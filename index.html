@@ -1,947 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kindred — Understand Yourself, Understand Each Other</title>
-<meta name="description" content="A warm, judgment-free space to talk things through, discover your personality type, and check in on your relationship — in plain, everyday language." />
-
-<!-- Tailwind (browser CDN, no build step needed) -->
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-<!-- Fonts: Fraunces (warm, human display serif) + Inter (clean, easy-to-read body) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-  :root{
-    --ink:#23271f;
-    --canvas:#fbf7f1;
-    --forest:#2c5347;
-    --forest-dark:#1d3a31;
-    --coral:#e2684a;
-    --coral-dark:#c8533a;
-    --sand:#efe5d3;
-    --gold:#be9a4d;
-  }
-  *{ -webkit-tap-highlight-color: transparent; }
-  html{ scroll-behavior:smooth; }
-  body{
-    background:var(--canvas);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-  }
-  .font-display{ font-family:'Fraunces',serif; }
-  .text-balance{ text-wrap:balance; }
-
-  /* signature hand-drawn underline */
-  .squiggle-underline{ position:relative; display:inline-block; }
-  .squiggle-underline svg{ position:absolute; left:0; bottom:-0.18em; width:100%; height:0.3em; }
-
-  .btn-primary{
-    background:var(--coral); color:#fff; font-weight:600;
-    transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.05);
-  }
-  .btn-primary:hover{ background:var(--coral-dark); transform: translateY(-1px); }
-  .btn-primary:active{ transform: translateY(0); }
-
-  .btn-ghost{
-    border:1.5px solid var(--ink); color:var(--ink); font-weight:600;
-    transition: background .15s ease, transform .15s ease;
-  }
-  .btn-ghost:hover{ background: rgba(35,39,31,0.06); transform: translateY(-1px); }
-
-  .card{
-    background:#fff; border:1px solid rgba(35,39,31,0.08);
-    box-shadow: 0 1px 2px rgba(35,39,31,0.04);
-  }
-
-  ::selection{ background: var(--gold); color:#1a1a1a; }
-
-  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
-    outline: 2.5px solid var(--forest);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-
-  /* page transitions */
-  .page{ display:none; }
-  .page.active{ display:block; animation: fadein .45s ease; }
-  @keyframes fadein{ from{ opacity:0; transform: translateY(6px);} to{opacity:1; transform:none;} }
-
-  .reveal{ opacity:0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
-  .reveal.in{ opacity:1; transform:none; }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
-    html{ scroll-behavior:auto; }
-  }
-
-  /* typing dots */
-  .typing-dot{ width:6px; height:6px; border-radius:50%; background:#9a9a90; display:inline-block; animation: bounce 1.1s infinite; }
-  .typing-dot:nth-child(2){ animation-delay:.15s; }
-  .typing-dot:nth-child(3){ animation-delay:.3s; }
-  @keyframes bounce{ 0%,60%,100%{ transform: translateY(0); opacity:.5;} 30%{ transform: translateY(-4px); opacity:1;} }
-
-  .chat-scroll::-webkit-scrollbar{ width:6px; }
-  .chat-scroll::-webkit-scrollbar-thumb{ background:rgba(35,39,31,0.15); border-radius:4px; }
-
-  /* progress bar fill animation handled inline via width transition */
-  .bar-fill{ transition: width .6s ease; }
-
-  .nav-link{ position:relative; }
-  .nav-link.is-active{ color:var(--coral); }
-
-  .cursor-blink::after{
-    content:'|'; animation: blink 1s step-end infinite; color: var(--forest);
-  }
-  @keyframes blink{ 50%{ opacity:0; } }
-</style>
+    <meta charset="UTF-8">
+    <title>Behavioral Insight Portal</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; background: #f4f4f9; }
+        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: #ddd; }
+        .tab-btn.active { background: #333; color: white; }
+        .quiz-section { display: none; background: white; padding: 20px; border-radius: 8px; }
+        .quiz-section.active { display: block; }
+        .question { margin-bottom: 20px; }
+        button#analyze { margin-top: 20px; padding: 15px; background: #28a745; color: white; border: none; cursor: pointer; width: 100%; }
+        #report { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background: #fff; white-space: pre-wrap; }
+    </style>
 </head>
-<body class="antialiased">
+<body>
 
-<!-- =================== NAV =================== -->
-<header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf7f1]/90 border-b border-black/5">
-  <nav class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-    <button onclick="goTo('home')" class="flex items-center gap-2 font-display text-xl font-semibold" style="color:var(--forest)">
-      <span aria-hidden="true">🌿</span> Kindred
-    </button>
-    <div class="hidden md:flex items-center gap-7 text-sm font-medium">
-      <button data-nav="chat" onclick="goTo('chat')" class="nav-link hover:text-[var(--coral)] transition">Talk it out</button>
-      <button data-nav="personality" onclick="goTo('personality')" class="nav-link hover:text-[var(--coral)] transition">Know your type</button>
-      <button data-nav="ego" onclick="goTo('ego')" class="nav-link hover:text-[var(--coral)] transition">Ego & Blindspots</button>
-      <button data-nav="couples" onclick="goTo('couples')" class="nav-link hover:text-[var(--coral)] transition">Couples check-in</button>
-    </div>
-    <button onclick="goTo('chat')" class="btn-primary text-sm px-4 py-2 rounded-full">Start a chat</button>
-  </nav>
-</header>
-
-<!-- =================== HOME =================== -->
-<main id="page-home" class="page active">
-
-  <!-- HERO -->
-  <section class="max-w-6xl mx-auto px-5 sm:px-8 pt-14 sm:pt-20 pb-16 grid md:grid-cols-2 gap-12 items-center">
-    <div class="reveal in">
-      <p class="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-5" style="background:var(--sand); color:var(--forest-dark)">A calmer corner of the internet</p>
-      <h1 class="font-display text-4xl sm:text-5xl leading-[1.1] text-balance">
-        You don't need a psychology degree to
-        <span class="squiggle-underline" style="color:var(--coral)">understand yourself.
-          <svg viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M0,6 Q25,0 50,6 T100,6 T150,6 T200,6" fill="none" stroke="var(--coral)" stroke-width="3"/></svg>
-        </span>
-      </h1>
-      <p class="mt-6 text-lg text-black/70 max-w-md">Kindred is a warm, judgment-free space to talk things through, learn how your mind works, and check in on the relationship that matters to you — all in plain, everyday language.</p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <button onclick="goTo('chat')" class="btn-primary px-6 py-3 rounded-full">Talk to Kindred</button>
-        <button onclick="goTo('personality')" class="btn-ghost px-6 py-3 rounded-full">Take the personality quiz</button>
-      </div>
-      <p class="mt-5 text-sm text-black/50">Free · No sign-up · Your answers stay on your device</p>
+    <h2>Assessment Dashboard</h2>
+    <div>
+        <button class="tab-btn active" onclick="openQuiz('personality')">Personality Insight</button>
+        <button class="tab-btn" onclick="openQuiz('couples')">Relationship Dynamics</button>
     </div>
 
-    <!-- phone demo of the chatbot -->
-    <div class="reveal in">
-      <div class="mx-auto max-w-sm rounded-[28px] p-5 sm:p-6" style="background:var(--forest-dark)">
-        <div class="rounded-2xl bg-[#fbf7f1] p-4 h-[420px] flex flex-col">
-          <div class="flex items-center gap-2 pb-3 border-b border-black/10">
-            <div class="w-8 h-8 rounded-full grid place-items-center text-white text-sm" style="background:var(--coral)">K</div>
-            <div>
-              <p class="text-sm font-semibold leading-none">Kindred</p>
-              <p class="text-xs text-black/50 leading-none mt-0.5">always listening</p>
-            </div>
-          </div>
-          <div id="hero-demo" class="flex-1 overflow-hidden pt-3 space-y-3 text-sm"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TRUST STRIP -->
-  <section style="background:var(--forest-dark)" class="py-12">
-    <div class="max-w-6xl mx-auto px-5 sm:px-8 grid sm:grid-cols-3 gap-8 text-[#fbf7f1]">
-      <div class="reveal">
-        <p class="font-display text-2xl mb-1">Private, always</p>
-        <p class="text-white/70 text-sm">Nothing you share here is stored on a server or sold to anyone. It stays between you and this page.</p>
-      </div>
-      <div class="reveal">
-        <p class="font-display text-2xl mb-1">Plain language, on purpose</p>
-        <p class="text-white/70 text-sm">No clinical jargon. Just clear, kind words — the way a good friend who happens to know psychology would talk.</p>
-      </div>
-      <div class="reveal">
-        <p class="font-display text-2xl mb-1">Grounded in real frameworks</p>
-        <p class="text-white/70 text-sm">Built on well-known ideas from psychology — personality typing and relationship research — simplified, never dumbed down.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURE CARDS -->
-  <section class="max-w-6xl mx-auto px-5 sm:px-8 py-20">
-    <h2 class="font-display text-3xl sm:text-4xl text-center text-balance">Four ways to get to know yourself <span style="color:var(--coral)">— and your person</span></h2>
-    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <button onclick="goTo('chat')" class="card reveal rounded-2xl p-6 text-left hover:-translate-y-1 transition flex flex-col justify-between">
-        <div>
-          <div class="w-11 h-11 rounded-full grid place-items-center text-xl mb-4" style="background:var(--sand)">💬</div>
-          <p class="font-display text-xl mb-2">Talk it out</p>
-          <p class="text-black/65 text-sm">Vent, untangle a hard feeling, or just think out loud with a companion that actually listens.</p>
-        </div>
-      </button>
-      <button onclick="goTo('personality')" class="card reveal rounded-2xl p-6 text-left hover:-translate-y-1 transition flex flex-col justify-between">
-        <div>
-          <div class="w-11 h-11 rounded-full grid place-items-center text-xl mb-4" style="background:var(--sand)">🧭</div>
-          <p class="font-display text-xl mb-2">Know your type</p>
-          <p class="text-black/65 text-sm">A friendly, 20-question personality quiz inspired by classic Jungian typing — find out how you love, work, and recharge.</p>
-        </div>
-      </button>
-      <button onclick="goTo('ego')" class="card reveal rounded-2xl p-6 text-left hover:-translate-y-1 transition flex flex-col justify-between">
-        <div>
-          <div class="w-11 h-11 rounded-full grid place-items-center text-xl mb-4" style="background:var(--sand)">🪞</div>
-          <p class="font-display text-xl mb-2">Ego & Blindspots</p>
-          <p class="text-black/65 text-sm">A highly tactical, un-fakeable scenario assessment looking at how your ego processes control, status, and validation loops.</p>
-        </div>
-      </button>
-      <button onclick="goTo('couples')" class="card reveal rounded-2xl p-6 text-left hover:-translate-y-1 transition flex flex-col justify-between">
-        <div>
-          <div class="w-11 h-11 rounded-full grid place-items-center text-xl mb-4" style="background:var(--sand)">💞</div>
-          <p class="font-display text-xl mb-2">Couples check-in</p>
-          <p class="text-black/65 text-sm">A split-link compatibility check covering raw realities like friction points, vulnerability thresholds, and life paths.</p>
-        </div>
-      </button>
-    </div>
-  </section>
-
-  <footer class="border-t border-black/10 py-10">
-    <div class="max-w-6xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row justify-between gap-4 text-sm text-black/55">
-      <p>🌿 Kindred — built to help you understand the mind, gently.</p>
-      <p class="max-w-md">Kindred offers self-reflection tools, not therapy or medical advice. If you're in crisis or feel unsafe, please contact local emergency services or a crisis helpline right away — you deserve real support.</p>
-    </div>
-  </footer>
-</main>
-
-<!-- =================== CHAT PAGE =================== -->
-<section id="page-chat" class="page">
-  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-10">
-    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
-    <h1 class="font-display text-3xl mb-1">Talk it out</h1>
-    <p class="text-black/60 text-sm mb-5">Say whatever's on your mind — there's no wrong way to start.</p>
-
-    <div class="card rounded-2xl flex flex-col overflow-hidden" style="height:70vh">
-      <div id="chat-window" class="chat-scroll flex-1 overflow-y-auto p-5 space-y-4"></div>
-
-      <div id="chat-chips" class="flex gap-2 flex-wrap px-4 pb-3"></div>
-
-      <form id="chat-form" class="border-t border-black/10 p-3 flex items-end gap-2">
-        <textarea id="chat-input" rows="1" placeholder="Type how you're feeling…" class="flex-1 resize-none rounded-xl border border-black/15 px-4 py-3 text-sm focus:outline-none focus:ring-2" style="--tw-ring-color:var(--forest)"></textarea>
-        <button type="submit" class="btn-primary rounded-xl px-5 py-3 text-sm">Send</button>
-      </form>
-    </div>
-    <p class="text-xs text-black/45 mt-3">Kindred is a supportive companion, not a licensed therapist. For ongoing struggles, please also talk to a real mental health professional.</p>
-  </div>
-</section>
-
-<!-- =================== PERSONALITY QUIZ PAGE =================== -->
-<section id="page-personality" class="page">
-  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-10">
-    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
-
-    <div id="mb-intro">
-      <h1 class="font-display text-3xl mb-2">Know your type</h1>
-      <p class="text-black/65 mb-6">20 quick, honest questions. No right answers — just go with whatever feels most like you. Takes about 3 minutes.</p>
-      <button onclick="startMB()" class="btn-primary px-6 py-3 rounded-full">Start the quiz</button>
+    <!-- Personality Quiz -->
+    <div id="personality" class="quiz-section active">
+        <h3>Personality Depth Assessment</h3>
+        <div id="p-questions"></div>
     </div>
 
-    <div id="mb-quiz" class="hidden">
-      <div class="w-full h-2 rounded-full bg-black/10 mb-6 overflow-hidden">
-        <div id="mb-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--coral)"></div>
-      </div>
-      <p id="mb-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold mb-3"></p>
-      <h2 id="mb-question" class="font-display text-2xl mb-6 text-balance"></h2>
-      <div class="grid gap-3" id="mb-options"></div>
+    <!-- Couples Quiz -->
+    <div id="couples" class="quiz-section">
+        <h3>Relationship Dynamics Assessment</h3>
+        <div id="c-questions"></div>
     </div>
 
-    <div id="mb-result" class="hidden"></div>
-  </div>
-</section>
-
-<!-- =================== EGO & BLINDSPOTS (SUBTLE NARCISSISM SCREENING) =================== -->
-<section id="page-ego" class="page">
-  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-10">
-    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
-
-    <div id="ego-intro">
-      <h1 class="font-display text-3xl mb-2">Ego & Blindspots</h1>
-      <p class="text-black/65 mb-4">How does your mind navigate social status, dynamic control, and daily validation? This assessment evaluates traits using hidden-metric behavioral scenarios where a "correct" answer is intentionally non-obvious.</p>
-      <p class="text-black/55 text-sm mb-6">To find out your accurate patterns, select the alternative that naturally registers with your instant default impulse—not what sounds ideal.</p>
-      <button onclick="startEgo()" class="btn-primary px-6 py-3 rounded-full">Begin the assessment</button>
-    </div>
-
-    <div id="ego-quiz" class="hidden">
-      <div class="w-full h-2 rounded-full bg-black/10 mb-6 overflow-hidden">
-        <div id="ego-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--gold)"></div>
-      </div>
-      <p id="ego-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold mb-3"></p>
-      <h2 id="ego-question" class="font-display text-xl mb-6 text-balance font-medium"></h2>
-      <div class="grid gap-3" id="ego-options"></div>
-    </div>
-
-    <div id="ego-result" class="hidden"></div>
-  </div>
-</section>
-
-<!-- =================== COUPLES QUIZ PAGE =================== -->
-<section id="page-couples" class="page">
-  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-10">
-    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
-
-    <!-- STEP 1: INITIAL STATE CHOICE -->
-    <div id="cp-intro">
-      <h1 class="font-display text-3xl mb-2">Couples Check-in</h1>
-      <p class="text-black/65 mb-6">A deep relationship assessment focusing on core friction points, hidden thresholds, and life paths. To capture true alignment, partners answer individually on their own screens. Once both complete it, your exact matching profile unlocks.</p>
-      
-      <div class="grid sm:grid-cols-2 gap-4 mt-4">
-        <div class="card p-5 rounded-xl flex flex-col justify-between">
-          <div>
-            <h3 class="font-semibold text-lg mb-1" style="color:var(--forest)">Start Fresh</h3>
-            <p class="text-xs text-black/60 mb-4">Choose this if you are the first partner initiating this check-in session.</p>
-          </div>
-          <button onclick="initiatePartnerSession(1)" class="btn-primary px-4 py-2.5 rounded-full text-xs">I am Partner 1</button>
-        </div>
-        <div class="card p-5 rounded-xl flex flex-col justify-between">
-          <div>
-            <h3 class="font-semibold text-lg mb-1" style="color:var(--coral)">Resume / Link Partner</h3>
-            <p class="text-xs text-black/60 mb-4">Choose this if your partner already finished and gave you an answer code.</p>
-          </div>
-          <div class="flex gap-2">
-            <input type="text" id="partner-code-input" placeholder="Paste code here..." class="border border-black/15 text-xs px-3 py-2 rounded-xl flex-1 focus:outline-none focus:ring-2 focus:ring-[var(--forest)]" />
-            <button onclick="initiatePartnerSession(2)" class="btn-ghost px-4 py-2 rounded-xl text-xs">Load</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- LINK GENERATION SCREEN -->
-    <div id="cp-link-screen" class="hidden text-center max-w-md mx-auto py-8">
-      <div class="w-16 h-16 bg-[var(--sand)] text-2xl rounded-full grid place-items-center mx-auto mb-4">🔗</div>
-      <h2 class="font-display text-2xl mb-2">Your part is complete!</h2>
-      <p class="text-sm text-black/65 mb-6">Copy the localized dataset string below and pass it along to your partner. When they enter it on their device, your true compatibility metrics match up instantly.</p>
-      <div class="bg-black/5 p-3 rounded-xl font-mono text-xs break-all select-all mb-4 text-left border border-black/10" id="cp-generated-string"></div>
-      <button onclick="navigator.clipboard.writeText(document.getElementById('cp-generated-string').textContent); alert('Copied code to clipboard!');" class="btn-primary px-5 py-2.5 rounded-full text-xs mb-4">Copy Session Data String</button>
-      <p class="text-xs text-black/40">Keep this tab open, or return when you have your partner's resulting string to sync up completely.</p>
-    </div>
-
-    <!-- MAIN QUIZ INTERFACE -->
-    <div id="cp-quiz" class="hidden">
-      <div class="w-full h-2 rounded-full bg-black/10 mb-6 overflow-hidden">
-        <div id="cp-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--forest)"></div>
-      </div>
-      <p id="cp-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold mb-1"></p>
-      <p id="cp-category" class="text-xs font-semibold mb-3" style="color:var(--coral)"></p>
-      <h2 id="cp-question" class="font-display text-xl mb-6 text-balance font-medium"></h2>
-      <div class="grid gap-3" id="cp-options"></div>
-    </div>
-
-    <div id="cp-result" class="hidden"></div>
-  </div>
-</section>
+    <button id="analyze" onclick="analyzePatterns()">Generate Behavioral Report</button>
+    <div id="report"></div>
 
 <script>
-/* =========================================================
-   NAVIGATION
-========================================================= */
-function goTo(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('is-active', l.dataset.nav===page));
-  window.scrollTo({top:0, behavior:'instant'});
-  if(page==='chat' && chatLog.length===0){ chatGreet(); }
-}
-
-/* scroll reveal */
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
-},{threshold:0.15});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-
-/* =========================================================
-   HERO TYPING DEMO
-========================================================= */
-const heroScript = [
-  {who:'user', text:"my partner and i keep arguing about the same thing over and over"},
-  {who:'bot', text:"That sounds exhausting — like you're stuck on a loop instead of actually getting anywhere. Can I ask, when it comes up again, is it more about the topic itself, or how it's being talked about?"}
-];
-function typeInto(el, text, speed=18){
-  return new Promise(resolve=>{
-    let i=0;
-    el.textContent='';
-    const t=setInterval(()=>{
-      el.textContent = text.slice(0,i)+'▌';
-      i++;
-      if(i>text.length){ clearInterval(t); el.textContent=text; resolve(); }
-    }, speed);
-  });
-}
-async function runHeroDemo(){
-  const wrap = document.getElementById('hero-demo');
-  if(!wrap) return;
-  wrap.innerHTML='';
-  for(const line of heroScript){
-    const bubble = document.createElement('div');
-    bubble.className = line.who==='user'
-      ? 'ml-auto max-w-[85%] rounded-2xl rounded-br-sm px-3.5 py-2 text-white'
-      : 'mr-auto max-w-[85%] rounded-2xl rounded-bl-sm px-3.5 py-2';
-    bubble.style.background = line.who==='user' ? 'var(--forest)' : 'var(--sand)';
-    wrap.appendChild(bubble);
-    await new Promise(r=>setTimeout(r,350));
-    await typeInto(bubble, line.text, line.who==='user'?14:10);
-    await new Promise(r=>setTimeout(r,500));
-  }
-  setTimeout(runHeroDemo, 4500);
-}
-runHeroDemo();
-
-/* =========================================================
-   CHATBOT MODULE
-========================================================= */
-const chatWindow = document.getElementById('chat-window');
-const chatForm = document.getElementById('chat-form');
-const chatInput = document.getElementById('chat-input');
-const chatChips = document.getElementById('chat-chips');
-let chatLog = [];
-
-const starterChips = [
-  "I'm anxious about something",
-  "My partner and I keep arguing",
-  "I feel really lonely lately",
-  "I'm having cold feet about marriage"
+const personalityQs = [
+    "The Success Narrative: You win an award. Do you (A) Let people think you were the mastermind? (B) Ensure the team knows I value their work equally?",
+    "The Critique Reflex: Someone points out a mistake. Do you (A) Find a flaw in their argument to neutralize it? (B) Honestly check if they’re right?",
+    "The Social Battery: Being where no one knows your status makes you feel (A) Slightly restless/invisible? (B) Relaxed, it's refreshing?",
+    "The Favor: Helping someone makes you feel (A) They now owe me loyalty? (B) I've relieved their burden?",
+    "The Rule-Breaker: A rule stops you. You (A) Circumvent it, it's just a suggestion? (B) Follow it, it keeps things fair?",
+    "The Conflict Pivot: Losing an argument, you (A) Pivot to their character? (B) Drop your point and listen?",
+    "The Boring Person: You label someone uninteresting if (A) They have no utility/status? (B) They are dishonest/unkind?",
+    "The Emotional Leak: Seeing someone cry, you (A) Feel awkward/irritated? (B) Feel immediate concern?",
+    "The Special Feeling: Are you destined for more than average? (A) Yes, it's my baseline? (B) No, simple life is fine?",
+    "The Mirroring: When meeting someone, you (A) Mirror their vibe to build rapport? (B) Stay yourself?",
+    "The Remorse Test: Hurting someone, what bothers you? (A) They think less of me? (B) They are in pain?",
+    "The Power Vacuum: Entering a group, you (A) Map the leader to leverage them? (B) Look for people I like?",
+    "The Vulnerability Test: Sharing secrets is (A) Giving them a weapon? (B) Necessary for trust?",
+    "The Boredom Trap: A situation doesn't serve you. You (A) Cut ties instantly? (B) Feel loyalty and try to evolve?",
+    "The Game Mentality: Life is (A) A competition? (B) A community?"
 ];
 
-function renderChips(){
-  chatChips.innerHTML = starterChips.map(c=>`<button class="text-xs px-3 py-1.5 rounded-full border border-black/15 hover:bg-black/5" onclick="sendChip(this)">${c}</button>`).join('');
-}
-function sendChip(btn){
-  chatInput.value = btn.textContent;
-  chatForm.requestSubmit();
-}
-
-function addBubble(who, text){
-  const row = document.createElement('div');
-  row.className = who==='user' ? 'flex justify-end' : 'flex justify-start';
-  const bubble = document.createElement('div');
-  bubble.className = 'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ' + (who==='user' ? 'rounded-br-sm text-white' : 'rounded-bl-sm');
-  bubble.style.background = who==='user' ? 'var(--forest)' : '#f1ece1';
-  bubble.style.color = who==='user' ? '#fff' : 'var(--ink)';
-  bubble.textContent = text;
-  row.appendChild(bubble);
-  chatWindow.appendChild(row);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-
-function addTyping(){
-  const row = document.createElement('div');
-  row.className = 'flex justify-start';
-  row.id = 'typing-row';
-  row.innerHTML = `<div class="rounded-2xl rounded-bl-sm px-4 py-3" style="background:#f1ece1"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
-  chatWindow.appendChild(row);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-function removeTyping(){ document.getElementById('typing-row')?.remove(); }
-
-function chatGreet(){
-  addBubble('bot', "Hi, I'm Kindred. I'm here to listen, no judgment at all. What's going on for you today?");
-  renderChips();
-}
-
-const topics = [
-  { keys:['anxious','anxiety','stressed','stress','overwhelmed','panic','nervous'],
-    replies:[
-      "That sounds like a lot to carry right now. Anxiety has a way of making everything feel urgent at once, even when it isn't. What's the loudest worry in your head right now?",
-      "Feeling overwhelmed makes total sense given what you're describing — your mind is trying to protect you, it's just being a bit too loud about it. Can you tell me what's triggering it most?"
-    ]},
-  { keys:['sad','down','depress','empty','numb','hopeless'],
-    replies:[
-      "I'm really glad you told me instead of carrying it alone. Feeling that low isn't weakness, it's a sign something inside needs real care. Has it been like this for a while, or did something specific bring it on?",
-      "That heaviness is real, and it matters. You don't have to perform being okay with me. What does a hard day usually look like for you?"
-    ]},
-  { keys:['argu','fight','conflict','partner','boyfriend','girlfriend','husband','wife','spouse'],
-    replies:[
-      "Going in circles in a relationship is so draining — like you're both tired but neither knows how to land the plane. Is it more about what you're arguing about, or how the arguing itself goes?",
-      "It makes sense you're frustrated. A lot of repeat fights aren't really about the dishes or the schedule — they're about feeling unheard underneath it. What do you think you actually need from them that you're not getting right now?"
-    ]},
-  { keys:['lonely','alone','isolated','no friends','no one understands'],
-    replies:[
-      "Loneliness is one of the heaviest feelings to sit with, especially when you're surrounded by people but still feel unseen. When do you feel it the most — at night, around others, or all the time?",
-      "Thank you for saying that out loud, that takes courage. Feeling alone doesn't mean you're unlovable, it usually means you haven't found your people yet, or the connection you have feels surface-level. What kind of connection are you craving right now?"
-    ]},
-  { keys:['family','parents','culture','tradition','expectation','in-law','in laws'],
-    replies:[
-      "Family and cultural expectations can feel like love and pressure at the same time — that's a hard tension to hold. What's the expectation that's weighing on you most right now?",
-      "It's really common to feel torn between honoring where you come from and being true to yourself — across pretty much every culture. Is this more about a specific decision, or a general feeling of not measuring up?"
-    ]},
-  { keys:['jealous','trust','cheat','suspicious','insecure about'],
-    replies:[
-      "Jealousy usually isn't really about the other person — it's often fear wearing a disguise, fear of losing something that matters to you. Has something specific happened, or is this more of a background worry?",
-      "Trust issues are exhausting to live with, for both people. Did this start with something that happened, or does it feel like it's always been there for you?"
-    ]},
-  { keys:['breakup','broke up','heartbroken','heartbreak','divorce','left me','ex'],
-    replies:[
-      "I'm really sorry. Endings like that hurt in a way that's hard to explain to people who haven't been through it. How are you holding up today, specifically?",
-      "That kind of loss can knock the wind out of you for a while — be gentle with yourself. What's the hardest part of it right now, the missing them, or the missing who you were with them?"
-    ]},
-  { keys:['confidence','worthless','not good enough','self-esteem','self esteem','hate myself','ugly'],
-    replies:[
-      "I want to gently push back on that — the way you're talking about yourself sounds harsher than the truth deserves. When did you start believing you weren't enough?",
-      "That inner voice can be so cruel, and so convincing. It's worth asking — would you ever say that to someone you loved? What's actually happened that's making you feel this way?"
-    ]},
-  { keys:['marriage','marry','engaged','wedding','cold feet','should i marry'],
-    replies:[
-      "Questioning a big decision like marriage is actually a healthy sign — it means you're taking it seriously, not that something's wrong. Is the doubt about this specific person, or about the idea of marriage itself?",
-      "Cold feet is so common it's almost a cliché, but your specific reason matters. Is it more fear, or is it a real, nagging gut feeling about something unresolved between you two?"
-    ]},
-  { keys:['angry','anger','furious','frustrated','mad at'],
-    replies:[
-      "Anger usually shows up to protect something underneath — a boundary, a hurt, a need that's been ignored. What do you think is really underneath it for you?",
-      "That frustration sounds valid. What happened right before it built up?"
-    ]}
+const coupleQs = [
+    "The Fight: You are exhausted. You (A) Shut down/withdraw? (B) Stay present and hear their hurt?",
+    "The Public Silliness: Partner makes you look silly. You (A) Call them out to protect image? (B) Let it go?",
+    "The Decision: Partner acts alone. You (A) Retaliate with a unilateral decision? (B) Set a boundary to talk it out?",
+    "The Scorecard: When they fail, you (A) Store it to use as ammo? (B) Process and clear it?",
+    "The Support: Partner is spiraling. You (A) Give a logic fix to stop the noise? (B) Hold space for them?",
+    "The Growth Gap: They are coasting. You (A) Feel they are dead weight? (B) Encourage them?",
+    "The Chores: You feel overworked. You (A) Stop doing your part to show them? (B) Ask for a calm meeting?",
+    "The Attraction: You like someone else. You (A) Keep it secret? (B) Create distance to protect the commitment?",
+    "The Future: You disagree on a life path. You (A) Expect them to follow my plan? (B) Have a hard talk?",
+    "The Vulnerability: They see you at your worst. You (A) Push them away? (B) Feel relieved?",
+    "The Family Jab: Family is rude. You (A) Call your partner weak for not defending? (B) Discuss being a united front?",
+    "The Empty Season: They are in a low phase. You (A) Look for validation elsewhere? (B) Stay the course?",
+    "The Money: They want a risk. You (A) Protect 'my' security? (B) Find middle ground?",
+    "The Rejection: They turn down intimacy. You (A) Punish them with distance? (B) Try again later?",
+    "The Conflict Core: The relationship is (A) Maximizing own happiness? (B) Mutual growth?"
 ];
 
-const fallbacks = [
-  "I hear you. Can you tell me a little more about what that's been like for you?",
-  "That sounds important. What's been going through your mind about it the most?",
-  "Thank you for sharing that with me. What would feel most helpful right now — talking it through, or figuring out a next step?",
-  "I'm listening. What's the part of this that feels heaviest right now?"
-];
-
-function botReply(userText){
-  const lower = userText.toLowerCase();
-  for(const topic of topics){
-    if(topic.keys.some(k=>lower.includes(k))){
-      return topic.replies[Math.floor(Math.random()*topic.replies.length)];
-    }
-  }
-  return fallbacks[Math.floor(Math.random()*fallbacks.length)];
+function setupQuiz(id, questions) {
+    const container = document.getElementById(id);
+    questions.forEach((q, i) => {
+        container.innerHTML += `<div class='question'>${q} 
+            <br><input type='radio' name='${id}-${i}' value='A'> A 
+            <input type='radio' name='${id}-${i}' value='B'> B</div>`;
+    });
 }
 
-chatForm.addEventListener('submit', e=>{
-  e.preventDefault();
-  const text = chatInput.value.trim();
-  if(!text) return;
-  addBubble('user', text);
-  chatLog.push(text);
-  chatInput.value='';
-  addTyping();
-  const delay = 700 + Math.random()*700;
-  setTimeout(()=>{
-    removeTyping();
-    addBubble('bot', botReply(text));
-  }, delay);
-});
-chatInput.addEventListener('keydown', e=>{
-  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); chatForm.requestSubmit(); }
-});
-
-/* =========================================================
-   PERSONALITY TYPE QUIZ MODULE
-========================================================= */
-const mbQuestions = [
-  {axis:'EI', a:"After a long week, I'd rather go out and be around people", b:"After a long week, I'd rather stay home and recharge alone"},
-  {axis:'EI', a:"In a group, I usually jump in and think out loud", b:"In a group, I usually listen first, then speak when I'm ready"},
-  {axis:'EI', a:"Meeting new people feels exciting and energizing", b:"Meeting new people feels nice, but a little draining"},
-  {axis:'EI', a:"My ideal weekend is full of plans with people I love", b:"My ideal weekend is quiet, with little to no plans"},
-  {axis:'EI', a:"When something exciting happens, I want to tell people right away", b:"When something exciting happens, I like to sit with it privately first"},
-  {axis:'SN', a:"I trust what I can see, touch, and prove", b:"I trust my gut feeling and the bigger picture"},
-  {axis:'SN', a:"I solve problems using facts and past experience", b:"I solve problems by looking for patterns and new possibilities"},
-  {axis:'SN', a:"I'm more interested in what's practical and real right now", b:"I'm more interested in ideas and 'what could be'"},
-  {axis:'SN', a:"People come to me for clear, step-by-step advice", b:"People come to me for fresh perspective and big ideas"},
-  {axis:'SN', a:"I'd rather read a clear how-to guide", b:"I'd rather read a story full of meaning and metaphor"},
-  {axis:'TF', a:"In tough decisions, I lead with logic and fairness", b:"In tough decisions, I lead with values and people's feelings"},
-  {axis:'TF', a:"When giving feedback, I focus on being honest and direct", b:"When giving feedback, I focus on being kind and gentle"},
-  {axis:'TF', a:"I'm more proud of being rational", b:"I'm more proud of being compassionate"},
-  {axis:'TF', a:"In an argument, I care more about being right", b:"In an argument, I care more about keeping the relationship okay"},
-  {axis:'TF', a:"I think it's more important to be consistent with rules", b:"I think it's more important to bend rules for people's situations"},
-  {axis:'JP', a:"My ideal day is planned out ahead of time", b:"My ideal day stays open to whatever happens"},
-  {axis:'JP', a:"I feel best when things are decided and settled", b:"I feel best when my options stay open"},
-  {axis:'JP', a:"My space is usually pretty organized", b:"My space is usually a creative kind of scattered"},
-  {axis:'JP', a:"Deadlines make me start early", b:"Deadlines make me work best right before they hit"},
-  {axis:'JP', a:"I prefer having a clear plan", b:"I prefer going with the flow"}
-];
-
-const TYPES = {
-  ISTJ:{name:"The Anchor", sum:"Steady, dependable, and quietly thorough — you keep your word and your world organized.", strengths:"Reliable and honest. Calm under pressure.", challenge:"Can be slow to open up emotionally.", love:"You show love through consistency and follow-through, not big declarations — your person always knows where they stand with you.", tip:"Try saying the soft feelings out loud sometimes, not just showing them through actions."},
-  ISFJ:{name:"The Guardian", sum:"Warm, attentive, and fiercely loyal — you notice what people need before they ask.", strengths:"Deeply caring. Quietly dependable.", challenge:"Tends to put others first to a fault.", love:"You love through small, thoughtful acts of care, and you remember the little things that matter to your person.", tip:"Your needs matter too — practice asking for support, not just giving it."},
-  INFJ:{name:"The Confidant", sum:"Insightful and idealistic — you see beneath the surface of people and situations.", strengths:"Deep empathy. Strong sense of purpose.", challenge:"Can overthink and burn out caring for everyone.", love:"You love intensely and want real depth, not small talk — you're drawn to honest, meaningful connection.", tip:"It's okay if not every relationship needs to be analyzed — some things can just be enjoyed."},
-  INTJ:{name:"The Architect", sum:"Independent and strategic — you see the long game when others see only the next step.", strengths:"Clear thinker. Driven by competence.", challenge:"Can come across as distant or overly critical.", love:"You love by investing real thought into your person's future and goals — you show up in ways that are useful and lasting.", tip:"Vulnerability isn't a weakness in your plan — let people see the unfinished parts of you too."},
-  ISTP:{name:"The Craftsman", sum:"Practical and cool-headed — you'd rather fix the problem than talk about it.", strengths:"Calm in a crisis. Hands-on problem solver.", challenge:"Can avoid emotional conversations.", love:"You show love through action — fixing things, showing up, being steady — more than through words.", tip:"Naming a feeling out loud, even clumsily, means more to your person than you think."},
-  ISFP:{name:"The Artist", sum:"Gentle and quietly intense — you feel things deeply, even if you don't show it loudly.", strengths:"Genuine and kind. Strong personal values.", challenge:"Avoids conflict, even when it's needed.", love:"You love softly and sincerely, through presence and shared moments rather than declarations.", tip:"Speaking up earlier in a disagreement saves you from resentment later."},
-  INFP:{name:"The Dreamer", sum:"Idealistic and deeply feeling — you're always looking for what's true and meaningful.", strengths:"Imaginative. Loyal to your values.", challenge:"Can take things personally and idealize people.", love:"You love with your whole heart and crave a partner who feels like home, not just company.", tip:"Real people will disappoint you sometimes — that doesn't mean the love isn't real."},
-  INTP:{name:"The Thinker", sum:"Curious and logical — you'd rather understand the 'why' than follow the crowd.", strengths:"Original thinker. Honest and fair.", challenge:"Can forget the emotional side of a conversation.", love:"You love by being fully yourself around someone and inviting them into your inner world.", tip:"Sometimes your person needs comfort before they need your analysis."},
-  ESTP:{name:"The Doer", sum:"Bold and present — you'd rather take action than sit and theorize.", strengths:"Adaptable. Brings energy to a room.", challenge:"Can act before thinking things through.", love:"You love through shared adventure and living fully in the moment together.", tip:"Slowing down to talk about feelings (not just plans) deepens the bond."},
-  ESFP:{name:"The Performer", sum:"Warm and spontaneous — you bring life and joy wherever you go.", strengths:"Generous and fun. Genuinely present with people.", challenge:"Can avoid hard, serious conversations.", love:"You love loudly and joyfully, making your person feel celebrated.", tip:"The hard conversations matter as much as the fun ones — don't skip them."},
-  ENFP:{name:"The Free Spirit", sum:"Enthusiastic and warm — you see potential in people before they see it in themselves.", strengths:"Inspiring. Emotionally perceptive.", challenge:"Can struggle with routine and follow-through.", love:"You love expressively and deeply, and you want your person to grow alongside you.", tip:"Consistency, not just intensity, is what makes love last."},
-  ENTP:{name:"The Challenger", sum:"Quick-witted and curious — you love a good debate and a new idea.", strengths:"Clever. Sees possibilities others miss.", challenge:"Can argue for sport and miss when it hurts someone.", love:"You love through stimulating conversation and shared growth — you want a partner, not just a companion.", tip:"Sometimes 'I hear you' matters more than winning the point."},
-  ESTJ:{name:"The Director", sum:"Organized and decisive — you make things happen and expect follow-through.", strengths:"Dependable leader. Gets things done.", challenge:"Can be rigid or overly blunt.", love:"You love by building a stable, well-run life together and showing up reliably.", tip:"Letting your person do things their own way (not just your way) builds trust."},
-  ESFJ:{name:"The Host", sum:"Warm and socially attuned — you make sure everyone around you feels cared for.", strengths:"Generous host. Strong sense of duty.", challenge:"Can seek approval too much.", love:"You love through care, hospitality, and remembering what matters to people.", tip:"You're allowed to need care too, not just give it."},
-  ENFJ:{name:"The Mentor", sum:"Charismatic and caring — you naturally bring out the best in people.", strengths:"Inspiring. Genuinely invested in others' growth.", challenge:"Can neglect your own needs while helping others.", love:"You love by championing your person's growth and believing in them, often more than they believe in themselves.", tip:"It's okay to need support back, not just offer it."},
-  ENTJ:{name:"The Commander", sum:"Confident and goal-driven — you take charge and make the plan happen.", strengths:"Strong leader. Efficient and decisive.", challenge:"Can be steamroll feelings while chasing the goal.", love:"You love by building an ambitious life together and fighting hard for what matters to you both.", tip:"Slowing down to ask 'how do you feel' (not just 'what's the plan') deepens intimacy."}
-};
-
-let mbIndex=0, mbScores={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-function startMB(){
-  mbIndex=0; mbScores={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-  document.getElementById('mb-intro').classList.add('hidden');
-  document.getElementById('mb-result').classList.add('hidden');
-  document.getElementById('mb-quiz').classList.remove('hidden');
-  renderMB();
-}
-function renderMB(){
-  const q = mbQuestions[mbIndex];
-  document.getElementById('mb-bar').style.width = (mbIndex/mbQuestions.length*100)+'%';
-  document.getElementById('mb-counter').textContent = `Question ${mbIndex+1} of ${mbQuestions.length}`;
-  document.getElementById('mb-question').textContent = "Which feels more like you?";
-  const opts = document.getElementById('mb-options');
-  opts.innerHTML = `
-    <button class="card rounded-xl p-5 text-left hover:border-[var(--forest)] transition" onclick="answerMB('${q.axis[0]}')">${q.a}</button>
-    <button class="card rounded-xl p-5 text-left hover:border-[var(--forest)] transition" onclick="answerMB('${q.axis[1]}')">${q.b}</button>`;
-}
-function answerMB(letter){
-  mbScores[letter]++;
-  mbIndex++;
-  if(mbIndex>=mbQuestions.length){ finishMB(); } else { renderMB(); }
-}
-function finishMB(){
-  document.getElementById('mb-quiz').classList.add('hidden');
-  const code = (mbScores.E>=mbScores.I?'E':'I') + (mbScores.S>=mbScores.N?'S':'N') + (mbScores.T>=mbScores.F?'T':'F') + (mbScores.J>=mbScores.P?'J':'P');
-  const t = TYPES[code];
-  const res = document.getElementById('mb-result');
-  res.classList.remove('hidden');
-  res.innerHTML = `
-    <div class="text-center reveal in">
-      <p class="text-xs uppercase tracking-widest font-semibold" style="color:var(--coral)">Your type</p>
-      <h2 class="font-display text-4xl mt-1">${code} <span class="text-2xl text-black/50">— ${t.name}</span></h2>
-      <p class="mt-4 text-black/70 max-w-md mx-auto">${t.sum}</p>
-    </div>
-    <div class="grid sm:grid-cols-2 gap-4 mt-8">
-      <div class="card rounded-xl p-5"><p class="font-semibold text-sm mb-1" style="color:var(--forest)">Your strengths</p><p class="text-sm text-black/70">${t.strengths}</p></div>
-      <div class="card rounded-xl p-5"><p class="font-semibold text-sm mb-1" style="color:var(--coral)">Your growth edge</p><p class="text-sm text-black/70">${t.challenge}</p></div>
-      <div class="card rounded-xl p-5"><p class="font-semibold text-sm mb-1" style="color:var(--forest)">How you love</p><p class="text-sm text-black/70">${t.love}</p></div>
-      <div class="card rounded-xl p-5"><p class="font-semibold text-sm mb-1" style="color:var(--coral)">Try this</p><p class="text-sm text-black/70">${t.tip}</p></div>
-    </div>
-    <div class="flex flex-wrap gap-3 mt-8 justify-center">
-      <button onclick="startMB()" class="btn-ghost px-5 py-2.5 rounded-full text-sm">Retake the quiz</button>
-      <button onclick="goTo('couples')" class="btn-primary px-5 py-2.5 rounded-full text-sm">Check compatibility with your partner →</button>
-    </div>
-    <p class="text-center text-xs text-black/40 mt-6 max-w-md mx-auto">This is a simplified, self-reflection tool inspired by classic Jungian personality typing — not a clinical or scientific diagnosis.</p>
-  `;
+function openQuiz(type) {
+    document.querySelectorAll('.quiz-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(type).classList.add('active');
+    event.currentTarget.classList.add('active');
 }
 
-/* =========================================================
-   EGO & BLINDSPOTS MODULE (UN-FAKEABLE BEHAVIORAL SCREENING)
-   Uses structural projective testing principles to isolate
-   entitlement, grandiosity, lack of empathy, and threat response.
-========================================================= */
-const egoQuestions = [
-  {
-    q: "A close acquaintance achieves a major career breakthrough that you've been working toward for years. What is your immediate internal voice?",
-    opts: [
-      { text: "Good for them, but they honestly had better luck, connections, or an easier path than I've had.", score: 3 },
-      { text: "I wonder if I can leverage their new position or visibility to help move my own goals forward.", score: 2 },
-      { text: "A mix of frustration about my timeline and genuine happiness that their hard work paid off.", score: 0 }
-    ]
-  },
-  {
-    q: "You present a concept you are deeply proud of. A peer points out a clear logical flaw in front of your manager. What describes your default impulse?",
-    opts: [
-      { text: "Explain why their critique misses the larger point, or quietly make a mental note of their own flaws to bring up later.", score: 3 },
-      { text: "Agree to take a look at it later, while feeling an internal wave of absolute irritation or humiliation.", score: 2 },
-      { text: "Acknowledge the oversight immediately and work on correcting the flaw without tracking who saw it.", score: 0 }
-    ]
-  },
-  {
-    q: "A friend calls you crying about a breakup while you are right in the middle of a stressful, critical project. How do you naturally view the situation?",
-    opts: [
-      { text: "It's deeply inconsiderate of them to disrupt my focus with cyclical drama when my timeline is clearly important.", score: 3 },
-      { text: "I'll listen for five minutes to be a good friend, but I'm mostly thinking about getting back to my tasks.", score: 2 },
-      { text: "I feel their distress immediately and put my tasks on pause, or set a compassionate, clean boundary to call back.", score: 0 }
-    ]
-  },
-  {
-    q: "An upscale restaurant accidentally misses your priority reservation, forcing you to wait outside with everyone else. What matches your internal baseline?",
-    opts: [
-      { text: "This is completely unacceptable incompetence; I expect management to offer a direct apology or comp our meals.", score: 3 },
-      { text: "I feel incredibly insulted and self-conscious standing out there, worried how it looks to others.", score: 2 },
-      { text: "It's annoying, but mistakes happen. We can just grab food down the street instead.", score: 0 }
-    ]
-  },
-  {
-    q: "Think about your closest friendships. Which statement best reflects your pattern of keeping them around?",
-    opts: [
-      { text: "I enjoy people who clearly look up to me, value my expertise, and match my caliber of lifestyle or intellect.", score: 3 },
-      { text: "I value people who don't challenge me too harshly or cause constant friction.", score: 2 },
-      { text: "I prefer people who challenge my assumptions and feel comfortable telling me when I'm being difficult.", score: 0 }
-    ]
-  },
-  {
-    q: "You realize you completely forgot an anniversary or crucial promise to a loved one. When confronted, you notice your mind tries to:",
-    opts: [
-      { text: "Remind them of how much I've been carrying lately, or point out how their reactions always blow things out of proportion.", score: 3 },
-      { text: "Apologize profusely to make the discomfort go away, though secretly I feel they make too big a deal out of slip-ups.", score: 2 },
-      { text: "Own the error unconditionally, sit with their disappointment, and focus entirely on making it right.", score: 0 }
-    ]
-  },
-  {
-    q: "When navigating a group dynamic, team environment, or family function, you find you feel most secure when:",
-    opts: [
-      { text: "I am implicitly running the show, setting the agenda, or recognized as the primary authority.", score: 3 },
-      { text: "I can sit back comfortably knowing my status and value are already established and respected.", score: 2 },
-      { text: "I am a collaborative contributor, equal in importance and influence to everyone else.", score: 0 }
-    ]
-  }
-];
-
-let egoIndex=0, egoAnswers=[];
-function startEgo(){
-  egoIndex=0; egoAnswers=[];
-  document.getElementById('ego-intro').classList.add('hidden');
-  document.getElementById('ego-result').classList.add('hidden');
-  document.getElementById('ego-quiz').classList.remove('hidden');
-  renderEgo();
-}
-function renderEgo(){
-  const q = egoQuestions[egoIndex];
-  document.getElementById('ego-bar').style.width = (egoIndex/egoQuestions.length*100)+'%';
-  document.getElementById('ego-counter').textContent = `Scenario ${egoIndex+1} of ${egoQuestions.length}`;
-  document.getElementById('ego-question').textContent = q.q;
-  document.getElementById('ego-options').innerHTML = q.opts.map((o, i)=>
-    `<button class="card rounded-xl p-4 text-left hover:border-[var(--gold)] transition text-sm leading-relaxed" onclick="answerEgo(${o.score})">${o.text}</button>`
-  ).join('');
-}
-function answerEgo(score){
-  egoAnswers.push(score);
-  egoIndex++;
-  if(egoIndex >= egoQuestions.length){ finishEgo(); } else { renderEgo(); }
-}
-function finishEgo(){
-  document.getElementById('ego-quiz').classList.add('hidden');
-  const score = egoAnswers.reduce((a,b)=>a+b, 0);
-  
-  let title="", text="", color="var(--forest)", insight="", strategy="";
-  if(score >= 14){
-    title = "High Ego Core & Defensive Shield";
-    color = "var(--coral)";
-    text = "Your scenario profile indicates a noticeable pattern of self-preservation loops, standard external validation demands, and structural projection when processing personal critique.";
-    insight = "This blueprint matches psychological profiles that over-index on narcissistic traits. It often functions as a heavy adaptive armor built to safeguard an highly sensitive internal worth. This armor can unintentionally block deep emotional empathy and cause you to instinctively control relationships rather than share them.";
-    strategy = "When an internal 'sting' or anger surge occurs during feedback, force a 10-second mental pause. Instead of explaining why the other party is wrong or flawed, practice letting their reality exist alongside yours without viewing it as an existential threat.";
-  } else if(score >= 7){
-    title = "Protective / Adaptive Ego Baseline";
-    color = "var(--gold)";
-    text = "Your results show a dynamic sense of self that generally values collaboration, paired with predictable spikes of protective pride or transactional behaviors under pressure.";
-    insight = "You have an established capacity for true baseline empathy, but whenever status threats, failure anxieties, or rejection indicators trigger, your ego defaults to scorekeeping, subtle exceptionalism, or internal withdrawal to maintain equilibrium.";
-    strategy = "Notice your personal scorekeeping tendencies in daily conflicts. Try giving an unconditional apology without adding a structural 'but...' or highlighting what the other person did wrong first.";
-  } else {
-    title = "Grounded & Interdependent Self";
-    color = "var(--forest)";
-    text = "Your scenario responses display a well-integrated, fluid ego structure that effortlessly tolerates mutual boundaries, relational equality, and objective personal criticism.";
-    insight = "You don't process external corrections or normal human limitations as deep shame threats. You interact with people as independent centers of value rather than engines designed to validate your status or personal plans.";
-    strategy = "Continue protecting this low-defense orientation. Ensure that your natural comfort with collaboration doesn't cross over into bypassing your own valid achievements or allowing high-ego individuals to override your boundaries.";
-  }
-
-  const res = document.getElementById('ego-result');
-  res.classList.remove('hidden');
-  res.innerHTML = `
-    <div class="text-center reveal in mb-8">
-      <p class="text-xs uppercase tracking-widest font-semibold" style="color:var(--coral)">Your Self-Processing Profile</p>
-      <h2 class="font-display text-3xl mt-1 font-semibold" style="color:${color}">${title}</h2>
-      <p class="mt-4 text-black/70 max-w-md mx-auto text-sm leading-relaxed">${text}</p>
-    </div>
-    <div class="grid gap-4">
-      <div class="card rounded-xl p-5">
-        <p class="font-semibold text-sm mb-1.5" style="color:var(--forest)">Psychological Architecture Insight</p>
-        <p class="text-sm text-black/70 leading-relaxed">${insight}</p>
-      </div>
-      <div class="card rounded-xl p-5">
-        <p class="font-semibold text-sm mb-1.5" style="color:var(--coral)">Constructive Behavioral Shift</p>
-        <p class="text-sm text-black/70 leading-relaxed">${strategy}</p>
-      </div>
-    </div>
-    <div class="flex flex-wrap gap-3 mt-8 justify-center">
-      <button onclick="startEgo()" class="btn-ghost px-5 py-2.5 rounded-full text-sm">Retake the self-check</button>
-      <button onclick="goTo('chat')" class="btn-primary px-5 py-2.5 rounded-full text-sm">Talk through a pattern with Kindred →</button>
-    </div>
-    <p class="text-center text-xs text-black/40 mt-6 max-w-lg mx-auto">This tool screens for core cognitive and behavioral defense styles. It does not constitute a diagnostic medical evaluation for Narcissistic Personality Disorder (NPD).</p>
-  `;
-}
-
-/* =========================================================
-   DEEP COUPLES ASSESMENT WITH SPLIT-LINK SYNCING
-   Features severe, deep pinching relationship issues.
-========================================================= */
-const cpQuestions = [
-  { cat: "Friction & Escalation", q: "When a deep, emotionally exhausting argument peaks, what represents your true baseline habit?" },
-  { cat: "Vulnerability & Shame", q: "When you feel deep insecurity, personal failure, or raw embarrassment inside the relationship:" },
-  { cat: "Control & Autonomy", q: "If your partner schedules major lifestyle plans, moves money, or alters paths without your alignment:" },
-  { cat: "Emotional Support", q: "When your partner comes to you completely broken or hyper-stressed from an outside issue:" },
-  { cat: "The Long Road", q: "If your partner went through a prolonged crisis that completely paused intimacy and fun for over a year:" }
-];
-
-// Mapping raw responses directly to a signature relational archetype index (0, 1, 2)
-const cpAnswersMap = [
-  [
-    "I shut down completely, pull away my presence, or leave the room because the emotional noise feels completely unsafe.",
-    "My temper builds fast; I use targeted truths, cutting statements, or intense points to firmly protect my stance.",
-    "I stay physically present, drop my defensive posture, and prioritize mapping their hurt over winning my point."
-  ],
-  [
-    "I mask it completely behind irritability, total self-reliance, or cold, unbothered behavior.",
-    "I project it onto them, subconsciously highlighting their faults or mistakes to shift the focus off my exposure.",
-    "I name the raw feeling out loud in plain words, even if it feels extremely clumsy, unprotected, and risky."
-  ],
-  [
-    "I retaliate with quiet resistance, make executive counter-decisions, or ice them out to recalibrate control.",
-    "I launch into an intense confrontation, treating it as a total breach of baseline respect and authority.",
-    "I call a hard pause to address the systemic boundary fracture without burning the interaction down."
-  ],
-  [
-    "I immediately pivot to rational tracking, structural cleanup steps, or direct advice to stop the emotional bleed.",
-    "I feel drained, slightly resentful, or burdened by the weight of their unregulated processing loop.",
-    "I hold physical and silent space for their raw pain before trying to unpack logic or systemic strategies."
-  ],
-  [
-    "I would love them deeply from a sense of moral obligation, but my mind would actively seek outside validation or independent worlds.",
-    "I would experience compounding resentment, constantly highlighting my unmet needs or checking out of the core bond.",
-    "I would grieve the lost season openly with them, maintaining fidelity and choosing to adapt to the hard stretch."
-  ]
-];
-
-let cpCurrentRole = 1; // 1 = Initiator, 2 = Joiner/Partner
-let cpIndex=0, cpLocalAnswers=[];
-let cpPartnerAnswers = null; // Decoded array from Partner 1
-
-function initiatePartnerSession(role) {
-  cpCurrentRole = role;
-  if(role === 2) {
-    const rawInput = document.getElementById('partner-code-input').value.trim();
-    if(!rawInput) { alert("Please paste a valid session data string first!"); return; }
-    try {
-      // Decode string back to data array
-      const parsed = JSON.parse(atob(rawInput));
-      if(!Array.isArray(parsed)) throw new Error();
-      cpPartnerAnswers = parsed;
-    } catch(e) {
-      alert("Invalid data string structure. Please verify you copied the full sequence.");
-      return;
-    }
-  }
-  
-  document.getElementById('cp-intro').classList.add('hidden');
-  document.getElementById('cp-quiz').classList.remove('hidden');
-  startCPQuiz();
-}
-
-function startCPQuiz(){
-  cpIndex=0; cpLocalAnswers=[];
-  renderCPQuestion();
-}
-
-function renderCPQuestion(){
-  const q = cpQuestions[cpIndex];
-  document.getElementById('cp-bar').style.width = (cpIndex/cpQuestions.length*100)+'%';
-  document.getElementById('cp-counter').textContent = `Deep Dimension ${cpIndex+1} of ${cpQuestions.length}`;
-  document.getElementById('cp-category').textContent = q.cat.toUpperCase();
-  document.getElementById('cp-question').textContent = q.q;
-  
-  const optionsPool = cpAnswersMap[cpIndex];
-  document.getElementById('cp-options').innerHTML = optionsPool.map((text, val)=>
-    `<button class="card rounded-xl p-4 text-left hover:border-[var(--forest)] transition text-sm leading-relaxed" onclick="answerCP(${val})">${text}</button>`
-  ).join('');
-}
-
-function answerCP(val){
-  cpLocalAnswers.push(val);
-  cpIndex++;
-  if(cpIndex >= cpQuestions.length){
-    if(cpCurrentRole === 1) {
-      // Encode answers to shareable string base64
-      const b64Str = btoa(JSON.stringify(cpLocalAnswers));
-      document.getElementById('cp-quiz').classList.add('hidden');
-      document.getElementById('cp-link-screen').classList.remove('hidden');
-      document.getElementById('cp-generated-string').textContent = b64Str;
-    } else {
-      // Evaluate combined profiles directly
-      finishCPCombined();
-    }
-  } else {
-    renderCPQuestion();
-  }
-}
-
-function finishCPCombined(){
-  document.getElementById('cp-quiz').classList.add('hidden');
-  const res = document.getElementById('cp-result');
-  res.classList.remove('hidden');
-  
-  let perfectMatches = 0;
-  let severeMismatches = 0; // tracking secure (2) vs volatile (0 or 1) dynamics
-  
-  for(let i=0; i<cpQuestions.length; i++){
-    if(cpLocalAnswers[i] === cpPartnerAnswers[i]) perfectMatches++;
-    if(Math.abs(cpLocalAnswers[i] - cpPartnerAnswers[i]) === 2) severeMismatches++;
-  }
-  
-  // High psychological matrix calculation
-  let matchingPercentage = 100 - (severeMismatches * 15) - ((cpQuestions.length - perfectMatches - severeMismatches) * 6);
-  if(matchingPercentage < 15) matchingPercentage = 15;
-  if(matchingPercentage > 100) matchingPercentage = 100;
-
-  let overallSummary = "";
-  if(matchingPercentage >= 80) {
-    overallSummary = "You share deep structural alignment on raw emotional thresholds. Your processing languages naturally support mutual repair loops rather than escalating threats.";
-  } else if(matchingPercentage >= 50) {
-    overallSummary = "You hold a workable baseline foundation, but significant friction spikes happen during high-stress exposure. One partner is likely exiting the conversation or over-controlling while the other takes on the weight.";
-  } else {
-    overallSummary = "Your coping models run opposite to one another during relationship friction. Your baseline scripts are creating a cycle where one partner's self-protection mechanism directly triggers the other's core boundary wounds.";
-  }
-
-  // Generate tactical block summaries
-  const analysisCards = cpQuestions.map((q, idx) => {
-    const p1AnsText = cpAnswersMap[idx][cpPartnerAnswers[idx]];
-    const p2AnsText = cpAnswersMap[idx][cpLocalAnswers[idx]];
+function analyzePatterns() {
+    let score = 0;
+    document.querySelectorAll('input:checked').forEach(i => { if(i.value === 'A') score++; });
     
-    let blockInsight = "";
-    if(cpPartnerAnswers[idx] === cpLocalAnswers[idx]) {
-      blockInsight = cpPartnerAnswers[idx] === 2 
-        ? "Superb relational awareness. Both choose exposed vulnerability over defensive posture." 
-        : "You share the exact same reactive shadow style. While predictable, this style will reliably double the weight of any escalation cycle if left unchecked.";
-    } else if(Math.abs(cpPartnerAnswers[idx] - cpLocalAnswers[idx]) === 2) {
-      blockInsight = "High Friction Potential. One partner is attempting a healthy collaborative pause, while the other is defaulting to a severe avoidance withdrawal or localized criticism stance.";
-    } else {
-      blockInsight = "Mismatched expectations. Your protective routines don't share the same internal timeline. One is pushing to solve or fix, while the other is still feeling completely overwhelmed.";
-    }
-
-    return `
-      <div class="card rounded-xl p-5 border-l-4" style="border-left-color: ${cpPartnerAnswers[idx] === cpLocalAnswers[idx] ? 'var(--forest)' : 'var(--coral)'}">
-        <p class="text-xs uppercase font-semibold tracking-wider text-black/40 mb-1">${q.cat}</p>
-        <p class="font-medium text-sm text-black/90 mb-3">${q.q}</p>
-        <div class="grid gap-2 text-xs bg-black/[0.02] p-3 rounded-lg mb-3">
-          <p><span class="font-semibold text-[var(--forest)]">Partner 1 choice:</span> "${p1AnsText}"</p>
-          <p><span class="font-semibold text-[var(--coral)]">Partner 2 choice:</span> "${p2AnsText}"</p>
-        </div>
-        <p class="text-xs text-black/70 italic font-medium">Core Diagnostic: ${blockInsight}</p>
-      </div>
-    `;
-  }).join('');
-
-  res.innerHTML = `
-    <div class="text-center reveal in mb-8">
-      <p class="text-xs uppercase tracking-widest font-semibold" style="color:var(--coral)">Deep Processing Alignment</p>
-      <h2 class="font-display text-5xl mt-1 font-bold">${matchingPercentage}%</h2>
-      <p class="mt-4 text-black/70 max-w-md mx-auto text-sm leading-relaxed">${overallSummary}</p>
-    </div>
-    <h3 class="font-display text-xl mb-4 font-semibold text-center sm:text-left">Dimension Breakthroughs</h3>
-    <div class="grid gap-4">${analysisCards}</div>
-    <div class="flex flex-wrap gap-3 mt-8 justify-center">
-      <button onclick="location.reload()" class="btn-ghost px-5 py-2.5 rounded-full text-sm">Reset & Clear Session</button>
-      <button onclick="goTo('chat')" class="btn-primary px-5 py-2.5 rounded-full text-sm">Deconstruct these friction points with Kindred</button>
-    </div>
-  `;
+    let report = "--- BEHAVIORAL ANALYSIS REPORT ---\n";
+    if(score > 20) report += "Pattern Observed: High reliance on ego-protection and transactional logic. Consider professional perspective.";
+    else if(score > 10) report += "Pattern Observed: Mixed traits of independence and defensive reflexes.";
+    else report += "Pattern Observed: Strong indicators of high empathy and communal-based decision making.";
+    
+    document.getElementById('report').innerText = report;
 }
+
+setupQuiz('p-questions', personalityQs);
+setupQuiz('c-questions', coupleQs);
 </script>
 </body>
 </html>
