@@ -1,66 +1,81 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-// --- BOHO DESIGN SYSTEM COLORS & STYLES ---
+// --- STYLING DEFINITIONS (BOHO AESTHETIC) ---
 const BOHO = {
-  bg: "bg-[#FDFBF7] text-[#4A3E3D]", // Warm linen background, deep earthy brown text
-  card: "bg-[#F5EDE0] border border-[#E6D5B8] rounded-3xl p-6 md:p-8 shadow-sm transition-all duration-300", // Soft clay canvas
-  primaryBtn: "bg-[#D4A373] hover:bg-[#C39262] text-white font-medium py-3 px-8 rounded-full transition-all duration-300 shadow-sm transform hover:-translate-y-0.5 tracking-wide text-sm", // Terracotta
-  secondaryBtn: "bg-[#CCD5AE] hover:bg-[#B9C496] text-[#4A3E3D] font-medium py-3 px-8 rounded-full transition-all duration-300 tracking-wide text-sm", // Sage Green
-  input: "w-full p-4 rounded-2xl border border-[#E6D5B8] bg-[#FDFBF7] focus:outline-none focus:ring-2 focus:ring-[#D4A373] text-[#4A3E3D] placeholder-[#A09384] shadow-inner transition-all",
-  navLink: "text-[#6B5B52] hover:text-[#D4A373] font-medium transition-colors cursor-pointer text-sm tracking-wider uppercase font-serif"
+  bg: "bg-[#FDFBF7] text-[#4A3E3D]",
+  card: "bg-[#F5EDE0] border border-[#E6D5B8] rounded-3xl p-6 md:p-8 shadow-sm transition-all duration-300",
+  primaryBtn: "bg-[#D4A373] hover:bg-[#C39262] text-white font-medium py-3 px-8 rounded-full transition-all duration-300 shadow-sm tracking-wide text-sm cursor-pointer",
+  secondaryBtn: "bg-[#CCD5AE] hover:bg-[#B9C496] text-[#4A3E3D] font-medium py-3 px-8 rounded-full transition-all duration-300 tracking-wide text-sm cursor-pointer",
+  input: "w-full p-4 rounded-2xl border border-[#E6D5B8] bg-[#FDFBF7] focus:outline-none focus:ring-2 focus:ring-[#D4A373] text-[#4A3E3D] placeholder-[#A09384]",
+  navLink: "text-[#6B5B52] hover:text-[#D4A373] font-medium transition-colors cursor-pointer text-xs tracking-wider uppercase font-serif"
 };
 
 export default function App() {
-  // --- STATE FOR PSYCHOLOGY QUIZ ---
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [quizComplete, setQuizComplete] = useState(false);
   const [insightsTracker, setInsightsTracker] = useState([]);
 
-  // --- STATE FOR COMPANION CHATBOT ---
   const [chatMessages, setChatMessages] = useState([
     { sender: 'bot', text: 'Hello, mindful soul. I am your companion. This is a safe space—how is your inner world feeling today?' }
   ]);
   const [userInput, setUserInput] = useState('');
-  const chatEndRef = useRef(null);
-
-  // --- REFS FOR LUXURY SMOOTH SCROLLING ---
+  
+  // SECTION REFS FOR LUXURY SMOOTH SCROLLING
   const homeSection = useRef(null);
   const quizSection = useRef(null);
   const chatSection = useRef(null);
+  const chatEndRef = useRef(null);
+
+  // AUTOMATICALLY INJECT BOHO CSS IN CASE TAILWIND SETUP IS MISSING
+  useEffect(() => {
+    if (!document.getElementById('boho-fallback-styles')) {
+      const style = document.createElement('style');
+      style.id = 'boho-fallback-styles';
+      style.innerHTML = `
+        html { scroll-behavior: smooth !important; background-color: #FDFBF7; }
+        body { margin: 0; background-color: #FDFBF7; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        /* Simple fallback utilities just in case compiler misses them */
+        .bg-\\[\\#FDFBF7\\] { background-color: #FDFBF7 !important; }
+        .text-\\[\\#4A3E3D\\] { color: #4A3E3D !important; }
+        .bg-\\[\\#F5EDE0\\] { background-color: #F5EDE0 !important; }
+        .bg-\\[\\#D4A373\\] { background-color: #D4A373 !important; }
+        .bg-\\[\\#CCD5AE\\] { background-color: #CCD5AE !important; }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
 
   const handleScroll = (elementRef) => {
     elementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // Auto-scrolling inside chat box when messages flow
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  // --- HIGH-LEVEL COGNITIVE PSYCHOLOGY QUIZ DATA ---
+  // HIGH LEVEL PSYCHOLOGY INSIGHT QUESTIONS
   const quizQuestions = [
     {
       theme: "Stress Frameworks",
       question: "When unexpected pressure builds up, what is your nervous system's instinctual home base?",
       options: [
-        { text: "I disconnect, mute notifications, or retreat to sleep.", archetype: "The Safe Harbor (Flight/Freeze)", feedback: "Your nervous system prioritizes energy preservation! By retreating, your brain tries to create a barrier against emotional overwhelm." },
-        { text: "I instantly map out control strategies and organize details.", archetype: "The Structural Architect (Fight/Control)", feedback: "Your mind channels anxiety into structure. Action feels like safety to you, kicking off immediate cognitive organizing." },
-        { text: "I reach out to share the burden or vent to a trusted friend.", archetype: "The Relational Connector (Tend-and-Befriend)", feedback: "Brilliant evolutionary adaptation. Your biology responds to stress by seeking social safety loops, which instantly lowers active cortisol." }
+        { text: "I disconnect, mute notifications, or retreat to sleep.", feedback: "Your nervous system prioritizes energy preservation! By retreating, your brain tries to create a barrier against emotional overwhelm." },
+        { text: "I instantly map out control strategies and organize details.", feedback: "Your mind channels anxiety into structure. Action feels like safety to you, kicking off immediate cognitive organizing." },
+        { text: "I reach out to share the burden or vent to a trusted friend.", feedback: "Brilliant evolutionary adaptation. Your biology responds to stress by seeking social safety loops, which instantly lowers active cortisol." }
       ]
     },
     {
       theme: "Neurochemical Optimization",
       question: "Which gentle adjustment actually signals deep safety to your brain during an active anxious spiral?",
       options: [
-        { text: "Extending your exhale to be twice as long as your inhale.", trueAnswer: true, feedback: "Spot on! Lengthening your exhale instantly triggers the Vagus Nerve, engaging the parasympathetic nervous system to slow down your heart rate manually." },
-        { text: "Analyzing exactly why you are anxious until you find the source.", trueAnswer: false, feedback: "Over-analyzing during panic often creates an emotional feedback loop, locking your brain into 'rumination mode' rather than calming it." },
-        { text: "Checking an objective task off a checklist right away.", trueAnswer: true, feedback: "Excellent. Achieving a concrete, tiny goal releases a predictable drip of dopamine, overriding feelings of chaotic helplessness." }
+        { text: "Extending your exhale to be twice as long as your inhale.", feedback: "Spot on! Lengthening your exhale instantly triggers the Vagus Nerve, engaging the parasympathetic nervous system to slow down your heart rate manually." },
+        { text: "Analyzing exactly why you are anxious until you find the source.", feedback: "Over-analyzing during panic often creates an emotional feedback loop, locking your brain into 'rumination mode' rather than calming it." },
+        { text: "Checking an objective task off a checklist right away.", feedback: "Excellent. Achieving a concrete, tiny goal releases a predictable drip of dopamine, overriding feelings of chaotic helplessness." }
       ]
     }
   ];
 
-  // --- HANDLERS ---
   const handleSelectAnswer = (idx, choice) => {
     setSelectedAnswer(idx);
     setInsightsTracker(prev => [...prev, choice.feedback]);
@@ -83,7 +98,6 @@ export default function App() {
     setChatMessages(prev => [...prev, userMessage]);
     setUserInput('');
 
-    // Active Listening Empathy Engine Responses
     setTimeout(() => {
       let botResponse = "I am processing that deeply. In cognitive psychology, mapping our thoughts out loud is the very first step toward emotional freedom. Tell me a bit more?";
       const cleanedText = userInput.toLowerCase();
@@ -106,14 +120,14 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen ${BOHO.bg} selection:bg-[#CCD5AE] selection:text-[#4A3E3D] font-sans antialiased`}>
+    <div className={`min-h-screen ${BOHO.bg} font-sans antialiased style={{scrollBehavior: 'smooth'}}`}>
       
       {/* PREMIUM STICKY HEADER */}
-      <nav className="sticky top-0 bg-[#FDFBF7]/85 backdrop-blur-md border-b border-[#E6D5B8]/60 z-50 px-6 md:px-12 py-5 flex justify-between items-center transition-all">
+      <nav className="sticky top-0 bg-[#FDFBF7] border-b border-[#E6D5B8] z-50 px-6 md:px-12 py-5 flex justify-between items-center shadow-xs">
         <div className="text-xl md:text-2xl font-serif tracking-widest text-[#8C6239] font-bold cursor-pointer" onClick={() => handleScroll(homeSection)}>
           🌿 SELFCULTURE
         </div>
-        <div className="hidden sm:flex gap-8 items-center">
+        <div className="flex gap-6 md:gap-8 items-center">
           <span onClick={() => handleScroll(homeSection)} className={BOHO.navLink}>Home</span>
           <span onClick={() => handleScroll(quizSection)} className={BOHO.navLink}>Mind Mapping</span>
           <span onClick={() => handleScroll(chatSection)} className={BOHO.navLink}>Earthy Chat</span>
@@ -125,31 +139,25 @@ export default function App() {
         <span className="text-xs uppercase tracking-widest text-[#9A7B56] font-semibold mb-4 bg-[#F5EDE0] px-4 py-1.5 rounded-full">
           Psychology UX Concept
         </span>
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif text-[#5C4033] mb-8 leading-[1.15] tracking-tight font-medium">
+        <h1 className="text-4xl sm:text-6xl font-serif text-[#5C4033] mb-8 leading-[1.15] tracking-tight">
           A soft sanctuary for <br />
           <span className="italic text-[#D4A373]">cognitive clarity</span>.
         </h1>
-        <p className="text-base sm:text-lg text-[#6B5B52] max-w-2xl mb-12 leading-relaxed font-light">
+        <p className="text-base sm:text-lg text-[#6B5B52] max-w-2xl mb-12 font-light leading-relaxed">
           Experience an application interface built on premium human-centric behavioral principles, calming aesthetics, and active micro-interactions designed to reduce cognitive load.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <button onClick={() => handleScroll(quizSection)} className={BOHO.primaryBtn}>
-            Begin Exploration Quiz
-          </button>
-          <button onClick={() => handleScroll(chatSection)} className={BOHO.secondaryBtn}>
-            Consult Companion
-          </button>
+          <button onClick={() => handleScroll(quizSection)} className={BOHO.primaryBtn}>Begin Exploration Quiz</button>
+          <button onClick={() => handleScroll(chatSection)} className={BOHO.secondaryBtn}>Consult Companion</button>
         </div>
       </section>
 
-      {/* COMPACT INTERACTIVE COGNITIVE QUIZ SECTION */}
+      {/* INTERACTIVE COGNITIVE QUIZ SECTION */}
       <section ref={quizSection} className="max-w-3xl mx-auto px-6 py-24 min-h-screen flex flex-col justify-center">
         <div className="text-center mb-12">
           <span className="text-xs font-mono uppercase tracking-wider text-[#9A7B56]">Part 01</span>
-          <h2 className="text-3xl md:text-4xl font-serif text-[#5C4033] mt-1 mb-3">The Mind Mapping Engine</h2>
-          <p className="text-[#6B5B52] font-light text-sm max-w-md mx-auto">
-            Interactive scenarios constructed using cognitive reframing parameters to decode responses without bias.
-          </p>
+          <h2 className="text-3xl font-serif text-[#5C4033] mt-1 mb-3">The Mind Mapping Engine</h2>
+          <p className="text-[#6B5B52] font-light text-sm max-w-md mx-auto">Interactive scenarios constructed using cognitive reframing parameters to decode responses without bias.</p>
         </div>
 
         <div className={BOHO.card}>
@@ -157,91 +165,60 @@ export default function App() {
             <div className="space-y-6">
               <div className="flex justify-between items-center text-xs text-[#9A7B56] font-mono tracking-wider">
                 <span>STAGE {currentQuestion + 1} OF {quizQuestions.length}</span>
-                <span className="bg-[#CCD5AE]/60 text-[#4A3E3D] px-3 py-1 rounded-full font-sans uppercase font-medium">
-                  {quizQuestions[currentQuestion].theme}
-                </span>
+                <span className="bg-[#CCD5AE] text-[#4A3E3D] px-3 py-1 rounded-full uppercase font-medium">{quizQuestions[currentQuestion].theme}</span>
               </div>
-              
-              <h3 className="text-xl md:text-2xl font-serif text-[#4A3E3D] leading-snug">
-                {quizQuestions[currentQuestion].question}
-              </h3>
-              
+              <h3 className="text-xl md:text-2xl font-serif text-[#4A3E3D]">{quizQuestions[currentQuestion].question}</h3>
               <div className="space-y-3 pt-2">
                 {quizQuestions[currentQuestion].options.map((choice, index) => (
                   <button
                     key={index}
                     onClick={() => selectedAnswer === null && handleSelectAnswer(index, choice)}
                     disabled={selectedAnswer !== null}
-                    className={`w-full text-left p-5 rounded-2xl transition-all duration-300 border flex justify-between items-center text-sm md:text-base ${
+                    className={`w-full text-left p-5 rounded-2xl transition-all border cursor-pointer ${
                       selectedAnswer === index 
-                        ? 'bg-[#E6D5B8] border-[#D4A373] text-[#4A3E3D] font-medium translate-x-1 shadow-xs' 
-                        : 'bg-[#FDFBF7] hover:bg-[#FDFBF7]/60 border-[#E6D5B8]/80 text-[#5C4033] hover:translate-x-0.5'
+                        ? 'bg-[#E6D5B8] border-[#D4A373] text-[#4A3E3D] font-medium' 
+                        : 'bg-[#FDFBF7] hover:bg-[#FDFBF7]/60 border-[#E6D5B8]/80 text-[#5C4033]'
                     }`}
                   >
-                    <span>{choice.text}</span>
-                    {selectedAnswer === index && <span className="text-xs text-[#8C6239] ml-2">✦ Selected</span>}
+                    {choice.text}
                   </button>
                 ))}
               </div>
-
               {selectedAnswer !== null && (
-                <div className="mt-8 p-6 bg-[#FDFBF7] rounded-2xl border border-[#D4A373]/60 shadow-inner animate-fadeIn space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-serif uppercase tracking-widest text-[#8C6239] font-semibold">
-                    <span>💡 Psychological Feedback Loop</span>
-                  </div>
-                  <p className="text-sm text-[#5C4033] leading-relaxed">
-                    {quizQuestions[currentQuestion].options[selectedAnswer].feedback}
-                  </p>
-                  <div className="pt-2">
-                    <button onClick={handleNextSteps} className={BOHO.primaryBtn}>
-                      {currentQuestion + 1 === quizQuestions.length ? "Compile Insights" : "Proceed onward"}
-                    </button>
-                  </div>
+                <div className="mt-8 p-6 bg-[#FDFBF7] rounded-2xl border border-[#D4A373]/60 space-y-3">
+                  <p className="text-xs font-serif uppercase tracking-widest text-[#8C6239] font-semibold">💡 Psychological Feedback Loop</p>
+                  <p className="text-sm text-[#5C4033] leading-relaxed">{quizQuestions[currentQuestion].options[selectedAnswer].feedback}</p>
+                  <button onClick={handleNextSteps} className={BOHO.primaryBtn}>
+                    {currentQuestion + 1 === quizQuestions.length ? "Compile Insights" : "Proceed onward"}
+                  </button>
                 </div>
               )}
             </div>
           ) : (
             <div className="text-center py-8 space-y-6">
-              <div className="w-16 h-16 bg-[#CCD5AE]/50 rounded-full flex items-center justify-center mx-auto text-2xl">🌱</div>
-              <div className="space-y-2">
-                <h3 className="text-2xl font-serif text-[#5C4033]">Emotional Mapping Compiled</h3>
-                <p className="text-sm text-[#6B5B52] max-w-md mx-auto leading-relaxed">
-                  By bringing your automatic subconscious reactions into conscious awareness, you systematically deactivate defensive amygdala hyper-arousal.
-                </p>
-              </div>
-              <div className="bg-[#FDFBF7] p-5 rounded-2xl text-left border border-[#E6D5B8] space-y-3 max-h-[180px] overflow-y-auto text-xs text-[#6B5B52] leading-relaxed">
-                <p className="font-semibold text-[#8C6239] uppercase tracking-wider font-mono">Your Self-Discovery Logs:</p>
-                {insightsTracker.map((insight, idx) => (
-                  <p key={idx} className="border-b border-[#E6D5B8]/40 pb-2">• {insight}</p>
-                ))}
-              </div>
-              <button onClick={resetMindQuiz} className={BOHO.secondaryBtn}>
-                Reset Framework
-              </button>
+              <div className="w-16 h-16 bg-[#CCD5AE] rounded-full flex items-center justify-center mx-auto text-2xl">🌱</div>
+              <h3 className="text-2xl font-serif text-[#5C4033]">Emotional Mapping Compiled</h3>
+              <p className="text-sm text-[#6B5B52] max-w-md mx-auto">By bringing your automatic subconscious reactions into conscious awareness, you systematically deactivate defensive amygdala hyper-arousal.</p>
+              <button onClick={resetMindQuiz} className={BOHO.secondaryBtn}>Reset Framework</button>
             </div>
           )}
         </div>
       </section>
 
-      {/* EMPATHETIC COMPANION CHATBOT SECTION */}
+      {/* CHATBOT SECTION */}
       <section ref={chatSection} className="max-w-3xl mx-auto px-6 py-24 min-h-screen flex flex-col justify-center">
         <div className="text-center mb-12">
           <span className="text-xs font-mono uppercase tracking-wider text-[#9A7B56]">Part 02</span>
-          <h2 className="text-3xl md:text-4xl font-serif text-[#5C4033] mt-1 mb-3">Earthy Therapy Companion</h2>
-          <p className="text-[#6B5B52] font-light text-sm max-w-md mx-auto">
-            An active conversational interface simulating unconditional positive regard to process daily cognitive strain.
-          </p>
+          <h2 className="text-3xl font-serif text-[#5C4033] mt-1 mb-3">Earthy Therapy Companion</h2>
+          <p className="text-[#6B5B52] font-light text-sm max-w-md mx-auto">An active conversational interface simulating unconditional positive regard to process daily cognitive strain.</p>
         </div>
 
-        <div className={`${BOHO.card} h-[550px] flex flex-col justify-between shadow-md`}>
-          {/* Messages Wrapper with Customized Scrollbar */}
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 scrollbar-thin scrollbar-thumb-[#E6D5B8] scrollbar-track-transparent">
+        <div className={`${BOHO.card} h-[500px] flex flex-col justify-between`}>
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4" style={{maxHeight: '350px'}}>
             {chatMessages.map((msg, index) => (
-              <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
-                <div className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
-                  msg.sender === 'user' 
-                    ? 'bg-[#D4A373] text-white rounded-tr-none shadow-sm font-medium' 
-                    : 'bg-[#FDFBF7] text-[#4A3E3D] rounded-tl-none border border-[#E6D5B8] shadow-xs'
+              <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] p-4 rounded-2xl text-sm ${
+                  msg.sender === 'user' ? 'bg-[#D4A373] text-white rounded-tr-none' : 'bg-[#FDFBF7] text-[#4A3E3D] rounded-tl-none border border-[#E6D5B8]'
                 }`}>
                   {msg.text}
                 </div>
@@ -249,9 +226,7 @@ export default function App() {
             ))}
             <div ref={chatEndRef} />
           </div>
-
-          {/* Clean Interactive Footer Bar */}
-          <form onSubmit={handleSendMessage} className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-[#E6D5B8]/40">
+          <form onSubmit={handleSendMessage} className="flex gap-3 pt-2 border-t border-[#E6D5B8]/40">
             <input
               type="text"
               value={userInput}
@@ -259,14 +234,11 @@ export default function App() {
               placeholder="State a feeling... (e.g., 'I feel overwhelmed')"
               className={BOHO.input}
             />
-            <button type="submit" className={`${BOHO.primaryBtn} sm:w-auto w-full py-4`}>
-              Transmit
-            </button>
+            <button type="submit" className={BOHO.primaryBtn}>Transmit</button>
           </form>
         </div>
       </section>
 
-      {/* BEAUTIFUL DESIGN FOOTER */}
       <footer className="border-t border-[#E6D5B8]/60 text-center py-16 text-xs text-[#9A7B56] tracking-widest uppercase font-serif bg-[#F5EDE0]/30">
         Engineered with Premium Behavioral UI Frameworks • © 2026 SELFCULTURE LABS
       </footer>
