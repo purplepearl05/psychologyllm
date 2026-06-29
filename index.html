@@ -4,94 +4,124 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kindred — Understand Yourself, Understand Each Other</title>
+<meta name="description" content="A warm, judgment-free space to talk things through, discover your personality type, and check in on your relationship — in plain, everyday language." />
+
+<!-- Tailwind (browser CDN, no build step needed) -->
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-  :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --coral:#e2684a; }
-  body{ background:var(--canvas); color:var(--ink); font-family:sans-serif; }
+  :root{
+    --ink:#23271f;
+    --canvas:#fbf7f1;
+    --forest:#2c5347;
+    --forest-dark:#1d3a31;
+    --coral:#e2684a;
+    --coral-dark:#c8533a;
+    --sand:#efe5d3;
+    --gold:#be9a4d;
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--canvas); color:var(--ink); font-family:'Inter',sans-serif; }
+  .font-display{ font-family:'Fraunces',serif; }
+  .btn-primary{ background:var(--coral); color:#fff; font-weight:600; transition: transform .15s ease, background .15s ease; }
+  .btn-primary:hover{ background:var(--coral-dark); }
+  .btn-ghost{ border:1.5px solid var(--ink); color:var(--ink); font-weight:600; }
+  .card{ background:#fff; border:1px solid rgba(35,39,31,0.08); }
   .page{ display:none; }
   .page.active{ display:block; }
-  .btn-primary{ background:var(--coral); color:#fff; padding:12px 24px; border-radius:9999px; font-weight:600; }
-  .card{ background:#fff; border:1px solid rgba(0,0,0,0.1); padding:16px; border-radius:12px; }
 </style>
 </head>
-<body>
+<body class="antialiased">
 
 <!-- NAVIGATION -->
-<nav class="p-5 flex gap-5 font-bold">
-  <button onclick="goTo('home')">Home</button>
-  <button onclick="goTo('chat')">Chatbot</button>
-  <button onclick="goTo('personality')">Personality Quiz</button>
-  <button onclick="goTo('tricky')">Tricky Quiz</button>
-</nav>
-
-<main class="p-5">
-  <!-- HOME -->
-  <section id="page-home" class="page active"><h1>Welcome to Kindred</h1></section>
-
-  <!-- CHATBOT -->
-  <section id="page-chat" class="page"><div id="chat-window" class="h-64 border p-4"></div></section>
-
-  <!-- PERSONALITY QUIZ -->
-  <section id="page-personality" class="page"><h1>Personality Quiz</h1></section>
-
-  <!-- TRICKY QUIZ -->
-  <section id="page-tricky" class="page">
-    <div id="tricky-intro">
-      <h1 class="text-2xl mb-4">The Tricky Quiz</h1>
-      <button onclick="startTricky()" class="btn-primary">Start Quiz</button>
+<header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf7f1]/90 border-b border-black/5">
+  <nav class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+    <button onclick="goTo('home')" class="font-display text-xl font-semibold" style="color:var(--forest)">🌿 Kindred</button>
+    <div class="hidden md:flex gap-7 text-sm font-medium">
+      <button onclick="goTo('chat')" class="hover:text-[var(--coral)]">Talk it out</button>
+      <button onclick="goTo('personality')" class="hover:text-[var(--coral)]">Know your type</button>
     </div>
-    <div id="tricky-quiz" class="hidden">
-      <h2 id="tricky-question" class="text-xl mb-4"></h2>
-      <div id="tricky-options" class="grid gap-2"></div>
-    </div>
-    <div id="tricky-result" class="hidden">
-      <h2 id="tricky-score"></h2>
-      <button onclick="startTricky()" class="btn-primary mt-4">Try Again</button>
-    </div>
-  </section>
+  </nav>
+</header>
+
+<!-- HOME PAGE -->
+<main id="page-home" class="page active max-w-6xl mx-auto px-5 py-20">
+  <h1 class="font-display text-5xl mb-6">Understand yourself better.</h1>
+  <div class="grid md:grid-cols-2 gap-8">
+    <button onclick="goTo('personality')" class="card rounded-2xl p-8 text-left">
+      <h2 class="font-display text-2xl mb-2">Personality Quiz</h2>
+      <p class="text-black/70">A 20-question self-reflection tool.</p>
+    </button>
+    <button onclick="goTo('chat')" class="card rounded-2xl p-8 text-left">
+      <h2 class="font-display text-2xl mb-2">Talk it out</h2>
+      <p class="text-black/70">A judgment-free space to vent.</p>
+    </button>
+  </div>
 </main>
 
+<!-- CHAT PAGE -->
+<section id="page-chat" class="page max-w-3xl mx-auto px-5 py-10">
+  <button onclick="goTo('home')" class="mb-4">← Back</button>
+  <div id="chat-window" class="card rounded-2xl p-5 h-[50vh] overflow-y-auto mb-4"></div>
+  <form id="chat-form" class="flex gap-2">
+    <input id="chat-input" class="flex-1 border rounded-xl px-4 py-3" placeholder="Type here...">
+    <button type="submit" class="btn-primary px-6 rounded-xl">Send</button>
+  </form>
+</section>
+
+<!-- QUIZ PAGE -->
+<section id="page-personality" class="page max-w-3xl mx-auto px-5 py-10">
+  <button onclick="goTo('home')" class="mb-4">← Back</button>
+  <div id="quiz-container">
+    <h2 id="q-text" class="font-display text-2xl mb-6"></h2>
+    <div id="q-options" class="grid gap-3"></div>
+  </div>
+  <div id="q-result" class="hidden"></div>
+</section>
+
 <script>
-/* NAVIGATION */
-function goTo(p){
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
+/* CORE LOGIC */
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
 }
 
-/* TRICKY QUIZ LOGIC */
-const trickyQuestions = [
-  {q: "If you have 3 apples and you take away 2, how many apples do you have?", options: ["1", "2", "3"], correct: 1},
-  {q: "What is always coming but never arrives?", options: ["Tomorrow", "The future", "Yesterday"], correct: 0}
+/* CHAT LOGIC */
+const chatWindow = document.getElementById('chat-window');
+document.getElementById('chat-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  chatWindow.innerHTML += `<div class="mb-3 text-right"><b>You:</b> ${input.value}</div>`;
+  chatWindow.innerHTML += `<div class="mb-3"><b>Kindred:</b> I'm listening. Tell me more about that.</div>`;
+  input.value = '';
+});
+
+/* QUIZ LOGIC */
+const quizData = [
+  {q: "Do you prefer group activities?", a: "Yes", b: "No"},
+  {q: "Are you more logic-driven?", a: "Yes", b: "No"}
 ];
-
-let tIndex = 0, tScore = 0;
-
-function startTricky(){
-  tIndex = 0; tScore = 0;
-  document.getElementById('tricky-intro').classList.add('hidden');
-  document.getElementById('tricky-result').classList.add('hidden');
-  document.getElementById('tricky-quiz').classList.remove('hidden');
-  renderTricky();
-}
-
-function renderTricky(){
-  const q = trickyQuestions[tIndex];
-  document.getElementById('tricky-question').textContent = q.q;
-  document.getElementById('tricky-options').innerHTML = q.options.map((opt, i) => `
-    <button class="card" onclick="answerTricky(${i})">${opt}</button>
-  `).join('');
-}
-
-function answerTricky(index){
-  if(index === trickyQuestions[tIndex].correct) tScore++;
-  tIndex++;
-  if(tIndex < trickyQuestions.length) renderTricky();
-  else {
-    document.getElementById('tricky-quiz').classList.add('hidden');
-    document.getElementById('tricky-result').classList.remove('hidden');
-    document.getElementById('tricky-score').textContent = `You scored ${tScore} out of ${trickyQuestions.length}.`;
+let qIdx = 0;
+function renderQuiz() {
+  if(qIdx >= quizData.length) {
+    document.getElementById('quiz-container').classList.add('hidden');
+    document.getElementById('q-result').classList.remove('hidden');
+    document.getElementById('q-result').innerHTML = "<h3>Quiz Complete!</h3>";
+    return;
   }
+  document.getElementById('q-text').textContent = quizData[qIdx].q;
+  document.getElementById('q-options').innerHTML = `
+    <button class="card p-4" onclick="next()">Yes</button>
+    <button class="card p-4" onclick="next()">No</button>`;
 }
+function next() { qIdx++; renderQuiz(); }
+renderQuiz();
 </script>
 </body>
 </html>
