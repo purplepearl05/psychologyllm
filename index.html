@@ -3,87 +3,97 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kindred — Deep Reflection</title>
+<title>Kindred — Understand Yourself, Understand Each Other</title>
+<meta name="description" content="A warm, judgment-free space to talk things through, discover your personality type, and check in on your relationship — in plain, everyday language." />
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --coral:#e2684a; --sand:#efe5d3; }
+  :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --forest-dark:#1d3a31; --coral:#e2684a; --coral-dark:#c8533a; --sand:#efe5d3; --gold:#be9a4d; }
   body{ background:var(--canvas); color:var(--ink); font-family:'Inter',sans-serif; }
   .font-display{ font-family:'Fraunces',serif; }
   .page{ display:none; } .page.active{ display:block; }
-  .card{ background:#fff; border:1px solid rgba(35,39,31,0.08); }
-  .active-option{ background:var(--sand); border-color:var(--forest); }
+  .card{ background:#fff; border:1px solid rgba(35,39,31,0.08); box-shadow: 0 1px 2px rgba(35,39,31,0.04); }
+  .btn-primary{ background:var(--coral); color:#fff; font-weight:600; transition: transform .15s ease; }
+  .btn-primary:hover{ background:var(--coral-dark); transform: translateY(-1px); }
+  .bar-fill{ transition: width .6s ease; }
+  .active-option{ background:var(--sand) !important; border-color:var(--forest) !important; }
 </style>
 </head>
-<body>
+<body class="antialiased">
 
-<header class="max-w-4xl mx-auto p-6 flex justify-between items-center">
-    <button onclick="goTo('home')" class="font-display text-2xl font-semibold">🌿 Kindred</button>
-    <div class="space-x-4 text-sm font-semibold">
-        <button onclick="goTo('personality')">Deep Insight</button>
-        <button onclick="goTo('couples')">Couples Check-in</button>
+<header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf7f1]/90 border-b border-black/5">
+  <nav class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+    <button onclick="goTo('home')" class="font-display text-xl font-semibold text-[var(--forest)]">🌿 Kindred</button>
+    <div class="flex items-center gap-7 text-sm font-medium">
+      <button onclick="goTo('personality')" class="hover:text-[var(--coral)]">Deep Insight</button>
+      <button onclick="goTo('couples')" class="hover:text-[var(--coral)]">Couples Check-in</button>
     </div>
+  </nav>
 </header>
 
-<main id="page-home" class="page active p-6 max-w-4xl mx-auto">
-    <h1 class="font-display text-5xl mb-8">Reflect on the patterns.</h1>
-    <div class="grid md:grid-cols-2 gap-6">
-        <button onclick="goTo('personality')" class="card p-8 rounded-2xl text-left">
-            <h2 class="font-display text-2xl mb-2">Deep Insight</h2>
-            <p class="text-black/60">15 scenarios probing for ego, empathy, and social utility.</p>
-        </button>
-        <button onclick="goTo('couples')" class="card p-8 rounded-2xl text-left">
-            <h2 class="font-display text-2xl mb-2">Couples Check-in</h2>
-            <p class="text-black/60">15 scenarios probing for conflict, trust, and alignment.</p>
-        </button>
-    </div>
+<main id="page-home" class="page active max-w-4xl mx-auto p-6 pt-12">
+  <h1 class="font-display text-5xl mb-8">Reflect on the patterns.</h1>
+  <div class="grid md:grid-cols-2 gap-6">
+    <button onclick="goTo('personality')" class="card p-8 rounded-2xl text-left hover:shadow-lg transition">
+      <h2 class="font-display text-2xl mb-2">Deep Insight Assessment</h2>
+      <p class="text-black/60">15 scenarios probing for ego, empathy, and social utility.</p>
+    </button>
+    <button onclick="goTo('couples')" class="card p-8 rounded-2xl text-left hover:shadow-lg transition">
+      <h2 class="font-display text-2xl mb-2">Couples Compatibility</h2>
+      <p class="text-black/60">15 scenarios probing for conflict, trust, and alignment.</p>
+    </button>
+  </div>
 </main>
 
-<section id="page-personality" class="page p-6 max-w-2xl mx-auto">
-    <h1 class="font-display text-3xl mb-6">Deep Insight Assessment</h1>
-    <div id="p-container"></div>
+<section id="page-personality" class="page max-w-2xl mx-auto p-6">
+  <button onclick="goTo('home')" class="text-sm opacity-60 mb-6">← Back home</button>
+  <h1 class="font-display text-3xl mb-6">Deep Insight Assessment</h1>
+  <div id="p-container"></div>
 </section>
 
-<section id="page-couples" class="page p-6 max-w-2xl mx-auto">
-    <h1 class="font-display text-3xl mb-6">Couples Compatibility</h1>
-    <div id="c-container"></div>
+<section id="page-couples" class="page max-w-2xl mx-auto p-6">
+  <button onclick="goTo('home')" class="text-sm opacity-60 mb-6">← Back home</button>
+  <h1 class="font-display text-3xl mb-6">Couples Compatibility</h1>
+  <div id="c-container"></div>
 </section>
 
 <script>
 const pQs = [
-    {q:"You win a team award. Do you:", a:"Let people think you were the 'mastermind' to open doors.", b:"Ensure the team knows I value their 'behind-the-scenes' work."},
-    {q:"Someone critiques your work in public. Your reflex is:", a:"Neutralize them by finding a flaw in their argument.", b:"Honestly check if they’re right, even if it's uncomfortable."},
-    {q:"Social situations where your status is unknown make you feel:", a:"Restless/Invisible.", b:"Relaxed/Refreshed."},
-    {q:"The act of helping feels 'complete' when:", a:"I've built a solid ally who owes me.", b:"I've actually relieved their burden."},
-    {q:"An inefficient rule stands in your way. You:", a:"Circumvent it.", b:"Follow it to maintain fairness."},
-    {q:"If you are losing an argument, you:", a:"Pivot to their character to shift focus.", b:"Stop and ask, 'Are we arguing about the same thing?'"},
-    {q:"You label someone 'not worth my time' if:", a:"They offer no utility or status.", b:"They are dishonest or unkind."},
-    {q:"You see someone sobbing in public. You:", a:"Feel irritated/awkward.", b:"Feel physical concern."},
-    {q:"Do you feel you are destined for 'more' than the average life?", a:"Yes, it's my expectation.", b:"No, a simple life is enough."},
-    {q:"When meeting someone new, you:", a:"Adjust your 'vibe' to get them to like you.", b:"Stay consistent to be authentic."},
-    {q:"You hurt someone. What bothers you most?", a:"They might think less of me.", b:"They are in pain."},
-    {q:"You enter a new group. You:", a:"Map the leader to leverage them.", b:"Look for people I enjoy."},
-    {q:"Sharing insecurities feels like:", a:"Giving them a weapon.", b:"A risk for trust."},
-    {q:"A situation no longer serves your goals. You:", a:"Cut ties and exit instantly.", b:"Try to see if the bond can evolve."},
-    {q:"Life feels mostly like:", a:"A competition.", b:"A community."}
+    {q:"You win a project award. Do you:", a:"Let people think you were the 'mastermind' because it opens more doors.", b:"Ensure the team knows I value their specific 'behind-the-scenes' work equally."},
+    {q:"The Critique Reflex: Someone points out a mistake you made. Your first internal urge is:", a:"To find a flaw in their argument to immediately 'neutralize' the criticism.", b:"To honestly check if they’re right, even if it's uncomfortable."},
+    {q:"The Social Battery: Being in a room where no one knows your status makes you feel:", a:"Slightly restless or 'invisible'.", b:"Relaxed—it’s refreshing not to have to 'perform'."},
+    {q:"The Favor: You help someone. What makes the act feel 'complete'?", a:"Knowing I’ve built a solid ally who will owe me.", b:"The feeling that I’ve actually relieved their burden."},
+    {q:"The Rule-Breaker: A small, inefficient rule stands in your way. You:", a:"Circumvent it—rules are just suggestions.", b:"Follow it—the system keeps things fair."},
+    {q:"The Conflict Pivot: If you are losing an argument, you tend to:", a:"Pivot to the other person's character to shift the focus.", b:"Stop and ask, 'Are we actually arguing about the same thing?'"},
+    {q:"The 'Boring' Person: You label someone as 'not worth my time' if:", a:"They don't have anything to offer me (utility/status).", b:"They are dishonest or unkind."},
+    {q:"The Emotional Leak: You see someone sobbing in public. You:", a:"Feel awkward/irritated by the intrusion.", b:"Feel an automatic, physical sense of concern."},
+    {q:"The 'Special' Feeling: Do you feel you are destined for something significantly better than the 'average' life?", a:"Yes, that's my baseline expectation.", b:"No, I believe a simple, meaningful life is a great goal."},
+    {q:"The Mirroring: When meeting someone new, you:", a:"Adjust your 'vibe' to match them so they like you instantly.", b:"Stay consistent, hoping they like who you actually are."},
+    {q:"The Remorse Test: You accidentally hurt someone. The part that bothers you most is:", a:"That they might think less of me now.", b:"That they are in actual pain."},
+    {q:"The Power Vacuum: You enter a new group. You:", a:"Map who the 'real' leader is to leverage them.", b:"Look for people you feel comfortable talking to."},
+    {q:"The Vulnerability Test: Sharing your deep insecurities feels like:", a:"Giving them a weapon they could use against me.", b:"A necessary risk to build real trust."},
+    {q:"The Boredom Trap: You are in a situation that no longer serves your goals. You:", a:"Cut ties cleanly and move on.", b:"Feel loyalty and try to see if the bond can evolve."},
+    {q:"The 'Game' Mentality: Life feels mostly like:", a:"A competition where there are winners and losers.", b:"A community where the goal is mutual well-being."}
 ];
 
 const cQs = [
-    {q:"During an exhausting argument, you:", a:"Withdraw to protect your inner peace.", b:"Stay present to hear their hurt."},
-    {q:"Partner tells a story that makes you look 'silly'. You:", a:"Call them out to protect image.", b:"Let it go."},
-    {q:"Partner makes a decision without asking. You:", a:"Make a unilateral decision to 'correct' them.", b:"Set a boundary and talk it through."},
-    {q:"When your partner fails you, do you:", a:"Store it away for future arguments.", b:"Address, process, and clear it."},
-    {q:"Partner is spiraling. You:", a:"Give a 'logic fix' to stop the noise.", b:"Hold space with no 'fix' needed."},
-    {q:"You are advancing; they are coasting. You:", a:"Feel they are a weight.", b:"Encourage them but focus on your path."},
-    {q:"Chore dispute. You:", a:"Stop doing your share to 'show them'.", b:"Ask for a calm, neutral meeting."},
-    {q:"Attraction to an outsider. You:", a:"Keep it a secret and enjoy the thrill.", b:"Create distance to protect commitment."},
-    {q:"Partner wants a life you don't. You:", a:"Expect them to eventually follow your plan.", b:"Have a hard talk about alignment."},
-    {q:"Partner sees you at your worst. You:", a:"Feel ashamed and push them away.", b:"Feel relieved they know the 'real' you."},
-    {q:"Family is passive-aggressive to you. You:", a:"Call your partner 'weak' for not defending you.", b:"Discuss how to be a 'united front'."},
-    {q:"Low-intimacy phase. You:", a:"Check out and look for validation elsewhere.", b:"Stay the course and support them."},
-    {q:"Partner wants a financial risk. You:", a:"Dig heels in to protect 'my' security.", b:"Find middle ground between safety and desire."},
-    {q:"They turn down intimacy. You:", a:"Feel the need to 'punish' them.", b:"Assume they are tired and try again later."},
-    {q:"Relationship is about:", a:"Two people maximizing their own happiness?", b:"Two people building a foundation together?"}
+    {q:"The Late-Night Fight: You are exhausted and arguing. You:", a:"Withdraw/shut down to protect your 'inner peace'.", b:"Focus on staying present to hear their hurt."},
+    {q:"The Public Silliness: Your partner tells a story that makes you look 'silly'. You:", a:"Call them out to protect your image.", b:"Let it go; their intent wasn't malicious."},
+    {q:"The Decision: Your partner makes a decision for you both without asking. You:", a:"'Correct' them by making a unilateral decision yourself.", b:"Set a boundary: 'Let's talk about how we decide together.'"},
+    {q:"The 'Scorecard': When your partner fails you, do you:", a:"Store it away for a future argument.", b:"Address, process, and clear it from your memory."},
+    {q:"The Support: Your partner is spiraling. You:", a:"Give a 'logic fix' to stop the noise.", b:"Just sit there and hold space."},
+    {q:"The Growth Gap: You are advancing; they are coasting. You:", a:"Secretly feel they are a weight holding you back.", b:"Encourage them but focus on your own path."},
+    {q:"The Chore Strike: You feel they aren't doing their share. You:", a:"Stop doing your share to 'show them'.", b:"Ask for a calm, neutral meeting to divide tasks."},
+    {q:"The Attraction: You feel attracted to an outsider. You:", a:"Keep it a secret and enjoy the thrill.", b:"Create distance to protect your commitment."},
+    {q:"The Future Vision: Your partner wants a life you don't. You:", a:"Expect them to eventually 'see reason' and follow your plan.", b:"Have a hard talk about whether your paths still align."},
+    {q:"The Vulnerability: Your partner sees you at your worst. You:", a:"Feel ashamed and push them away.", b:"Feel relieved that someone finally knows the 'real' you."},
+    {q:"The Family Jab: Their family is passive-aggressive to you. You:", a:"Take it out on your partner later.", b:"Discuss how to be a 'united front' together."},
+    {q:"The 'Empty' Season: Your partner is in a low-intimacy phase. You:", a:"Check out and look for validation elsewhere.", b:"Stay the course and support them."},
+    {q:"The Financial Dispute: They want to take a 'risk' with savings. You:", a:"Dig your heels in to protect 'my' security.", b:"Try to find the middle ground."},
+    {q:"The Rejection: They turn down intimacy. You:", a:"Feel an immediate need to 'punish' them with distance.", b:"Assume they are tired and try again another time."},
+    {q:"The Conflict Core: At the end of the day, is the relationship about:", a:"Two people maximizing their own happiness?", b:"Two people building a foundation that helps them both grow?"}
 ];
 
 function goTo(page){
@@ -95,11 +105,16 @@ function render(arr, id){
     const cont = document.getElementById(id);
     arr.forEach((item, i) => {
         cont.innerHTML += `<div class='card p-5 rounded-xl mb-4'>
-            <p class='mb-3 font-semibold'>${i+1}. ${item.q}</p>
-            <button class='block w-full text-left p-3 border rounded mb-2 hover:bg-sand' onclick='this.classList.add("active-option")'>${item.a}</button>
-            <button class='block w-full text-left p-3 border rounded hover:bg-sand' onclick='this.classList.add("active-option")'>${item.b}</button>
+            <p class='mb-4 font-semibold text-lg'>${i+1}. ${item.q}</p>
+            <button class='w-full text-left p-4 border rounded-xl mb-3 hover:bg-[var(--sand)] transition' onclick='select(this)'>${item.a}</button>
+            <button class='w-full text-left p-4 border rounded-xl hover:bg-[var(--sand)] transition' onclick='select(this)'>${item.b}</button>
         </div>`;
     });
+}
+
+function select(btn){
+    btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active-option'));
+    btn.classList.add('active-option');
 }
 
 render(pQs, 'p-container');
