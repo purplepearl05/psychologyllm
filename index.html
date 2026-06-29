@@ -1,122 +1,1407 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kindred — Alignment Study</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --coral:#e2684a; }
-        body{ background:var(--canvas); color:var(--ink); font-family:'Inter',sans-serif; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .btn-primary { background: var(--coral); color: #fff; font-weight: 600; padding: 12px 24px; border-radius: 9999px; transition: 0.2s; }
-        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kindred — Know Yourself, Know Each Other</title>
+<meta name="description" content="The ultimate relationship and personality assessment tool. Discover compatibility, screen for red flags, and build healthier connections." />
+
+<script src="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4)"></script>
+
+<link rel="preconnect" href="[fonts.googleapis.com](https://fonts.googleapis.com)">
+<link rel="preconnect" href="[fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap)" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#23271f;
+    --canvas:#fbf7f1;
+    --forest:#2c5347;
+    --forest-dark:#1d3a31;
+    --coral:#e2684a;
+    --coral-dark:#c8533a;
+    --sand:#efe5d3;
+    --gold:#be9a4d;
+    --rose:#d4a5a5;
+    --lavender:#9b8bb4;
+    --sky:#7eb8c9;
+  }
+  *{ -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--canvas);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    margin: 0;
+    min-height: 100vh;
+  }
+  .font-display{ font-family:'Fraunces',serif; }
+  .text-balance{ text-wrap:balance; }
+
+  .squiggle-underline{ position:relative; display:inline-block; }
+  .squiggle-underline svg{ position:absolute; left:0; bottom:-0.18em; width:100%; height:0.3em; }
+
+  .btn-primary{
+    background:var(--coral); color:#fff; font-weight:600;
+    transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+    box-shadow: 0 2px 8px rgba(226,104,74,0.25);
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover{ background:var(--coral-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(226,104,74,0.35); }
+  .btn-primary:active{ transform: translateY(0); }
+
+  .btn-secondary{
+    background:var(--forest); color:#fff; font-weight:600;
+    transition: transform .15s ease, background .15s ease;
+    border: none; cursor: pointer;
+  }
+  .btn-secondary:hover{ background:var(--forest-dark); transform: translateY(-1px); }
+
+  .btn-ghost{
+    border:2px solid var(--ink); color:var(--ink); font-weight:600; background: transparent;
+    transition: background .15s ease, transform .15s ease;
+    cursor: pointer;
+  }
+  .btn-ghost:hover{ background: rgba(35,39,31,0.06); transform: translateY(-1px); }
+
+  .card{
+    background:#fff; border:1px solid rgba(35,39,31,0.08);
+    box-shadow: 0 2px 8px rgba(35,39,31,0.06);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .card:hover{ transform: translateY(-2px); box-shadow: 0 4px 16px rgba(35,39,31,0.1); }
+
+  ::selection{ background: var(--gold); color:#1a1a1a; }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline: 2.5px solid var(--forest);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .page{ display:none; }
+  .page.active{ display:block; animation: fadein .4s ease; }
+  @keyframes fadein{ from{ opacity:0; transform: translateY(8px);} to{opacity:1; transform:none;} }
+
+  .reveal{ opacity:0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    html{ scroll-behavior:auto; }
+  }
+
+  .bar-fill{ transition: width .5s ease; }
+
+  .progress-ring{ transform: rotate(-90deg); }
+  .progress-ring-circle{ transition: stroke-dashoffset 0.5s ease; }
+
+  .trait-bar{ height: 8px; border-radius: 4px; background: #e5e5e5; overflow: hidden; }
+  .trait-bar-fill{ height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+  .match-animation{ animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse{ 0%, 100%{ transform: scale(1); } 50%{ transform: scale(1.05); } }
+
+  .gradient-text{
+    background: linear-gradient(135deg, var(--coral), var(--lavender));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .option-btn{
+    text-align: left;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 2px solid rgba(35,39,31,0.1);
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .option-btn:hover{
+    border-color: var(--forest);
+    background: rgba(44,83,71,0.03);
+  }
+
+  .link-box{
+    background: linear-gradient(135deg, var(--forest-dark), var(--forest));
+    border-radius: 16px;
+    padding: 2rem;
+    color: #fff;
+  }
+
+  .copy-btn{
+    background: rgba(255,255,255,0.2);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .copy-btn:hover{ background: rgba(255,255,255,0.3); }
+
+  .emoji-badge{
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1.5rem;
+  }
+
+  .compatibility-circle{
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    position: relative;
+  }
+
+  .hidden{ display: none !important; }
+</style>
 </head>
-<body>
-    <main id="app" class="max-w-2xl mx-auto px-6 py-12">
-        <!-- Home Page -->
-        <div id="page-home" class="page active">
-            <h1 class="font-display text-4xl mb-6">Alignment Study</h1>
-            <p class="text-lg mb-8">This is a 40-question forced-choice assessment to see how your communication styles and perspectives align. Take your time, and be honest.</p>
-            <button onclick="startStudy()" class="btn-primary">Start the Study</button>
-        </div>
+<body class="antialiased">
 
-        <!-- Quiz Page -->
-        <div id="page-quiz" class="page">
-            <div class="w-full bg-gray-200 h-2 mb-6 rounded-full">
-                <div id="progress-bar" class="bg-coral h-full rounded-full" style="width: 0%"></div>
+<!-- NAV -->
+<header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf7f1]/90 border-b border-black/5">
+  <nav class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+    <button onclick="goTo('home')" class="flex items-center gap-2 font-display text-xl font-semibold" style="color:var(--forest)">
+      <span aria-hidden="true">💝</span> Kindred
+    </button>
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+      <button onclick="goTo('personality')" class="hover:text-[var(--coral)] transition">Personality</button>
+      <button onclick="goTo('couples-intro')" class="hover:text-[var(--coral)] transition">Couples Match</button>
+      <button onclick="goTo('red-flags')" class="hover:text-[var(--coral)] transition">Red Flag Screen</button>
+    </div>
+    <button onclick="goTo('couples-intro')" class="btn-primary text-sm px-4 py-2 rounded-full">Start Matching</button>
+  </nav>
+</header>
+
+<!-- HOME PAGE -->
+<main id="page-home" class="page active">
+  <section class="max-w-6xl mx-auto px-5 sm:px-8 pt-14 sm:pt-20 pb-16">
+    <div class="text-center max-w-3xl mx-auto reveal in">
+      <p class="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-5" style="background:var(--sand); color:var(--forest-dark)">Psychology-backed relationship tools</p>
+      <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-balance">
+        The truth about your relationship, 
+        <span class="squiggle-underline" style="color:var(--coral)">before it's too late.
+          <svg viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M0,6 Q25,0 50,6 T100,6 T150,6 T200,6" fill="none" stroke="var(--coral)" stroke-width="3"/></svg>
+        </span>
+      </h1>
+      <p class="mt-6 text-lg text-black/70 max-w-xl mx-auto">Science-based personality matching, compatibility assessment, and discreet screening for narcissism, manipulation, and other relationship red flags.</p>
+      <div class="mt-8 flex flex-wrap gap-4 justify-center">
+        <button onclick="goTo('couples-intro')" class="btn-primary px-8 py-4 rounded-full text-lg">Test Our Compatibility</button>
+        <button onclick="goTo('red-flags')" class="btn-ghost px-8 py-4 rounded-full text-lg">Screen for Red Flags</button>
+      </div>
+      <p class="mt-6 text-sm text-black/50">Free · Anonymous · Results stay on your device</p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="mt-20 grid sm:grid-cols-3 gap-6">
+      <button onclick="goTo('couples-intro')" class="card reveal rounded-2xl p-7 text-left">
+        <div class="emoji-badge mb-4" style="background:var(--sand)">💑</div>
+        <p class="font-display text-xl mb-2">Couples Compatibility</p>
+        <p class="text-black/65 text-sm">Both partners take the same quiz, then see your match across 6 key dimensions: communication, values, conflict style, intimacy, goals, and attachment.</p>
+      </button>
+      <button onclick="goTo('personality')" class="card reveal rounded-2xl p-7 text-left">
+        <div class="emoji-badge mb-4" style="background:var(--sand)">🧠</div>
+        <p class="font-display text-xl mb-2">Deep Personality Profile</p>
+        <p class="text-black/65 text-sm">25 questions based on Big Five and attachment theory. Learn how you think, love, and handle conflict.</p>
+      </button>
+      <button onclick="goTo('red-flags')" class="card reveal rounded-2xl p-7 text-left">
+        <div class="emoji-badge mb-4" style="background:var(--sand)">🚩</div>
+        <p class="font-display text-xl mb-2">Red Flag Screening</p>
+        <p class="text-black/65 text-sm">Discreet assessment for narcissistic, manipulative, or controlling tendencies. Framed as a "personality study" — they won't know what you're screening for.</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- Psychology Section -->
+  <section style="background:var(--forest-dark)" class="py-16">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <h2 class="font-display text-3xl text-white text-center mb-12">Built on real psychology</h2>
+      <div class="grid sm:grid-cols-4 gap-6 text-[#fbf7f1]">
+        <div class="reveal text-center">
+          <p class="text-3xl font-display mb-2">Big Five</p>
+          <p class="text-white/70 text-sm">Gold standard personality model used in clinical research worldwide</p>
+        </div>
+        <div class="reveal text-center">
+          <p class="text-3xl font-display mb-2">Attachment</p>
+          <p class="text-white/70 text-sm">How you bond, based on Bowlby & Ainsworth's attachment theory</p>
+        </div>
+        <div class="reveal text-center">
+          <p class="text-3xl font-display mb-2">Dark Triad</p>
+          <p class="text-white/70 text-sm">Clinical screening for narcissism, Machiavellianism, psychopathy</p>
+        </div>
+        <div class="reveal text-center">
+          <p class="text-3xl font-display mb-2">Gottman</p>
+          <p class="text-white/70 text-sm">Relationship dynamics research with 90%+ divorce prediction accuracy</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-black/10 py-10">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row justify-between gap-4 text-sm text-black/55">
+      <p>💝 Kindred — Know yourself, know each other.</p>
+      <p class="max-w-md">Self-reflection tools only, not therapy or diagnosis. If you feel unsafe in a relationship, contact local support services.</p>
+    </div>
+  </footer>
+</main>
+
+<!-- COUPLES INTRO PAGE -->
+<section id="page-couples-intro" class="page">
+  <div class="max-w-2xl mx-auto px-5 sm:px-8 py-10">
+    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-6">← Back home</button>
+    
+    <div class="text-center">
+      <div class="text-6xl mb-4">💑</div>
+      <h1 class="font-display text-3xl sm:text-4xl mb-4">Couples Compatibility Match</h1>
+      <p class="text-black/65 mb-8">Both partners take the same 25-question quiz independently. Then share your results to see your compatibility across 6 key relationship dimensions.</p>
+    </div>
+
+    <div class="card rounded-2xl p-6 mb-6">
+      <h3 class="font-semibold mb-3">How it works:</h3>
+      <ol class="space-y-3 text-sm text-black/70">
+        <li class="flex gap-3"><span class="font-display text-lg" style="color:var(--coral)">1</span> You take the quiz and get a unique result code</li>
+        <li class="flex gap-3"><span class="font-display text-lg" style="color:var(--coral)">2</span> Share the link with your partner</li>
+        <li class="flex gap-3"><span class="font-display text-lg" style="color:var(--coral)">3</span> They take the same quiz</li>
+        <li class="flex gap-3"><span class="font-display text-lg" style="color:var(--coral)">4</span> Enter each other's codes to see your match</li>
+      </ol>
+    </div>
+
+    <div class="space-y-3">
+      <button onclick="startCouplesQuiz()" class="btn-primary w-full px-6 py-4 rounded-xl text-lg">Start My Quiz</button>
+      <button onclick="goTo('couples-compare')" class="btn-ghost w-full px-6 py-3 rounded-xl">I already have codes to compare</button>
+    </div>
+  </div>
+</section>
+
+<!-- COUPLES QUIZ PAGE -->
+<section id="page-couples-quiz" class="page">
+  <div class="max-w-2xl mx-auto px-5 sm:px-8 py-10">
+    <button onclick="goTo('couples-intro')" class="text-sm text-black/50 hover:text-black mb-4">← Back</button>
+    
+    <div class="mb-6">
+      <div class="flex justify-between items-center mb-2">
+        <p id="couples-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold"></p>
+        <p id="couples-category" class="text-xs font-semibold" style="color:var(--coral)"></p>
+      </div>
+      <div class="w-full h-2 rounded-full bg-black/10 overflow-hidden">
+        <div id="couples-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--forest)"></div>
+      </div>
+    </div>
+
+    <h2 id="couples-question" class="font-display text-2xl mb-6 text-balance"></h2>
+    <div id="couples-options" class="space-y-3"></div>
+  </div>
+</section>
+
+<!-- COUPLES RESULT PAGE -->
+<section id="page-couples-result" class="page">
+  <div class="max-w-2xl mx-auto px-5 sm:px-8 py-10">
+    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-6">← Back home</button>
+    
+    <div id="couples-result-content"></div>
+  </div>
+</section>
+
+<!-- COUPLES COMPARE PAGE -->
+<section id="page-couples-compare" class="page">
+  <div class="max-w-2xl mx-auto px-5 sm:px-8 py-10">
+    <button onclick="goTo('couples-intro')" class="text-sm text-black/50 hover:text-black mb-6">← Back</button>
+    
+    <div class="text-center mb-8">
+      <h1 class="font-display text-3xl mb-2">Compare Your Results</h1>
+      <p class="text-black/65">Enter both result codes to see your compatibility</p>
+    </div>
+
+    <div class="space-y-4 mb-6">
+      <div>
+        <label class="block text-sm font-medium mb-2">Partner 1 Code</label>
+        <input type="text" id="code1-input" placeholder="e.g., K7X9M2" class="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-[var(--forest)] focus:outline-none text-lg font-mono text-center uppercase" maxlength="6">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2">Partner 2 Code</label>
+        <input type="text" id="code2-input" placeholder="e.g., P3N8Q5" class="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-[var(--forest)] focus:outline-none text-lg font-mono text-center uppercase" maxlength="6">
+      </div>
+    </div>
+
+    <button onclick="compareResults()" class="btn-primary w-full px-6 py-4 rounded-xl text-lg">See Our Compatibility</button>
+    
+    <p id="compare-error" class="text-center text-sm mt-4 hidden" style="color:var(--coral)"></p>
+  </div>
+</section>
+
+<!-- COUPLES MATCH RESULT PAGE -->
+<section id="page-couples-match" class="page">
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-10">
+    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-6">← Back home</button>
+    <div id="couples-match-content"></div>
+  </div>
+</section>
+
+<!-- PERSONALITY QUIZ PAGE -->
+<section id="page-personality" class="page">
+  <div class="max-w-2xl mx-auto px-5 sm:px-8 py-10">
+    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
+
+    <div id="personality-intro">
+      <div class="text-center">
+        <div class="text-6xl mb-4">🧠</div>
+        <h1 class="font-display text-3xl mb-2">Deep Personality Profile</h1>
+        <p class="text-black/65 mb-6">25 questions to understand how you think, connect, and handle conflict. Based on the Big Five model and attachment theory.</p>
+        <button onclick="startPersonality()" class="btn-primary px-8 py-4 rounded-full text-lg">Start Assessment</button>
+      </div>
+    </div>
+
+    <div id="personality-quiz" class="hidden">
+      <div class="mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <p id="pers-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold"></p>
+          <p id="pers-dimension" class="text-xs font-semibold" style="color:var(--lavender)"></p>
+        </div>
+        <div class="w-full h-2 rounded-full bg-black/10 overflow-hidden">
+          <div id="pers-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--lavender)"></div>
+        </div>
+      </div>
+
+      <h2 id="pers-question" class="font-display text-2xl mb-6 text-balance"></h2>
+      <div id="pers-options" class="space-y-3"></div>
+    </div>
+
+    <div id="personality-result" class="hidden"></div>
+  </div>
+</section>
+
+<!-- RED FLAGS SCREENING PAGE -->
+<section id="page-red-flags" class="page">
+  <div class="max-w-2xl mx-auto px-5 sm:px-8 py-10">
+    <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
+
+    <div id="rf-intro">
+      <div class="text-center">
+        <div class="text-6xl mb-4">🔍</div>
+        <h1 class="font-display text-3xl mb-2">Personality & Relationship Study</h1>
+        <p class="text-black/65 mb-4">A research-based assessment exploring how people approach relationships, decisions, and social situations.</p>
+        <p class="text-sm text-black/50 mb-6">20 quick questions · Pick the option that feels most like you, even if it's not perfect</p>
+        <button onclick="startRedFlags()" class="btn-primary px-8 py-4 rounded-full text-lg">Begin Assessment</button>
+      </div>
+    </div>
+
+    <div id="rf-quiz" class="hidden">
+      <div class="mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <p id="rf-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold"></p>
+        </div>
+        <div class="w-full h-2 rounded-full bg-black/10 overflow-hidden">
+          <div id="rf-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--coral)"></div>
+        </div>
+      </div>
+
+      <h2 id="rf-question" class="font-display text-xl mb-6 text-balance"></h2>
+      <div id="rf-options" class="space-y-3"></div>
+    </div>
+
+    <div id="rf-result" class="hidden"></div>
+  </div>
+</section>
+
+<script>
+/* =========================================================
+   NAVIGATION
+========================================================= */
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* =========================================================
+   COUPLES COMPATIBILITY QUIZ
+   Based on: Big Five, Attachment Theory, Gottman Research
+========================================================= */
+const couplesQuestions = [
+  // Communication Style (5 questions)
+  {cat:"Communication", q:"When something bothers me, I typically:", 
+   opts:[
+     {t:"Bring it up right away, even if it causes tension", s:{direct:3, avoidant:0}},
+     {t:"Wait for the right moment, then discuss calmly", s:{direct:2, secure:2}},
+     {t:"Drop hints and hope they pick up on it", s:{avoidant:2, anxious:1}},
+     {t:"Keep it to myself to avoid conflict", s:{avoidant:3}}
+   ]},
+  {cat:"Communication", q:"In conversations, I feel most connected when:",
+   opts:[
+     {t:"We share deep feelings and vulnerabilities", s:{intimate:3, anxious:1}},
+     {t:"We problem-solve and plan together", s:{practical:3}},
+     {t:"We laugh and keep things light", s:{playful:3}},
+     {t:"We give each other space to think independently", s:{independent:3, avoidant:1}}
+   ]},
+  {cat:"Communication", q:"When my partner is upset, my instinct is to:",
+   opts:[
+     {t:"Comfort them and ask how I can help", s:{nurturing:3, secure:1}},
+     {t:"Give them space until they're ready to talk", s:{independent:2, avoidant:1}},
+     {t:"Try to fix the problem immediately", s:{practical:3, anxious:1}},
+     {t:"Feel anxious that I might be the cause", s:{anxious:3}}
+   ]},
+  {cat:"Communication", q:"I prefer a partner who:",
+   opts:[
+     {t:"Tells me everything, including hard truths", s:{direct:3, secure:1}},
+     {t:"Is honest but tactful about sensitive topics", s:{secure:3}},
+     {t:"Focuses on positives and avoids negativity", s:{avoidant:2, playful:1}},
+     {t:"Keeps some mystery and independence", s:{independent:3, avoidant:1}}
+   ]},
+  {cat:"Communication", q:"After a disagreement, I need:",
+   opts:[
+     {t:"To talk it through until we both feel heard", s:{anxious:2, intimate:2}},
+     {t:"Some time apart, then reconnect when calm", s:{secure:3}},
+     {t:"Physical affection to feel reconnected", s:{intimate:3}},
+     {t:"To move on quickly and not dwell on it", s:{avoidant:3}}
+   ]},
+  
+  // Values & Priorities (4 questions)
+  {cat:"Values", q:"In life, I prioritize:",
+   opts:[
+     {t:"Family and close relationships above all", s:{family:3, secure:1}},
+     {t:"Personal growth and achieving my potential", s:{growth:3, independent:1}},
+     {t:"Financial security and stability", s:{security:3, practical:1}},
+     {t:"Freedom, adventure, and new experiences", s:{adventure:3, independent:1}}
+   ]},
+  {cat:"Values", q:"My ideal future involves:",
+   opts:[
+     {t:"A stable home, possibly kids, deep roots", s:{family:3, security:2}},
+     {t:"Career success and recognition", s:{growth:3, independent:1}},
+     {t:"Travel, flexibility, and varied experiences", s:{adventure:3}},
+     {t:"Building wealth and financial freedom", s:{security:3}}
+   ]},
+  {cat:"Values", q:"When it comes to family involvement in our relationship:",
+   opts:[
+     {t:"Family should be closely involved in our lives", s:{family:3}},
+     {t:"Balanced involvement with clear boundaries", s:{secure:3}},
+     {t:"Our relationship comes first, family second", s:{independent:3}},
+     {t:"Minimal family involvement; we're our own unit", s:{independent:3, avoidant:1}}
+   ]},
+  {cat:"Values", q:"My approach to money in a relationship is:",
+   opts:[
+     {t:"Complete transparency and joint accounts", s:{intimate:2, security:2}},
+     {t:"Shared expenses but some personal spending freedom", s:{secure:3}},
+     {t:"Mostly separate finances with agreed contributions", s:{independent:3}},
+     {t:"The higher earner should have more say", s:{power:2}}
+   ]},
+  
+  // Conflict Style (4 questions)
+  {cat:"Conflict", q:"During an argument, I tend to:",
+   opts:[
+     {t:"Stay calm and focus on finding a solution", s:{secure:3}},
+     {t:"Get emotional and need to express everything", s:{anxious:3}},
+     {t:"Shut down and need time before I can talk", s:{avoidant:3}},
+     {t:"Get defensive and point out their faults too", s:{defensive:3}}
+   ]},
+  {cat:"Conflict", q:"When I'm wrong, I:",
+   opts:[
+     {t:"Apologize sincerely and try to do better", s:{secure:3}},
+     {t:"Admit it, but explain my reasoning", s:{defensive:1, practical:2}},
+     {t:"Struggle to admit it; it feels like losing", s:{defensive:3}},
+     {t:"Apologize just to end the conflict", s:{avoidant:3}}
+   ]},
+  {cat:"Conflict", q:"The worst thing a partner can do in a fight is:",
+   opts:[
+     {t:"Bring up past mistakes", s:{anxious:1}},
+     {t:"Give me the silent treatment", s:{anxious:2}},
+     {t:"Criticize who I am as a person", s:{secure:1}},
+     {t:"Refuse to see my perspective at all", s:{defensive:1}}
+   ]},
+  {cat:"Conflict", q:"After making up from a fight, I:",
+   opts:[
+     {t:"Feel closer and more connected", s:{secure:3}},
+     {t:"Still feel uneasy for a while", s:{anxious:3}},
+     {t:"Try to forget it happened", s:{avoidant:3}},
+     {t:"Keep a mental note in case it happens again", s:{defensive:2, anxious:1}}
+   ]},
+  
+  // Intimacy & Affection (4 questions)
+  {cat:"Intimacy", q:"I feel most loved when my partner:",
+   opts:[
+     {t:"Says loving words and compliments me", s:{words:3}},
+     {t:"Does helpful things for me", s:{acts:3}},
+     {t:"Is physically affectionate", s:{touch:3}},
+     {t:"Gives me their full attention and time", s:{time:3}}
+   ]},
+  {cat:"Intimacy", q:"My need for physical affection is:",
+   opts:[
+     {t:"Very high — I need lots of touch daily", s:{touch:3, anxious:1}},
+     {t:"Moderate — regular affection feels right", s:{secure:2, touch:1}},
+     {t:"Lower — quality over quantity", s:{independent:2}},
+     {t:"Depends entirely on my mood", s:{avoidant:1}}
+   ]},
+  {cat:"Intimacy", q:"When it comes to emotional vulnerability:",
+   opts:[
+     {t:"I open up easily and deeply", s:{intimate:3, anxious:1}},
+     {t:"I share over time as trust builds", s:{secure:3}},
+     {t:"I struggle to share, even with a partner", s:{avoidant:3}},
+     {t:"I prefer to keep some things private", s:{independent:2, avoidant:1}}
+   ]},
+  {cat:"Intimacy", q:"Physical intimacy in a relationship is:",
+   opts:[
+     {t:"Essential to feeling connected", s:{touch:3, intimate:2}},
+     {t:"Important but not everything", s:{secure:3}},
+     {t:"Nice but not my primary need", s:{independent:2}},
+     {t:"Often complicated for me", s:{avoidant:2, anxious:1}}
+   ]},
+  
+  // Independence & Togetherness (4 questions)
+  {cat:"Independence", q:"My ideal amount of 'alone time' is:",
+   opts:[
+     {t:"Minimal — I love spending all my time together", s:{anxious:2, intimate:1}},
+     {t:"A few hours per week for my own hobbies", s:{secure:3}},
+     {t:"Regular significant alone time is essential", s:{independent:3}},
+     {t:"I need more alone time than most people understand", s:{avoidant:3}}
+   ]},
+  {cat:"Independence", q:"Spending time with friends separately:",
+   opts:[
+     {t:"Makes me a little uneasy honestly", s:{anxious:3}},
+     {t:"Is healthy and I encourage it", s:{secure:3}},
+     {t:"Is important to maintain my identity", s:{independent:3}},
+     {t:"Is when I feel most like myself", s:{avoidant:2, independent:2}}
+   ]},
+  {cat:"Independence", q:"I feel most secure in a relationship when:",
+   opts:[
+     {t:"We're in constant contact throughout the day", s:{anxious:3}},
+     {t:"We have regular check-ins but trust the gaps", s:{secure:3}},
+     {t:"We both maintain strong individual identities", s:{independent:3}},
+     {t:"I don't feel obligated to report my whereabouts", s:{avoidant:2, independent:2}}
+   ]},
+  {cat:"Independence", q:"Making major life decisions:",
+   opts:[
+     {t:"Should always be done together", s:{intimate:2, anxious:1}},
+     {t:"Discuss together, but each person decides their domain", s:{secure:3}},
+     {t:"I value input but ultimately decide for myself", s:{independent:3}},
+     {t:"I make my decisions; they make theirs", s:{avoidant:2, independent:2}}
+   ]},
+  
+  // Future & Growth (4 questions)
+  {cat:"Future", q:"When it comes to personal growth:",
+   opts:[
+     {t:"I want us to grow and change together", s:{intimate:2, growth:2}},
+     {t:"Support each other's individual growth journeys", s:{secure:3, growth:1}},
+     {t:"My personal growth is my responsibility alone", s:{independent:3}},
+     {t:"I'm fairly set in who I am", s:{avoidant:1}}
+   ]},
+  {cat:"Future", q:"If my partner wanted me to change something about myself:",
+   opts:[
+     {t:"I'd want to understand and try if it's reasonable", s:{secure:3}},
+     {t:"I'd feel hurt that they don't accept me as I am", s:{anxious:2}},
+     {t:"I'd consider it, but I won't change for anyone", s:{independent:2, defensive:1}},
+     {t:"That's a red flag — they should accept me", s:{defensive:3}}
+   ]},
+  {cat:"Future", q:"In 5 years, I hope my relationship involves:",
+   opts:[
+     {t:"Deep emotional intimacy and partnership", s:{intimate:3, secure:1}},
+     {t:"Shared accomplishments and a life we built", s:{practical:3}},
+     {t:"Freedom to be ourselves while choosing each other", s:{independent:3}},
+     {t:"Whatever feels right when we get there", s:{avoidant:1, playful:2}}
+   ]},
+  {cat:"Future", q:"The idea of long-term commitment makes me feel:",
+   opts:[
+     {t:"Excited and secure", s:{secure:3}},
+     {t:"Happy but a little nervous", s:{anxious:2, secure:1}},
+     {t:"Thoughtful — it's a big decision", s:{independent:2}},
+     {t:"Somewhat trapped if I'm honest", s:{avoidant:3}}
+   ]}
+];
+
+let couplesIndex = 0;
+let couplesAnswers = [];
+let myCode = '';
+
+function startCouplesQuiz(){
+  couplesIndex = 0;
+  couplesAnswers = [];
+  goTo('couples-quiz');
+  renderCouplesQ();
+}
+
+function renderCouplesQ(){
+  const q = couplesQuestions[couplesIndex];
+  document.getElementById('couples-bar').style.width = (couplesIndex/couplesQuestions.length*100)+'%';
+  document.getElementById('couples-counter').textContent = `Question ${couplesIndex+1} of ${couplesQuestions.length}`;
+  document.getElementById('couples-category').textContent = q.cat.toUpperCase();
+  document.getElementById('couples-question').textContent = q.q;
+  
+  const opts = document.getElementById('couples-options');
+  opts.innerHTML = q.opts.map((o, i) => 
+    `<button class="option-btn" onclick="answerCouplesQ(${i})">${o.t}</button>`
+  ).join('');
+}
+
+function answerCouplesQ(optIndex){
+  const q = couplesQuestions[couplesIndex];
+  couplesAnswers.push({
+    cat: q.cat,
+    scores: q.opts[optIndex].s
+  });
+  couplesIndex++;
+  if(couplesIndex >= couplesQuestions.length){
+    finishCouplesQuiz();
+  } else {
+    renderCouplesQ();
+  }
+}
+
+function generateCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for(let i = 0; i < 6; i++){
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+function calculateProfile(answers){
+  const profile = {
+    // Communication
+    direct: 0, secure: 0, avoidant: 0, anxious: 0,
+    intimate: 0, practical: 0, playful: 0, independent: 0,
+    nurturing: 0,
+    // Values  
+    family: 0, growth: 0, security: 0, adventure: 0, power: 0,
+    // Conflict
+    defensive: 0,
+    // Love languages
+    words: 0, acts: 0, touch: 0, time: 0
+  };
+  
+  answers.forEach(a => {
+    Object.keys(a.scores).forEach(key => {
+      if(profile[key] !== undefined){
+        profile[key] += a.scores[key];
+      }
+    });
+  });
+  
+  return profile;
+}
+
+function encodeProfile(profile){
+  // Simple encoding: convert profile to base64 string
+  const str = JSON.stringify(profile);
+  return btoa(str).replace(/=/g, '');
+}
+
+function decodeProfile(encoded){
+  try {
+    const padded = encoded + '='.repeat((4 - encoded.length % 4) % 4);
+    return JSON.parse(atob(padded));
+  } catch(e) {
+    return null;
+  }
+}
+
+function finishCouplesQuiz(){
+  const profile = calculateProfile(couplesAnswers);
+  myCode = generateCode();
+  
+  // Store in localStorage
+  const stored = JSON.parse(localStorage.getItem('kindred_profiles') || '{}');
+  stored[myCode] = profile;
+  localStorage.setItem('kindred_profiles', JSON.stringify(stored));
+  
+  // Calculate attachment style
+  const attachmentScore = {
+    secure: profile.secure,
+    anxious: profile.anxious,
+    avoidant: profile.avoidant
+  };
+  const attachStyle = Object.keys(attachmentScore).reduce((a,b) => 
+    attachmentScore[a] > attachmentScore[b] ? a : b
+  );
+  
+  const attachLabels = {
+    secure: {name: "Secure", desc: "You're comfortable with intimacy and independence. You communicate needs clearly and trust your partner."},
+    anxious: {name: "Anxious-Preoccupied", desc: "You crave closeness and can worry about the relationship. You're very attuned to your partner's moods."},
+    avoidant: {name: "Dismissive-Avoidant", desc: "You value independence highly and may pull back when things get too close. You're self-reliant."}
+  };
+  
+  const content = document.getElementById('couples-result-content');
+  content.innerHTML = `
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-3">✨</div>
+      <h1 class="font-display text-3xl mb-2">Your Profile is Ready!</h1>
+      <p class="text-black/65">Share this code with your partner to compare results</p>
+    </div>
+    
+    <div class="link-box mb-8 text-center">
+      <p class="text-white/70 text-sm mb-2">Your unique code:</p>
+      <p class="text-4xl font-mono font-bold tracking-wider mb-4">${myCode}</p>
+      <button onclick="copyCode('${myCode}')" class="copy-btn">📋 Copy Code</button>
+    </div>
+    
+    <div class="card rounded-2xl p-6 mb-6">
+      <h3 class="font-display text-xl mb-3">Your Attachment Style</h3>
+      <p class="font-semibold text-lg mb-2" style="color:var(--forest)">${attachLabels[attachStyle].name}</p>
+      <p class="text-black/70 text-sm">${attachLabels[attachStyle].desc}</p>
+    </div>
+    
+    <div class="card rounded-2xl p-6 mb-8">
+      <h3 class="font-display text-xl mb-4">Your Relationship Profile</h3>
+      <div class="space-y-4">
+        ${renderTraitBar('Direct Communication', profile.direct, 12, 'var(--forest)')}
+        ${renderTraitBar('Emotional Intimacy', profile.intimate, 12, 'var(--coral)')}
+        ${renderTraitBar('Independence', profile.independent, 12, 'var(--lavender)')}
+        ${renderTraitBar('Security Focus', profile.security, 12, 'var(--gold)')}
+        ${renderTraitBar('Family Orientation', profile.family, 12, 'var(--sky)')}
+      </div>
+    </div>
+    
+    <div class="space-y-3">
+      <button onclick="goTo('couples-compare')" class="btn-primary w-full px-6 py-4 rounded-xl">Compare With Partner's Code</button>
+      <button onclick="shareLink()" class="btn-ghost w-full px-6 py-3 rounded-xl">📤 Send Quiz to Partner</button>
+    </div>
+  `;
+  
+  goTo('couples-result');
+}
+
+function renderTraitBar(label, value, max, color){
+  const pct = Math.round((value / max) * 100);
+  return `
+    <div>
+      <div class="flex justify-between text-sm mb-1">
+        <span class="text-black/70">${label}</span>
+        <span class="font-semibold">${Math.round(pct)}%</span>
+      </div>
+      <div class="trait-bar">
+        <div class="trait-bar-fill" style="width:${pct}%; background:${color}"></div>
+      </div>
+    </div>
+  `;
+}
+
+function copyCode(code){
+  navigator.clipboard.writeText(code);
+  alert('Code copied!');
+}
+
+function shareLink(){
+  const url = window.location.href.split('?')[0];
+  if(navigator.share){
+    navigator.share({
+      title: 'Kindred Compatibility Quiz',
+      text: 'Take this relationship compatibility quiz so we can compare our results!',
+      url: url
+    });
+  } else {
+    navigator.clipboard.writeText(url);
+    alert('Link copied to clipboard!');
+  }
+}
+
+function compareResults(){
+  const code1 = document.getElementById('code1-input').value.toUpperCase().trim();
+  const code2 = document.getElementById('code2-input').value.toUpperCase().trim();
+  const errorEl = document.getElementById('compare-error');
+  
+  if(!code1 || !code2){
+    errorEl.textContent = 'Please enter both codes';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  const stored = JSON.parse(localStorage.getItem('kindred_profiles') || '{}');
+  const profile1 = stored[code1];
+  const profile2 = stored[code2];
+  
+  if(!profile1 || !profile2){
+    errorEl.textContent = 'One or both codes not found. Make sure both partners completed the quiz on this device or shared codes correctly.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  errorEl.classList.add('hidden');
+  showCompatibilityResult(profile1, profile2);
+}
+
+function showCompatibilityResult(p1, p2){
+  // Calculate compatibility across dimensions
+  const dimensions = [
+    {name: 'Communication', keys: ['direct', 'secure'], icon: '💬'},
+    {name: 'Emotional Intimacy', keys: ['intimate', 'anxious', 'nurturing'], icon: '❤️'},
+    {name: 'Independence', keys: ['independent', 'avoidant'], icon: '🌱'},
+    {name: 'Values & Priorities', keys: ['family', 'security', 'growth', 'adventure'], icon: '⭐'},
+    {name: 'Conflict Style', keys: ['defensive', 'avoidant'], icon: '⚖️'},
+    {name: 'Affection Needs', keys: ['touch', 'words', 'acts', 'time'], icon: '🤗'}
+  ];
+  
+  let dimResults = [];
+  let totalCompat = 0;
+  
+  dimensions.forEach(dim => {
+    let similarity = 0;
+    let maxPossible = 0;
+    
+    dim.keys.forEach(key => {
+      const v1 = p1[key] || 0;
+      const v2 = p2[key] || 0;
+      const max = Math.max(v1, v2, 1);
+      const diff = Math.abs(v1 - v2);
+      similarity += (max - diff) / max;
+      maxPossible += 1;
+    });
+    
+    const pct = Math.round((similarity / maxPossible) * 100);
+    totalCompat += pct;
+    dimResults.push({...dim, pct});
+  });
+  
+  const overallCompat = Math.round(totalCompat / dimensions.length);
+  
+  // Determine overall assessment
+  let assessment, assessColor;
+  if(overallCompat >= 80){
+    assessment = "Excellent Match";
+    assessColor = 'var(--forest)';
+  } else if(overallCompat >= 65){
+    assessment = "Strong Foundation";
+    assessColor = 'var(--forest)';
+  } else if(overallCompat >= 50){
+    assessment = "Promising with Work";
+    assessColor = 'var(--gold)';
+  } else {
+    assessment = "Challenging Dynamics";
+    assessColor = 'var(--coral)';
+  }
+  
+  const content = document.getElementById('couples-match-content');
+  content.innerHTML = `
+    <div class="text-center mb-8">
+      <div class="compatibility-circle mx-auto mb-4 match-animation" style="background: linear-gradient(135deg, var(--forest), var(--coral));">
+        <span class="text-white">${overallCompat}%</span>
+      </div>
+      <h1 class="font-display text-3xl mb-2">${assessment}</h1>
+      <p class="text-black/65">Based on psychological compatibility analysis</p>
+    </div>
+    
+    <div class="space-y-4 mb-8">
+      ${dimResults.map(d => `
+        <div class="card rounded-xl p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">${d.icon}</span>
+            <div class="flex-1">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold">${d.name}</span>
+                <span class="text-sm font-semibold" style="color:${d.pct >= 70 ? 'var(--forest)' : d.pct >= 50 ? 'var(--gold)' : 'var(--coral)'}">${d.pct}%</span>
+              </div>
             </div>
-            <p id="counter" class="text-sm font-semibold mb-2"></p>
-            <h2 id="question" class="text-2xl font-bold mb-6"></h2>
-            <div id="options" class="grid gap-3"></div>
+          </div>
+          <div class="trait-bar">
+            <div class="trait-bar-fill" style="width:${d.pct}%; background:${d.pct >= 70 ? 'var(--forest)' : d.pct >= 50 ? 'var(--gold)' : 'var(--coral)'}"></div>
+          </div>
+          <p class="text-sm text-black/60 mt-2">${getCompatAdvice(d.name, d.pct)}</p>
         </div>
+      `).join('')}
+    </div>
+    
+    <div class="card rounded-xl p-6 mb-6" style="background:var(--sand)">
+      <h3 class="font-display text-xl mb-3">💡 Key Insight</h3>
+      <p class="text-black/70">${getOverallAdvice(dimResults)}</p>
+    </div>
+    
+    <div class="flex gap-3">
+      <button onclick="goTo('couples-intro')" class="btn-ghost flex-1 px-4 py-3 rounded-xl">Retake Quiz</button>
+      <button onclick="goTo('home')" class="btn-primary flex-1 px-4 py-3 rounded-xl">Home</button>
+    </div>
+  `;
+  
+  goTo('couples-match');
+}
 
-        <!-- Result Page -->
-        <div id="page-result" class="page">
-            <h2 class="text-3xl font-bold mb-4">Assessment Complete</h2>
-            <p id="final-score" class="text-xl mb-6"></p>
-            <button onclick="location.reload()" class="btn-primary">Restart Study</button>
+function getCompatAdvice(dimension, pct){
+  const advice = {
+    'Communication': {
+      high: "You naturally understand each other's communication needs.",
+      mid: "Different styles can complement each other with awareness.",
+      low: "Practice stating needs directly — don't assume they'll guess."
+    },
+    'Emotional Intimacy': {
+      high: "You're on the same page about emotional closeness.",
+      mid: "One may need more reassurance than the other — that's workable.",
+      low: "Have an honest conversation about emotional needs and expectations."
+    },
+    'Independence': {
+      high: "You both value similar amounts of togetherness and space.",
+      mid: "Negotiate 'me time' vs 'we time' early to prevent resentment.",
+      low: "This difference needs explicit discussion to prevent hurt."
+    },
+    'Values & Priorities': {
+      high: "Your life goals and values align well.",
+      mid: "Some differences can add richness if you stay curious about each other.",
+      low: "Core value differences need serious discussion before major commitments."
+    },
+    'Conflict Style': {
+      high: "You handle disagreements in compatible ways.",
+      mid: "Learn each other's repair attempts and respect cool-down needs.",
+      low: "Consider learning a conflict resolution framework together."
+    },
+    'Affection Needs': {
+      high: "You both give and receive love in similar ways.",
+      mid: "Learn each other's love language and make intentional effort.",
+      low: "What makes one feel loved may not register for the other — communicate."
+    }
+  };
+  
+  const level = pct >= 70 ? 'high' : pct >= 50 ? 'mid' : 'low';
+  return advice[dimension]?.[level] || '';
+}
+
+function getOverallAdvice(dimResults){
+  const lowest = dimResults.reduce((a, b) => a.pct < b.pct ? a : b);
+  const highest = dimResults.reduce((a, b) => a.pct > b.pct ? a : b);
+  
+  return `Your strongest area is ${highest.name.toLowerCase()} — lean into this as your foundation. Your growth edge is ${lowest.name.toLowerCase()} — this isn't a dealbreaker, but it's where intentional effort will pay off most. Remember: compatibility isn't about being the same, it's about being willing to understand and bridge differences.`;
+}
+
+/* =========================================================
+   PERSONALITY QUIZ (Big Five + Attachment)
+========================================================= */
+const personalityQs = [
+  // Openness (5)
+  {dim:"Openness", q:"New experiences and unfamiliar situations make me feel:",
+   opts:[{t:"Excited and curious", s:5}, {t:"Interested but cautious", s:3}, {t:"A bit uncomfortable", s:2}, {t:"Anxious; I prefer routine", s:1}]},
+  {dim:"Openness", q:"When it comes to art, music, or creative expression:",
+   opts:[{t:"I'm deeply moved and seek it out", s:5}, {t:"I enjoy it casually", s:3}, {t:"I can take it or leave it", s:2}, {t:"It doesn't interest me much", s:1}]},
+  {dim:"Openness", q:"I prefer conversations that are:",
+   opts:[{t:"Abstract, philosophical, about ideas", s:5}, {t:"A mix of ideas and practical matters", s:3}, {t:"Focused on real, concrete topics", s:2}, {t:"Brief and to the point", s:1}]},
+  {dim:"Openness", q:"When making decisions, I rely more on:",
+   opts:[{t:"Intuition and gut feelings", s:4}, {t:"A mix of both", s:3}, {t:"Logic and evidence", s:2}, {t:"Established rules and norms", s:1}]},
+  {dim:"Openness", q:"My ideal vacation is:",
+   opts:[{t:"Exploring somewhere completely new and foreign", s:5}, {t:"Somewhere new but well-planned", s:3}, {t:"A favorite familiar destination", s:2}, {t:"Staying home — travel stresses me", s:1}]},
+  
+  // Conscientiousness (5)
+  {dim:"Conscientiousness", q:"My living/working space is usually:",
+   opts:[{t:"Very organized and tidy", s:5}, {t:"Generally neat with some clutter", s:3}, {t:"Messy but I know where things are", s:2}, {t:"Chaotic", s:1}]},
+  {dim:"Conscientiousness", q:"When I have a deadline:",
+   opts:[{t:"I finish well ahead of time", s:5}, {t:"I complete it on time, planned out", s:4}, {t:"I usually finish just in time", s:2}, {t:"I often need extensions", s:1}]},
+  {dim:"Conscientiousness", q:"I make decisions:",
+   opts:[{t:"Carefully after thorough analysis", s:5}, {t:"Thoughtfully but not obsessively", s:3}, {t:"Fairly quickly, trusting my instincts", s:2}, {t:"Impulsively", s:1}]},
+  {dim:"Conscientiousness", q:"Keeping promises and commitments:",
+   opts:[{t:"Is extremely important to me", s:5}, {t:"I try my best but life happens", s:3}, {t:"I mean to, but sometimes forget", s:2}, {t:"I don't make many commitments", s:1}]},
+  {dim:"Conscientiousness", q:"My approach to goals is:",
+   opts:[{t:"Detailed plans with milestones", s:5}, {t:"General direction with flexibility", s:3}, {t:"I set them but don't always follow through", s:2}, {t:"I don't really set goals", s:1}]},
+  
+  // Extraversion (5)
+  {dim:"Extraversion", q:"After a long week, I recharge by:",
+   opts:[{t:"Going out with friends or to events", s:5}, {t:"A mix of social time and alone time", s:3}, {t:"Mostly alone or with one close person", s:2}, {t:"Completely alone", s:1}]},
+  {dim:"Extraversion", q:"At a party, I typically:",
+   opts:[{t:"Talk to everyone, meet new people", s:5}, {t:"Stick with a small group but enjoy it", s:3}, {t:"Find one person to talk to deeply", s:2}, {t:"Look for the exit", s:1}]},
+  {dim:"Extraversion", q:"I would describe myself as:",
+   opts:[{t:"Outgoing and enthusiastic", s:5}, {t:"Friendly but selective", s:3}, {t:"Quiet but warm once you know me", s:2}, {t:"Private and reserved", s:1}]},
+  {dim:"Extraversion", q:"Silence in social situations:",
+   opts:[{t:"Makes me uncomfortable; I fill it", s:5}, {t:"Is fine occasionally", s:3}, {t:"Is often comfortable", s:2}, {t:"Is my preference", s:1}]},
+  {dim:"Extraversion", q:"My social battery:",
+   opts:[{t:"Rarely runs out", s:5}, {t:"Lasts through most events", s:3}, {t:"Drains fairly quickly", s:2}, {t:"Is very limited", s:1}]},
+  
+  // Agreeableness (5)
+  {dim:"Agreeableness", q:"When someone wrongs me, I:",
+   opts:[{t:"Forgive easily and move on", s:5}, {t:"Can forgive with a sincere apology", s:4}, {t:"Hold onto it for a while", s:2}, {t:"Rarely forget or forgive", s:1}]},
+  {dim:"Agreeableness", q:"In group decisions, I:",
+   opts:[{t:"Prioritize harmony over my preference", s:5}, {t:"Voice my opinion but go with the group", s:3}, {t:"Push for what I want", s:2}, {t:"Insist on my way if I feel strongly", s:1}]},
+  {dim:"Agreeableness", q:"I believe people are generally:",
+   opts:[{t:"Good and trustworthy", s:5}, {t:"Mixed, but lean good", s:3}, {t:"Out for themselves mostly", s:2}, {t:"Not to be trusted", s:1}]},
+  {dim:"Agreeableness", q:"When someone is struggling, I:",
+   opts:[{t:"Feel compelled to help immediately", s:5}, {t:"Offer help if I can", s:3}, {t:"Feel sympathy but keep distance", s:2}, {t:"Think they should handle it themselves", s:1}]},
+  {dim:"Agreeableness", q:"Criticism of me:",
+   opts:[{t:"I accept and learn from", s:5}, {t:"Stings but I can hear it", s:3}, {t:"I get defensive about", s:2}, {t:"Makes me angry or dismissive", s:1}]},
+  
+  // Neuroticism (5)
+  {dim:"Emotional Stability", q:"My mood is generally:",
+   opts:[{t:"Very stable day to day", s:5}, {t:"Mostly stable with occasional dips", s:4}, {t:"Fluctuates noticeably", s:2}, {t:"Often unpredictable", s:1}]},
+  {dim:"Emotional Stability", q:"I worry about things:",
+   opts:[{t:"Rarely", s:5}, {t:"Sometimes, but I manage it", s:3}, {t:"Often", s:2}, {t:"Almost constantly", s:1}]},
+  {dim:"Emotional Stability", q:"Under stress, I:",
+   opts:[{t:"Stay calm and focused", s:5}, {t:"Feel it but function well", s:3}, {t:"Get anxious and less effective", s:2}, {t:"Can become overwhelmed", s:1}]},
+  {dim:"Emotional Stability", q:"I feel self-doubt:",
+   opts:[{t:"Almost never", s:5}, {t:"Occasionally in new situations", s:4}, {t:"Fairly often", s:2}, {t:"Very frequently", s:1}]},
+  {dim:"Emotional Stability", q:"After something goes wrong, I:",
+   opts:[{t:"Bounce back quickly", s:5}, {t:"Need some time but recover", s:3}, {t:"Dwell on it for a while", s:2}, {t:"Struggle to move past it", s:1}]}
+];
+
+let persIndex = 0;
+let persAnswers = [];
+
+function startPersonality(){
+  persIndex = 0;
+  persAnswers = [];
+  document.getElementById('personality-intro').classList.add('hidden');
+  document.getElementById('personality-result').classList.add('hidden');
+  document.getElementById('personality-quiz').classList.remove('hidden');
+  renderPersQ();
+}
+
+function renderPersQ(){
+  const q = personalityQs[persIndex];
+  document.getElementById('pers-bar').style.width = (persIndex/personalityQs.length*100)+'%';
+  document.getElementById('pers-counter').textContent = `Question ${persIndex+1} of ${personalityQs.length}`;
+  document.getElementById('pers-dimension').textContent = q.dim.toUpperCase();
+  document.getElementById('pers-question').textContent = q.q;
+  
+  document.getElementById('pers-options').innerHTML = q.opts.map((o, i) =>
+    `<button class="option-btn" onclick="answerPersQ(${i})">${o.t}</button>`
+  ).join('');
+}
+
+function answerPersQ(idx){
+  const q = personalityQs[persIndex];
+  persAnswers.push({dim: q.dim, score: q.opts[idx].s});
+  persIndex++;
+  if(persIndex >= personalityQs.length){
+    finishPersonality();
+  } else {
+    renderPersQ();
+  }
+}
+
+function finishPersonality(){
+  document.getElementById('personality-quiz').classList.add('hidden');
+  
+  const dims = ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Emotional Stability'];
+  const scores = {};
+  dims.forEach(d => {
+    const dScores = persAnswers.filter(a => a.dim === d).map(a => a.score);
+    scores[d] = Math.round(dScores.reduce((a,b)=>a+b,0) / dScores.length * 20);
+  });
+  
+  const descriptions = {
+    Openness: {
+      high: "Creative, curious, open to new ideas and experiences",
+      low: "Practical, conventional, prefers routine and familiarity"
+    },
+    Conscientiousness: {
+      high: "Organized, dependable, self-disciplined",
+      low: "Flexible, spontaneous, adaptable to change"
+    },
+    Extraversion: {
+      high: "Outgoing, energetic, draws energy from others",
+      low: "Reflective, reserved, recharges through solitude"
+    },
+    Agreeableness: {
+      high: "Compassionate, cooperative, trusting of others",
+      low: "Analytical, competitive, skeptical"
+    },
+    'Emotional Stability': {
+      high: "Calm, resilient, emotionally consistent",
+      low: "Sensitive, emotionally expressive, deeply feeling"
+    }
+  };
+  
+  const res = document.getElementById('personality-result');
+  res.classList.remove('hidden');
+  res.innerHTML = `
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-3">🧠</div>
+      <h1 class="font-display text-3xl mb-2">Your Personality Profile</h1>
+      <p class="text-black/65">Based on the Big Five model of personality</p>
+    </div>
+    
+    <div class="space-y-5 mb-8">
+      ${dims.map(d => `
+        <div class="card rounded-xl p-5">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-semibold">${d}</span>
+            <span class="text-lg font-bold" style="color:var(--forest)">${scores[d]}%</span>
+          </div>
+          <div class="trait-bar mb-3">
+            <div class="trait-bar-fill" style="width:${scores[d]}%; background:var(--forest)"></div>
+          </div>
+          <p class="text-sm text-black/65">${scores[d] >= 60 ? descriptions[d].high : descriptions[d].low}</p>
         </div>
-    </main>
+      `).join('')}
+    </div>
+    
+    <div class="flex gap-3">
+      <button onclick="startPersonality()" class="btn-ghost flex-1 px-4 py-3 rounded-xl">Retake</button>
+      <button onclick="goTo('couples-intro')" class="btn-primary flex-1 px-4 py-3 rounded-xl">Compare With Partner</button>
+    </div>
+  `;
+}
 
-    <script>
-        const questions = [
-            {q: "If a friend asks for help with a problem they created, what is your first thought?", o: ["I’ll help; everyone struggles sometimes.", "I’ll help, but I’ll make sure they know it’s an inconvenience.", "They are just looking for attention.", "I don't help people who can't handle their own business."]},
-            {q: "You win a large sum of money. What is your top priority?", o: ["Helping those I care about.", "Keeping it quiet to avoid people asking for favors.", "Investing to ensure I am more powerful than my peers.", "Buying status symbols that prove my success."]},
-            {q: "Seeing someone cry in public makes you feel:", o: ["Concerned; I want to help.", "Awkward; I want to leave.", "That they are doing it for attention.", "Irritated that they are making a scene."]},
-            {q: "A superior criticizes your work. Your reaction?", o: ["I analyze the critique to improve.", "I find a flaw in the person critiquing me.", "I make them look incompetent in response.", "I feign agreement but ignore them entirely."]},
-            {q: "A friend succeeds where you failed. You feel:", o: ["Genuinely happy for them.", "Jealous, but I hide it.", "Cheated; they took what was mine.", "Suspicious; I look for how they cheated."]},
-            {q: "Is it okay to lie?", o: ["Only to spare someone’s feelings.", "To keep the peace.", "If it gives me an advantage.", "Everyone lies; the honest are just naive."]},
-            {q: "In an argument, your goal is:", o: ["To understand the other perspective.", "To reach a compromise.", "To prove them wrong.", "To win the argument."]},
-            {q: "What defines a 'weak' person?", o: ["No one is weak; we all have struggles.", "Being unable to defend oneself.", "Being too trusting.", "Being unable to suppress emotions."]},
-            {q: "Rules are:", o: ["Necessary guidelines.", "Suggestions I can ignore.", "Obstacles to my progress.", "For people who aren't smart enough to avoid them."]},
-            {q: "Do you care if people believe your stories?", o: ["Yes, honesty is vital.", "I exaggerate slightly for effect.", "If it gets a reaction, truth is secondary.", "My version is the only truth that matters."]},
-            {q: "In a crisis, your role is:", o: ["Calming and supporting others.", "Making the hard calls others fear.", "Appearing unaffected by the chaos.", "Ensuring everything goes according to my plan."]},
-            {q: "Handling complainers:", o: ["Offering a listening ear.", "Giving advice so they stop complaining.", "Distancing myself to protect my energy.", "Explaining why their failure is their fault."]},
-            {q: "Sensitivity is:", o: ["A strength.", "Difficult to work with.", "A manipulation tool.", "A character weakness."]},
-            {q: "A perfect night out is:", o: ["Relaxing with loved ones.", "Being treated with high service.", "Being the center of attention.", "Being seen as successful."]},
-            {q: "Most important quality:", o: ["Integrity.", "Confidence.", "Intelligence.", "Influence."]},
-            {q: "When you disagree:", o: ["I seek common ground.", "I persist until they see the logic.", "I wait for them to realize their error.", "I ignore them to deny them the satisfaction."]},
-            {q: "Respect is:", o: ["Mutual consideration.", "Recognition of my capability.", "Deference to my judgment.", "Acknowledgment of my achievements."]},
-            {q: "Explaining yourself:", o: ["A normal interaction.", "Annoying that others can't keep up.", "An interrogation.", "A waste of my time."]},
-            {q: "Above the rules?", o: ["Never.", "If the rule is illogical.", "Yes, rules are for the mediocre.", "I don't see them as rules."]},
-            {q: "Past relationships taught you:", o: ["How to grow.", "People are unreliable.", "People are envious.", "People are unintelligent."]},
-            {q: "You say you’re unhappy. I should:", o: ["Ask how to fix it together.", "Ask what you did to cause it.", "Say you’re being sensitive.", "Say you should be happy with what you have."]},
-            {q: "My friend upsets you. You:", o: ["Talk to me about your feelings.", "Give me the silent treatment.", "Demand I cut ties.", "Wait to insult the friend to hurt me."]},
-            {q: "Privacy is:", o: ["Having our own lives, but being open.", "Checking phones to ensure trust.", "Total transparency; no secrets.", "I keep mine; you share yours."]},
-            {q: "Moving forward after a fight:", o: ["Talk it out calmly.", "Keep at it until I admit I'm wrong.", "Act as if nothing happened.", "Use silence until I apologize."]},
-            {q: "A weekend away with friends:", o: ["Have fun!", "Check in every few hours.", "If you loved me, you'd stay.", "I might not be here when you return."]},
-            {q: "Making up for a mistake:", o: ["Apology and changed behavior.", "A grand gesture.", "Making me feel the pain you felt.", "Holding it over my head for months."]},
-            {q: "Supporting me when stressed:", o: ["Listen to me.", "Do exactly as I say to fix it.", "Stay away until I’m happy.", "Apologize for causing it."]},
-            {q: "My biggest flaw:", o: ["I love you as you are.", "You don't listen to my advice.", "You’re too dramatic.", "Your need for independence."]},
-            {q: "Celebrating my success:", o: ["Genuinely excited.", "Change the subject.", "Minimize it.", "Point out what I missed."]},
-            {q: "Can people change?", o: ["Yes, people grow.", "Only if they do as I say.", "No, they just mask the truth.", "Only if it benefits me."]},
-            {q: "Best compliment:", o: ["You make me feel loved.", "You understand my potential.", "You’re great at supporting me.", "I couldn't survive without you."]},
-            {q: "Partner should be grateful for:", o: ["Our mutual growth.", "The stability I provide.", "My pushing them to be better.", "Our high-status lifestyle."]},
-            {q: "Rough day?", o: ["Tell you and seek comfort.", "Keep it quiet so I don't drag you down.", "Ask your advice to fix it.", "Give you space until I'm normal."]},
-            {q: "Long-lasting secret:", o: ["Constant communication.", "Respecting my independence.", "Maintaining high standards.", "Reading minds."]},
-            {q: "Secrets:", o: ["Total transparency.", "Privacy is mysterious.", "You should just tell me.", "Privacy is only for unimportant things."]},
-            {q: "Compromise:", o: ["The foundation of love.", "Necessary, but my idea is better.", "Annoying, but I do it to avoid conflict.", "Only fair if you do it too."]},
-            {q: "Attractive trait:", o: ["Kindness.", "How much they admire me.", "Ambition.", "Ability to follow my lead."]},
-            {q: "Surprises:", o: ["Love them.", "I prefer control.", "Only if high-quality.", "I don't like not knowing."]},
-            {q: "Bad mood:", o: ["A hug.", "Space.", "Leave me alone.", "You fix it."]},
-            {q: "Dealbreaker:", o: ["Betrayal.", "Ignoring boundaries.", "Not appreciating me.", "Being told I'm wrong."]}
-        ];
+/* =========================================================
+   RED FLAGS SCREENING (Dark Triad + Manipulation)
+   Disguised as "Personality & Relationship Study"
+========================================================= */
+const rfQuestions = [
+  {q:"If a friend asks for help with a problem they created, my first thought is:",
+   opts:[
+     {t:"I'll help — everyone struggles sometimes", s:0},
+     {t:"I'll help, but make sure they know it's inconvenient", s:1},
+     {t:"They're probably looking for attention", s:2},
+     {t:"I don't help people who can't handle their own problems", s:3}
+   ]},
+  {q:"Winning a large sum of money, my priority would be:",
+   opts:[
+     {t:"Helping those I care about", s:0},
+     {t:"Keeping it quiet to avoid people asking for favors", s:1},
+     {t:"Investing to become more powerful than my peers", s:2},
+     {t:"Buying status symbols that prove my success", s:3}
+   ]},
+  {q:"Seeing someone cry in public makes me feel:",
+   opts:[
+     {t:"Concerned — I want to help", s:0},
+     {t:"Awkward — I want to leave", s:1},
+     {t:"They're doing it for attention", s:2},
+     {t:"Irritated that they're making a scene", s:3}
+   ]},
+  {q:"When a superior criticizes my work, I:",
+   opts:[
+     {t:"Analyze the critique to improve", s:0},
+     {t:"Find a flaw in the person critiquing me", s:1},
+     {t:"Make them look incompetent in response", s:2},
+     {t:"Agree outwardly but ignore them entirely", s:2}
+   ]},
+  {q:"When a friend succeeds where I failed, I feel:",
+   opts:[
+     {t:"Genuinely happy for them", s:0},
+     {t:"Jealous, but I hide it", s:1},
+     {t:"Cheated — they took what was mine", s:2},
+     {t:"Suspicious; I look for how they cheated", s:3}
+   ]},
+  {q:"Is it okay to lie?",
+   opts:[
+     {t:"Only to spare someone's feelings", s:0},
+     {t:"To keep the peace", s:1},
+     {t:"If it gives me an advantage", s:2},
+     {t:"Everyone lies; the honest are just naive", s:3}
+   ]},
+  {q:"In an argument, my goal is:",
+   opts:[
+     {t:"To understand the other perspective", s:0},
+     {t:"To reach a compromise", s:0},
+     {t:"To prove them wrong", s:2},
+     {t:"To win", s:3}
+   ]},
+  {q:"Rules are:",
+   opts:[
+     {t:"Necessary guidelines for society", s:0},
+     {t:"Suggestions I can choose to follow", s:1},
+     {t:"Obstacles to my progress", s:2},
+     {t:"For people not smart enough to avoid them", s:3}
+   ]},
+  {q:"Do I care if people believe my stories?",
+   opts:[
+     {t:"Yes, honesty is important to me", s:0},
+     {t:"I exaggerate slightly for effect", s:1},
+     {t:"If it gets a reaction, truth is secondary", s:2},
+     {t:"My version is the only version that matters", s:3}
+   ]},
+  {q:"In a crisis, my role is:",
+   opts:[
+     {t:"Calming and supporting others", s:0},
+     {t:"Making the hard calls others fear", s:1},
+     {t:"Appearing unaffected by the chaos", s:2},
+     {t:"Ensuring everything goes according to my plan", s:3}
+   ]},
+  {q:"Sensitivity is:",
+   opts:[
+     {t:"A strength", s:0},
+     {t:"Sometimes difficult to work with", s:1},
+     {t:"A tool that can be used", s:2},
+     {t:"A character weakness", s:3}
+   ]},
+  {q:"Respect is:",
+   opts:[
+     {t:"Mutual consideration for each other", s:0},
+     {t:"Recognition of my capability", s:1},
+     {t:"Deference to my judgment", s:2},
+     {t:"Acknowledgment of my achievements", s:2}
+   ]},
+  {q:"I feel I am above the rules:",
+   opts:[
+     {t:"Never — rules apply to everyone", s:0},
+     {t:"Only when the rule is illogical", s:1},
+     {t:"Yes, rules are for average people", s:3},
+     {t:"I don't even see them as 'rules'", s:3}
+   ]},
+  {q:"Past relationships taught me:",
+   opts:[
+     {t:"How to grow as a person", s:0},
+     {t:"That people are often unreliable", s:1},
+     {t:"That people are often envious of me", s:2},
+     {t:"That most people aren't very intelligent", s:3}
+   ]},
+  {q:"When my partner is unhappy, I should:",
+   opts:[
+     {t:"Ask how we can fix it together", s:0},
+     {t:"Ask what they did to cause it", s:2},
+     {t:"Tell them they're being too sensitive", s:2},
+     {t:"Tell them they should be happy with what they have", s:3}
+   ]},
+  {q:"After a fight, the best approach is:",
+   opts:[
+     {t:"Talk it out calmly until we both feel heard", s:0},
+     {t:"Keep at it until they admit they're wrong", s:2},
+     {t:"Act as if nothing happened", s:1},
+     {t:"Give them silence until they apologize", s:2}
+   ]},
+  {q:"A partner spending a weekend with friends:",
+   opts:[
+     {t:"\"Have fun!\"", s:0},
+     {t:"\"Check in every few hours\"", s:1},
+     {t:"\"If you really loved me, you'd stay\"", s:2},
+     {t:"\"I might not be here when you get back\"", s:3}
+   ]},
+  {q:"Can people really change?",
+   opts:[
+     {t:"Yes, people grow throughout their lives", s:0},
+     {t:"Only if they follow my guidance", s:2},
+     {t:"No, they just learn to hide their true nature", s:2},
+     {t:"Only if it benefits me", s:3}
+   ]},
+  {q:"Compromise in a relationship is:",
+   opts:[
+     {t:"The foundation of partnership", s:0},
+     {t:"Necessary, but my idea is usually better", s:2},
+     {t:"Annoying, but I do it to avoid conflict", s:1},
+     {t:"Only fair if they compromise too", s:2}
+   ]},
+  {q:"What would be a dealbreaker for me?",
+   opts:[
+     {t:"Betrayal or dishonesty", s:0},
+     {t:"Someone ignoring my boundaries", s:0},
+     {t:"Someone not appreciating me enough", s:2},
+     {t:"Being told I'm wrong", s:3}
+   ]}
+];
 
-        let index = 0, score = 0;
-        function startStudy() {
-            document.getElementById('page-home').classList.remove('active');
-            document.getElementById('page-quiz').classList.add('active');
-            showQuestion();
-        }
-        function showQuestion() {
-            const q = questions[index];
-            document.getElementById('counter').innerText = `Question ${index + 1} of ${questions.length}`;
-            document.getElementById('progress-bar').style.width = `${((index) / questions.length) * 100}%`;
-            document.getElementById('question').innerText = q.q;
-            const container = document.getElementById('options');
-            container.innerHTML = '';
-            q.o.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left p-4 border border-black/10 rounded-xl hover:bg-black/5";
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    if (i > 0) score++;
-                    index++;
-                    index < questions.length ? showQuestion() : showResult();
-                };
-                container.appendChild(btn);
-            });
-        }
-        function showResult() {
-            document.getElementById('page-quiz').classList.remove('active');
-            document.getElementById('page-result').classList.add('active');
-            let res = score <= 10 ? "Highly Secure & Compatible" : (score <= 25 ? "Moderate Alignment; Work Required" : "High Risk / Significant Divergence");
-            document.getElementById('final-score').innerText = `Result Analysis: ${res}`;
-        }
-    </script>
+let rfIndex = 0;
+let rfScore = 0;
+
+function startRedFlags(){
+  rfIndex = 0;
+  rfScore = 0;
+  document.getElementById('rf-intro').classList.add('hidden');
+  document.getElementById('rf-result').classList.add('hidden');
+  document.getElementById('rf-quiz').classList.remove('hidden');
+  renderRfQ();
+}
+
+function renderRfQ(){
+  const q = rfQuestions[rfIndex];
+  document.getElementById('rf-bar').style.width = (rfIndex/rfQuestions.length*100)+'%';
+  document.getElementById('rf-counter').textContent = `Question ${rfIndex+1} of ${rfQuestions.length}`;
+  document.getElementById('rf-question').textContent = q.q;
+  
+  // Shuffle options to make it less obvious
+  const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
+  document.getElementById('rf-options').innerHTML = shuffled.map((o, i) =>
+    `<button class="option-btn" onclick="answerRfQ(${o.s})">${o.t}</button>`
+  ).join('');
+}
+
+function answerRfQ(score){
+  rfScore += score;
+  rfIndex++;
+  if(rfIndex >= rfQuestions.length){
+    finishRedFlags();
+  } else {
+    renderRfQ();
+  }
+}
+
+function finishRedFlags(){
+  document.getElementById('rf-quiz').classList.add('hidden');
+  
+  // Max possible: 60 (20 questions × 3 max points)
+  const pct = Math.round((rfScore / 60) * 100);
+  
+  let level, levelColor, icon, title, desc, advice;
+  
+  if(rfScore <= 8){
+    level = "Low Concern";
+    levelColor = "var(--forest)";
+    icon = "✅";
+    title = "Healthy Relationship Patterns";
+    desc = "This profile shows strong empathy, respect for boundaries, and healthy relationship attitudes. These responses indicate someone who values partnership over power, and connection over control.";
+    advice = "Continue nurturing these healthy patterns. In relationships, maintain open communication and mutual respect.";
+  } else if(rfScore <= 20){
+    level = "Some Caution";
+    levelColor = "var(--gold)";
+    icon = "⚠️";
+    title = "Some Areas to Watch";
+    desc = "This profile shows mostly healthy patterns with some attitudes that could become problematic under stress. There may be tendencies toward defensiveness, subtle control, or difficulty with vulnerability.";
+    advice = "Pay attention to patterns during conflict. Notice if criticism is deflected, if compromise feels one-sided, or if blame is frequently externalized. These patterns can intensify over time.";
+  } else if(rfScore <= 35){
+    level = "Significant Concern";
+    levelColor = "var(--coral)";
+    icon = "🚨";
+    title = "Concerning Patterns Detected";
+    desc = "This profile shows consistent patterns associated with controlling, manipulative, or narcissistic relationship styles. There are indicators of entitlement, lack of empathy, and viewing others as tools rather than partners.";
+    advice = "These patterns rarely improve without professional intervention and genuine desire to change. If you're evaluating a partner: trust your instincts, document concerning behaviors, and consider consulting a therapist who specializes in personality disorders.";
+  } else {
+    level = "High Alert";
+    levelColor = "var(--coral)";
+    icon = "🔴";
+    title = "Serious Warning Signs";
+    desc = "This profile shows strong patterns associated with Dark Triad traits (narcissism, Machiavellianism, psychopathy). There are consistent indicators of manipulation, lack of remorse, entitlement, and viewing relationships primarily as power dynamics.";
+    advice = "If this is a partner or potential partner: proceed with extreme caution. These patterns are deeply ingrained and resistant to change. Consider speaking with a mental health professional before making major relationship decisions. Your safety and wellbeing come first.";
+  }
+  
+  const res = document.getElementById('rf-result');
+  res.classList.remove('hidden');
+  res.innerHTML = `
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-3">${icon}</div>
+      <p class="text-sm font-semibold uppercase tracking-wider mb-1" style="color:${levelColor}">${level}</p>
+      <h1 class="font-display text-3xl mb-2">${title}</h1>
+    </div>
+    
+    <div class="card rounded-xl p-6 mb-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-sm font-medium">Concern Level</span>
+        <div class="flex-1 trait-bar">
+          <div class="trait-bar-fill" style="width:${pct}%; background:${levelColor}"></div>
+        </div>
+        <span class="text-sm font-bold">${pct}%</span>
+      </div>
+      <p class="text-black/70">${desc}</p>
+    </div>
+    
+    <div class="card rounded-xl p-6 mb-8" style="background:${rfScore > 20 ? '#fef2f2' : 'var(--sand)'}">
+      <h3 class="font-display text-lg mb-2">What This Means</h3>
+      <p class="text-black/70 text-sm">${advice}</p>
+    </div>
+    
+    ${rfScore > 15 ? `
+    <div class="card rounded-xl p-6 mb-6 border-2" style="border-color:var(--coral)">
+      <h3 class="font-semibold mb-2" style="color:var(--coral)">🔒 If You Feel Unsafe</h3>
+      <p class="text-black/70 text-sm mb-3">If you're in a relationship with someone showing these patterns and feel unsafe, please reach out to:</p>
+      <ul class="text-sm text-black/70 space-y-1">
+        <li>• National Domestic Violence Hotline: 1-800-799-7233</li>
+        <li>• Crisis Text Line: Text HOME to 741741</li>
+        <li>• Local counseling or support services</li>
+      </ul>
+    </div>
+    ` : ''}
+    
+    <div class="flex gap-3">
+      <button onclick="startRedFlags()" class="btn-ghost flex-1 px-4 py-3 rounded-xl">Retake</button>
+      <button onclick="goTo('home')" class="btn-primary flex-1 px-4 py-3 rounded-xl">Home</button>
+    </div>
+    
+    <p class="text-center text-xs text-black/45 mt-6">This is a screening tool for self-reflection, not a clinical diagnosis. Patterns exist on a spectrum and context matters. For serious concerns, consult a licensed mental health professional.</p>
+  `;
+}
+</script>
+
 </body>
 </html>
