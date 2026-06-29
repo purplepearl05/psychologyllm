@@ -3,743 +3,509 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kindred — Understand Yourself, Understand Each Other</title>
-<meta name="description" content="A warm, judgment-free space to talk things through, map personality compatibility, and check relationship alignment in real time." />
+<title>Kindred — Honest Marriage Matching & Personality Screening</title>
 
 <!-- Tailwind Engine CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-<!-- Fonts: Fraunces (warm display serif) + Inter (clean body text) -->
+<!-- Fonts: Fraunces + Inter -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2 family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root{
     --ink:#23271f;
     --canvas:#fbf7f1;
     --forest:#2c5347;
-    --forest-dark:#1d3a31;
     --coral:#e2684a;
-    --coral-dark:#c8533a;
     --sand:#efe5d3;
-    --gold:#be9a4d;
   }
-  *{ -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-  html{ scroll-behavior:smooth; }
   body{
     background:var(--canvas);
     color:var(--ink);
     font-family:'Inter',sans-serif;
-    margin: 0;
-    padding: 0;
+    margin:0; padding:0;
   }
   .font-display{ font-family:'Fraunces',serif; }
-  .text-balance{ text-wrap:balance; }
-
-  .squiggle-underline{ position:relative; display:inline-block; }
-  .squiggle-underline svg{ position:absolute; left:0; bottom:-0.18em; width:100%; height:0.3em; }
-
   .btn-primary{
     background:var(--coral); color:#fff; font-weight:600;
-    transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    transition: all .15s ease;
     cursor: pointer;
   }
-  .btn-primary:hover{ background:var(--coral-dark); transform: translateY(-1px); }
-  .btn-primary:active{ transform: translateY(0); }
-
+  .btn-primary:hover{ background:#c8533a; transform: translateY(-1px); }
   .btn-ghost{
     border:1.5px solid var(--ink); color:var(--ink); font-weight:600;
-    transition: background .15s ease, transform .15s ease;
+    transition: all .15s ease;
     cursor: pointer;
   }
-  .btn-ghost:hover{ background: rgba(35,39,31,0.06); transform: translateY(-1px); }
-
+  .btn-ghost:hover{ background: rgba(35,39,31,0.05); }
   .card{
     background:#fff; border:1px solid rgba(35,39,31,0.08);
-    box-shadow: 0 1px 2px rgba(35,39,31,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
   }
-
   .page{ display:none; }
-  .page.active{ display:block; animation: fadein .45s ease; }
-  @keyframes fadein{ from{ opacity:0; transform: translateY(6px);} to{opacity:1; transform:none;} }
-
-  .pulse-indicator { animation: beacon 1.8s infinite ease-in-out; }
-  @keyframes beacon { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(0.96); } }
-
-  .chat-scroll::-webkit-scrollbar{ width:6px; }
-  .chat-scroll::-webkit-scrollbar-thumb{ background:rgba(35,39,31,0.15); border-radius:4px; }
-  .bar-fill{ transition: width .4s ease; }
+  .page.active{ display:block; animation: fadein .4s ease-out; }
+  @keyframes fadein{ from{ opacity:0; transform: translateY(4px); } to{ opacity:1; transform:none; } }
+  .bar-fill{ transition: width .3s ease; }
 </style>
 </head>
 <body class="antialiased">
 
 <!-- =================== NAVIGATION =================== -->
 <header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf7f1]/90 border-b border-black/5">
-  <nav class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-    <button onclick="goTo('home')" class="flex items-center gap-2 font-display text-xl font-semibold border-none bg-transparent cursor-pointer" style="color:var(--forest)">
-      <span>🌿</span> Kindred
+  <nav class="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
+    <button onclick="goTo('home')" class="flex items-center gap-2 font-display text-xl font-bold bg-transparent border-none cursor-pointer text-[var(--forest)]">
+      🌱 Kindred
     </button>
-    <div class="hidden md:flex items-center gap-7 text-sm font-medium">
-      <button onclick="goTo('chat')" class="hover:text-[var(--coral)] transition bg-transparent border-none cursor-pointer">Talk it out</button>
-      <button onclick="goTo('couples')" class="hover:text-[var(--coral)] transition bg-transparent border-none cursor-pointer">Couples Alignment</button>
-      <button onclick="goTo('bachelor-hub')" class="hover:text-[var(--coral)] transition bg-transparent border-none cursor-pointer">Live Matrix Test</button>
-      <button onclick="goTo('screener-intro')" class="hover:text-[var(--coral)] transition bg-transparent border-none cursor-pointer">Integrity Screener</button>
+    <div class="flex items-center gap-5 text-sm font-medium">
+      <button onclick="goTo('couples-intro')" class="hover:text-[var(--coral)] transition bg-transparent border-none cursor-pointer">Marriage Matcher</button>
+      <button onclick="goTo('screener-intro')" class="hover:text-[var(--coral)] transition bg-transparent border-none cursor-pointer">Integrity Test</button>
+      <button onclick="goTo('chat')" class="hover:text-[var(--coral)] transition bg-transparent border-none cursor-pointer">Reflection Chat</button>
     </div>
-    <button onclick="goTo('bachelor-hub')" class="btn-primary text-sm px-4 py-2 rounded-full">Live Monitor Hub</button>
   </nav>
 </header>
 
 <!-- =================== HOME PAGE =================== -->
-<main id="page-home" class="page active">
-  <section class="max-w-6xl mx-auto px-5 sm:px-8 pt-14 sm:pt-20 pb-16 grid md:grid-cols-2 gap-12 items-center">
-    <div>
-      <p class="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-5" style="background:var(--sand); color:var(--forest-dark)">Grounded Behavioral Dynamics</p>
-      <h1 class="font-display text-4xl sm:text-5xl leading-[1.1] text-balance">
-        Deep personality alignment, <br>
-        <span class="squiggle-underline" style="color:var(--coral)">without performance masks.
-          <svg viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M0,6 Q25,0 50,6 T100,6 T150,6 T200,6" fill="none" stroke="var(--coral)" stroke-width="3"/></svg>
-        </span>
-      </h1>
-      <p class="mt-6 text-lg text-black/70 max-w-md">Kindred offers an intuitive, secure space to look beneath curated answers, measure authentic core compatibility, and run live behavioral evaluations safely.</p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <button onclick="goTo('bachelor-hub')" class="btn-primary px-6 py-3 rounded-full">Deploy Live Matrix Test</button>
-        <button onclick="goTo('couples')" class="btn-ghost px-6 py-3 rounded-full">Dual Couples Match</button>
-      </div>
-    </div>
+<main id="page-home" class="page active max-w-4xl mx-auto px-5 pt-12 pb-16 text-center">
+  <span class="text-xs uppercase font-bold tracking-widest text-[var(--forest)] bg-[var(--sand)] px-3 py-1 rounded-full">Designed for Serious Marriage Matching</span>
+  <h1 class="font-display text-4xl sm:text-5xl font-medium mt-4 max-w-2xl mx-auto leading-tight">
+    See past the surface behavior to discover true core personality compatibility.
+  </h1>
+  <p class="mt-4 text-black/65 max-w-xl mx-auto text-base">
+    Skip the casual dating app fluff. Kindred helps serious partners screen suitors, uncover hidden communication issues, and test character honesty safely.
+  </p>
+  
+  <div class="mt-8 flex flex-wrap justify-center gap-4">
+    <button onclick="goTo('couples-intro')" class="btn-primary px-8 py-3.5 rounded-full text-sm">Start 15-Question Marriage Match</button>
+    <button onclick="goTo('screener-intro')" class="btn-ghost px-8 py-3.5 rounded-full text-sm">Take Subtle Integrity Test</button>
+  </div>
 
-    <div class="space-y-4">
-      <div class="card rounded-2xl p-6 border-l-4 style-card" style="border-color: var(--forest)">
-        <h3 class="font-display font-semibold text-lg mb-1">Live Response Tracking</h3>
-        <p class="text-sm text-black/65">Send your candidate a tracking token link. Watch their real-time selections update instantly on your personal dashboard before they can self-correct.</p>
-      </div>
-      <div class="card rounded-2xl p-6 border-l-4 style-card" style="border-color: var(--coral)">
-        <h3 class="font-display font-semibold text-lg mb-1">Masked Behavioral Screeners</h3>
-        <p class="text-sm text-black/65">Proxy psychological scenarios built to expose core manipulation indicators, volatile anger patterns, and defensive displacement metrics without alerting the subject.</p>
-      </div>
+  <div class="grid md:grid-cols-2 gap-6 mt-16 text-left">
+    <div class="card rounded-2xl p-6">
+      <h3 class="font-display font-semibold text-lg text-[var(--forest)] mb-1">Dual Device Link-Matching</h3>
+      <p class="text-xs text-black/60 leading-relaxed">Fill out your profile questions, text the system-generated secure link directly to your potential partner, and watch your shared compatibility score automatically calculate live on both screens when they finish.</p>
     </div>
-  </section>
+    <div class="card rounded-2xl p-6">
+      <h3 class="font-display font-semibold text-lg text-[var(--coral)] mb-1">Subtle Integrity Screener</h3>
+      <p class="text-xs text-black/60 leading-relaxed">10 conversational situations designed to gently flag core personality habits like quick tempers, lack of accountability, or blame-shifting without ever alerting them.</p>
+    </div>
+  </div>
 </main>
 
-<!-- =================== LIVE MONITOR HUB =================== -->
-<section id="page-bachelor-hub" class="page">
-  <div class="max-w-2xl mx-auto px-5 py-10">
-    <div class="text-center mb-8">
-      <h1 class="font-display text-3xl mb-2">Live Vector Monitor Hub</h1>
-      <p class="text-sm text-black/60">Generate an anti-performance test link. Send it to your partner to trace live inputs dynamically.</p>
+<!-- =================== COUPLES MATCH SYSTEM =================== -->
+<section id="page-couples-intro" class="page max-w-xl mx-auto px-5 py-12">
+  <div class="card rounded-2xl p-6 sm:p-8 space-y-5">
+    <h2 class="font-display text-2xl font-bold">15-Question Marriage Alignment System</h2>
+    <p class="text-sm text-black/70 leading-relaxed">
+      This test evaluates deep, everyday marriage dynamics—covering financial logic, home responsibilities, handling in-laws, child-rearing strategies, and stress-responses.
+    </p>
+    <div class="p-4 rounded-xl bg-[var(--sand)]/50 text-xs text-black/75 space-y-1">
+      <p class="font-bold">How it works:</p>
+      <p>1. You complete the questions first.</p>
+      <p>2. Send the smart matching link to your suitor or partner.</p>
+      <p>3. Once they complete it on their own phone, the results appear instantly.</p>
     </div>
+    <button onclick="startCouplesQuiz()" class="btn-primary w-full py-3 rounded-xl text-sm">Start My Assessment</button>
+  </div>
+</section>
 
-    <div class="grid gap-6">
-      <div class="card rounded-2xl p-6 space-y-4">
-        <h3 class="font-display text-lg font-semibold text-[var(--forest)]">1. Configure Validation Rules</h3>
-        <div class="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold uppercase text-black/50 mb-1">Target Profile</label>
-            <select id="hub-gender-select" class="w-full p-2.5 rounded-xl bg-neutral-50 border border-black/10 text-sm focus:outline-none">
-              <option value="male">Evaluating a Male (Bachelor Framework)</option>
-              <option value="female">Evaluating a Female (Bachelorette Framework)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold uppercase text-black/50 mb-1">Output Privacy Mode</label>
-            <input type="text" value="Secret Transmission (Monitor Only)" disabled class="w-full p-2.5 rounded-xl bg-neutral-100 border border-black/10 text-sm text-black/40" />
-          </div>
-        </div>
+<section id="page-couples-quiz" class="page max-w-xl mx-auto px-5 py-12">
+  <div class="w-full h-1.5 bg-black/5 rounded-full mb-6 overflow-hidden">
+    <div id="cp-progress" class="h-full bg-[var(--forest)] bar-fill" style="width:0%"></div>
+  </div>
+  <div class="flex justify-between text-xs font-bold text-black/40 mb-2 uppercase tracking-wider">
+    <span id="cp-role-display">Your Profile</span>
+    <span id="cp-counter-display">Question 1 of 15</span>
+  </div>
+  <div class="card rounded-2xl p-6 sm:p-8 space-y-6">
+    <h3 id="cp-question-text" class="font-display text-lg sm:text-xl font-medium leading-snug">Loading question logic...</h3>
+    <div id="cp-options-container" class="grid gap-3"></div>
+  </div>
+</section>
 
-        <div class="pt-2">
-          <button onclick="generateLiveTelemetryLink()" class="btn-primary w-full py-3 rounded-xl text-xs uppercase tracking-wider font-bold">Generate Live Monitoring Payload</button>
-        </div>
-
-        <div id="hub-link-box" class="hidden p-4 rounded-xl bg-[var(--sand)] space-y-2 mt-2">
-          <p class="text-xs font-bold text-[var(--forest)] flex items-center gap-1.5 uppercase tracking-wide">
-            <span class="w-2 h-2 rounded-full bg-[var(--forest)] pulse-indicator"></span> Realtime Link Matrix Armed:
-          </p>
-          <div class="flex gap-2">
-            <input type="text" id="hub-link-input" readonly class="flex-1 bg-white text-xs p-2.5 rounded-lg border border-black/10 font-mono select-all" />
-            <button onclick="copyHubLink()" class="bg-neutral-800 text-white text-xs px-4 rounded-lg font-medium hover:bg-black">Copy</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card rounded-2xl p-6 space-y-4 border-t-4" style="border-color: var(--forest)">
-        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-black/5 pb-3">
-          <h3 class="font-display text-lg font-semibold">2. Live Stream Telemetry Dashboard</h3>
-          <span id="hub-stream-status" class="text-xs px-3 py-1 rounded-full bg-neutral-100 text-black/50 font-medium">Awaiting Connection...</span>
-        </div>
-
-        <div id="hub-placeholder" class="py-12 text-center text-sm text-black/40">
-          No live streaming link currently active. Deploy a pipeline above to open telemetry channels.
-        </div>
-
-        <div id="hub-stream-active" class="hidden space-y-4">
-          <div class="p-4 rounded-xl bg-neutral-50 border border-black/5">
-            <p class="text-[10px] text-black/40 uppercase font-bold tracking-wider">Current Pipeline Position</p>
-            <h4 id="hub-live-q-text" class="font-display font-medium text-base text-neutral-800 mt-1">Loading current perspective...</h4>
-          </div>
-
-          <div>
-            <div class="flex justify-between text-xs font-semibold text-black/50 mb-1"><span>Target Progress</span><span id="hub-progress-text">0%</span></div>
-            <div class="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
-              <div id="hub-progress-bar" class="h-full bg-[var(--forest)] bar-fill" style="width: 0%"></div>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <p class="text-xs font-bold uppercase text-black/40">Live Real-Time Answer Selections</p>
-            <div id="hub-live-options" class="grid gap-2"></div>
-          </div>
-
-          <button id="hub-reveal-btn" onclick="revealLiveCalculatedReport()" class="hidden btn-primary w-full py-3 rounded-xl text-sm">Compile Character Profile Metrics</button>
-        </div>
-      </div>
+<section id="page-couples-share" class="page max-w-xl mx-auto px-5 py-12 text-center">
+  <div class="card rounded-2xl p-6 sm:p-8 space-y-5">
+    <div class="w-12 h-12 bg-emerald-50 text-[var(--forest)] text-xl rounded-full grid place-items-center mx-auto font-bold">✓</div>
+    <h2 class="font-display text-2xl font-bold">Your Baseline Answers Locked!</h2>
+    <p class="text-sm text-black/65 max-w-md mx-auto">
+      Copy this special secure link and send it directly to your partner or suitor. Keep this page open on your screen—the matching results will instantly load here the second they complete their side!
+    </p>
+    <div class="flex gap-2 bg-neutral-50 p-2 rounded-xl border border-black/10">
+      <input type="text" id="share-link-input" readonly class="flex-1 bg-transparent text-xs p-2 focus:outline-none font-mono" />
+      <button onclick="copyShareLink()" class="bg-neutral-800 text-white text-xs px-4 py-2 rounded-lg font-medium hover:bg-black">Copy Link</button>
+    </div>
+    <div class="text-xs text-amber-700 bg-amber-50 rounded-lg p-3 flex items-center justify-center gap-2 font-medium">
+      <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+      Waiting for your partner to open the link and submit responses...
     </div>
   </div>
 </section>
 
-<!-- =================== TARGET ASSESSOR RUNNER =================== -->
-<section id="page-target-runner" class="page">
-  <div class="max-w-2xl mx-auto px-5 py-12">
-    <div class="w-full h-2 rounded-full bg-black/5 mb-6 overflow-hidden">
-      <div id="runner-bar" class="h-full bar-fill rounded-full bg-[var(--coral)]" style="width:0%"></div>
+<section id="page-couples-results" class="page max-w-2xl mx-auto px-5 py-12">
+  <div class="card rounded-3xl p-6 sm:p-8 text-center space-y-6">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-widest text-[var(--coral)]">Total Calculated Marriage Sync Score</span>
+      <h2 id="final-match-pct" class="font-display text-6xl font-bold text-[var(--forest)] mt-2">0%</h2>
     </div>
-
-    <div class="flex justify-between items-center mb-4">
-      <span class="text-xs uppercase tracking-widest font-bold px-3 py-1 rounded-full text-white bg-[var(--forest)]">Secure Verification Matrix Active</span>
-      <span id="runner-counter" class="text-xs font-mono text-black/40 font-bold">Scenario 1 of 3</span>
+    <p id="final-match-summary" class="text-sm text-black/65 max-w-md mx-auto leading-relaxed"></p>
+    <hr class="border-black/5" />
+    <div class="text-left space-y-3">
+      <h4 class="text-xs uppercase font-bold tracking-wider text-black/40">Pillar Analysis Breakdown:</h4>
+      <div id="pillar-results-box" class="grid gap-3"></div>
     </div>
-
-    <div class="card rounded-2xl p-6 sm:p-8 space-y-6">
-      <div>
-        <span id="runner-cat" class="text-xs uppercase font-bold tracking-widest text-black/40">Core Perspective Metric</span>
-        <h3 id="runner-q-text" class="font-display text-xl sm:text-2xl mt-1 text-balance">Loading parameter block...</h3>
-      </div>
-      <div id="runner-options" class="grid gap-3"></div>
-    </div>
-    <p class="text-center text-[11px] text-black/30 mt-6">🔒 Responses are saved directly within the local encryption cluster nodes.</p>
-  </div>
-</section>
-
-<!-- =================== TARGET RUNNER CLOSURE =================== -->
-<section id="page-target-complete" class="page">
-  <div class="max-w-md mx-auto px-5 py-24 text-center space-y-4">
-    <div class="w-14 h-14 bg-emerald-50 text-[var(--forest)] text-xl rounded-full grid place-items-center mx-auto font-bold">✓</div>
-    <h2 class="font-display text-2xl">Configuration Finalized</h2>
-    <p class="text-sm text-black/60 leading-relaxed">Your secure verification answers have been compiled, processed, and closed out inside the local database terminal context.</p>
-    <p class="text-xs text-black/35">You may now close this browser instance safely.</p>
-  </div>
-</section>
-
-<!-- =================== INTUITIVE DUAL COUPLES MODE =================== -->
-<section id="page-couples" class="page">
-  <div class="max-w-2xl mx-auto px-5 py-10">
-    <div id="cp-intro">
-      <h1 class="font-display text-3xl mb-2">Couples Compatibility Engine</h1>
-      <p class="text-black/65 mb-4">A complete deep-dive across five main pillars of psychological connection: core worldview tracking, intimacy, career sync, conflict resolution pathways, and long-term security architecture.</p>
-      <div class="card rounded-2xl p-5 bg-[var(--sand)]/40 border border-black/5 text-sm space-y-2 mb-6">
-        <p class="font-semibold text-[var(--forest-dark)]">How synchronization works:</p>
-        <p class="text-xs text-black/70 leading-relaxed">Partner A completes the answers to establish the tracking blueprint, and then simply hands the device to Partner B to calibrate matching scores instantly.</p>
-      </div>
-      <button onclick="launchCouplesPipeline()" class="btn-primary px-6 py-3 rounded-full text-sm">Begin Partner A Evaluation</button>
-    </div>
-
-    <div id="cp-quiz" class="hidden">
-      <div class="w-full h-2 rounded-full bg-black/10 mb-6 overflow-hidden">
-        <div id="cp-flow-bar" class="h-full bar-fill rounded-full bg-[var(--forest)]" style="width:0%"></div>
-      </div>
-      <div class="flex justify-between items-center mb-3">
-        <span id="cp-user-tag" class="text-xs uppercase font-bold tracking-wider px-2.5 py-1 rounded-full text-white bg-[var(--coral)]">Partner A</span>
-        <span id="cp-flow-counter" class="text-xs font-mono text-black/40 font-bold">1 of 10</span>
-      </div>
-      <p id="cp-flow-cat" class="text-xs font-bold uppercase tracking-widest text-[var(--coral)] mb-1"></p>
-      <h2 id="cp-flow-q" class="font-display text-xl sm:text-2xl mb-6 text-balance"></h2>
-      <div class="grid gap-3" id="cp-flow-options"></div>
-    </div>
-
-    <div id="cp-handover" class="hidden text-center py-12 space-y-4">
-      <div class="w-14 h-14 bg-[var(--sand)] text-xl rounded-full grid place-items-center mx-auto">🔄</div>
-      <h2 class="font-display text-2xl">Partner A Blueprint Locked</h2>
-      <p class="text-sm text-black/65 max-w-sm mx-auto">Pass this exact device to your partner right now so they can enter their comparative perspective profile loop.</p>
-      <button onclick="launchPartnerBPipeline()" class="btn-primary px-6 py-3 rounded-full text-sm">Begin Partner B Evaluation</button>
-    </div>
-
-    <div id="cp-flow-results" class="hidden space-y-6">
-      <div class="text-center space-y-1">
-        <p class="text-xs uppercase tracking-widest font-bold text-[var(--coral)]">Total Synthesis Matrix</p>
-        <h2 id="cp-res-pct" class="font-display text-5xl font-bold text-[var(--forest)]">0%</h2>
-        <p id="cp-res-summary" class="text-sm text-black/60 max-w-md mx-auto pt-2"></p>
-      </div>
-      <div id="cp-res-breakdown" class="grid gap-4 pt-4"></div>
-      <button onclick="goTo('home')" class="btn-ghost w-full py-3 rounded-full text-sm">Return Home</button>
-    </div>
+    <button onclick="goTo('home')" class="btn-ghost w-full py-3 rounded-xl text-sm">Return Home</button>
   </div>
 </section>
 
 <!-- =================== CHARACTER INTEGRITY SCREENER =================== -->
-<section id="page-screener-intro" class="page">
-  <div class="max-w-2xl mx-auto px-5 py-10">
-    <h1 class="font-display text-3xl mb-2">Character Integrity & Volatility Screener</h1>
-    <p class="text-black/65 mb-6">An advanced self-administered evaluation configuration using indirect diagnostic paths to flag cluster abnormalities, lack of interpersonal empathy, and aggressive response points.</p>
-    <div class="card rounded-2xl p-6 border-l-4 space-y-2 mb-6" style="border-color: var(--coral)">
-      <p class="text-xs font-bold uppercase text-[var(--coral-dark)]">⚠️ Methodological Proxy Blueprint</p>
-      <p class="text-xs text-black/70 leading-relaxed">This module uses behavioral scenarios intentionally structured so that manipulative patterns cannot easily distinguish the idealized baseline answers.</p>
-    </div>
-    <button onclick="startScreenerQuiz()" class="btn-primary px-6 py-3 rounded-full text-sm">Initialize Integrity Diagnostic</button>
+<section id="page-screener-intro" class="page max-w-xl mx-auto px-5 py-12">
+  <div class="card rounded-2xl p-6 sm:p-8 space-y-4">
+    <h2 class="font-display text-2xl font-bold">10-Question Personality & Integrity Test</h2>
+    <p class="text-sm text-black/70 leading-relaxed">
+      This diagnostic uses everyday, realistic social situations to measure hidden traits like frustration management, blame projection, ego needs, and empathy levels. 
+    </p>
+    <p class="text-xs text-black/50 italic">
+      Tip: For true accuracy, answers should reflect what someone actually does in real-life moments, rather than the most polite answer.
+    </p>
+    <button onclick="startScreenerQuiz()" class="btn-primary w-full py-3 rounded-xl text-sm">Begin Personality Check</button>
   </div>
 </section>
 
-<section id="page-screener-quiz" class="page">
-  <div class="max-w-2xl mx-auto px-5 py-12">
-    <div class="w-full h-2 rounded-full bg-black/5 mb-6 overflow-hidden">
-      <div id="sc-bar" class="h-full bar-fill bg-[var(--coral)]" style="width:0%"></div>
+<section id="page-screener-quiz" class="page max-w-xl mx-auto px-5 py-12">
+  <div class="w-full h-1.5 bg-black/5 rounded-full mb-6 overflow-hidden">
+    <div id="sc-progress" class="h-full bg-[var(--coral)] bar-fill" style="width:0%"></div>
+  </div>
+  <span id="sc-counter" class="text-xs font-bold text-black/40 uppercase tracking-wide">Situation 1 of 10</span>
+  <div class="card rounded-2xl p-6 sm:p-8 space-y-6 mt-1">
+    <h3 id="sc-question-text" class="font-display text-lg sm:text-xl font-medium leading-snug">Loading scenario...</h3>
+    <div id="sc-options-container" class="grid gap-3"></div>
+  </div>
+</section>
+
+<section id="page-screener-results" class="page max-w-xl mx-auto px-5 py-12">
+  <div class="card rounded-2xl p-6 sm:p-8 space-y-6">
+    <div class="text-center">
+      <h2 class="font-display text-2xl font-bold">Screener Spectrum Report</h2>
+      <p class="text-xs text-black/50 mt-1">Calculated via hidden core personality indicators</p>
     </div>
-    <div class="card rounded-2xl p-6 sm:p-8 space-y-6">
+    
+    <div class="space-y-4">
       <div>
-        <span class="text-xs uppercase font-bold tracking-widest text-[var(--coral)]">Structural Stress Vector</span>
-        <h3 id="sc-q-text" class="font-display text-xl sm:text-2xl mt-1 text-balance">Loading scenarios...</h3>
+        <div class="flex justify-between text-xs font-bold mb-1"><span>Anger Sensitivity & Quick Temper Risk</span><span id="v-txt">0%</span></div>
+        <div class="w-full h-2 bg-black/5 rounded-full overflow-hidden"><div id="v-bar" class="h-full bg-[var(--coral)] bar-fill" style="width:0%"></div></div>
       </div>
-      <div id="sc-options" class="grid gap-3"></div>
-    </div>
-  </div>
-</section>
-
-<section id="page-screener-results" class="page">
-  <div class="max-w-2xl mx-auto px-5 py-10 space-y-8">
-    <div class="text-center space-y-1">
-      <h2 class="font-display text-3xl">Behavioral Spectrum Analysis</h2>
-      <p class="text-sm text-black/55">Processed across latent indicator tracking scales.</p>
-    </div>
-    <div class="card rounded-2xl p-6 space-y-5">
-      <div class="space-y-4">
-        <div>
-          <div class="flex justify-between text-xs font-bold uppercase mb-1"><span>Volatility & Anger Escalation</span><span id="v-score-txt">0%</span></div>
-          <div class="w-full h-2.5 bg-black/5 rounded-full overflow-hidden"><div id="v-score-bar" class="h-full bar-fill bg-[var(--coral)]" style="width: 0%"></div></div>
-        </div>
-        <div>
-          <div class="flex justify-between text-xs font-bold uppercase mb-1"><span>Ego-Centricity & Entitlement</span><span id="e-score-txt">0%</span></div>
-          <div class="w-full h-2.5 bg-black/5 rounded-full overflow-hidden"><div id="e-score-bar" class="h-full bar-fill bg-[var(--gold)]" style="width: 0%"></div></div>
-        </div>
-        <div>
-          <div class="flex justify-between text-xs font-bold uppercase mb-1"><span>Empathy Displacement/Manipulation</span><span id="p-score-txt">0%</span></div>
-          <div class="w-full h-2.5 bg-black/5 rounded-full overflow-hidden"><div id="p-score-bar" class="h-full bar-fill bg-purple-800" style="width: 0%"></div></div>
-        </div>
+      <div>
+        <div class="flex justify-between text-xs font-bold mb-1"><span>Ego Defense & Blame-Shifting Habit</span><span id="e-txt">0%</span></div>
+        <div class="w-full h-2 bg-black/5 rounded-full overflow-hidden"><div id="e-bar" class="h-full bg-amber-500 bar-fill" style="width:0%"></div></div>
       </div>
-      <div id="sc-summary-box" class="p-4 rounded-xl bg-neutral-50 border border-black/5 text-sm text-black/70 leading-relaxed font-medium"></div>
-      <button onclick="goTo('home')" class="btn-ghost w-full py-3 rounded-full text-sm">Return Home</button>
+      <div>
+        <div class="flex justify-between text-xs font-bold mb-1"><span>Empathy Blindspots / Self-Focus</span><span id="p-txt">0%</span></div>
+        <div class="w-full h-2 bg-black/5 rounded-full overflow-hidden"><div id="p-bar" class="h-full bg-indigo-700 bar-fill" style="width:0%"></div></div>
+      </div>
     </div>
+
+    <div id="sc-summary-text" class="p-4 rounded-xl bg-neutral-50 border border-black/5 text-xs text-black/75 leading-relaxed"></div>
+    <button onclick="goTo('home')" class="btn-ghost w-full py-3 rounded-xl text-sm">Return Home</button>
   </div>
 </section>
 
-<!-- =================== CHAT SYSTEM PACKET =================== -->
-<section id="page-chat" class="page">
-  <div class="max-w-2xl mx-auto px-5 py-10">
-    <h1 class="font-display text-2xl mb-1">Talk it out</h1>
-    <p class="text-sm text-black/60 mb-4">A judgment-free, confidential terminal workspace.</p>
-    <div class="card rounded-2xl flex flex-col overflow-hidden h-[60vh]">
-      <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 chat-scroll text-sm"></div>
-      <form id="chat-entry-form" class="border-t border-black/10 p-3 flex gap-2">
-        <input type="text" id="chat-msg-input" placeholder="Share how you're feeling..." class="flex-1 rounded-xl border border-black/15 px-4 py-2.5 text-sm focus:outline-none" />
-        <button type="submit" class="btn-primary px-5 py-2.5 rounded-xl text-sm">Send</button>
-      </form>
-    </div>
+<!-- =================== COMPANION SANDBOX CHAT =================== -->
+<section id="page-chat" class="page max-w-xl mx-auto px-5 py-12">
+  <h2 class="font-display text-2xl font-bold mb-1">Private Reflection Space</h2>
+  <p class="text-xs text-black/60 mb-4">A judgment-free dashboard sandbox to freely sort out marriage criteria and relationship expectations.</p>
+  <div class="card rounded-2xl flex flex-col h-[55vh] overflow-hidden">
+    <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs leading-relaxed"></div>
+    <form id="chat-form" class="border-t border-black/5 p-3 flex gap-2 bg-neutral-50">
+      <input type="text" id="chat-input" placeholder="Type an entry or question here..." class="flex-1 bg-white border border-black/10 rounded-xl px-3 text-xs focus:outline-none" />
+      <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-xs">Submit</button>
+    </form>
   </div>
 </section>
 
-<!-- =================== CORE APPLICATION ENGINE DATA =================== -->
+<!-- =================== DATA ARCHITECTURE ENGINE =================== -->
 <script>
 function goTo(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const el = document.getElementById('page-' + pageId);
-  if(el) el.classList.add('active');
+  const target = document.getElementById('page-' + pageId);
+  if(target) target.classList.add('active');
   window.scrollTo({top:0, behavior:'instant'});
-  if(pageId === 'chat' && !chatActivated) runChatInit();
+  if(pageId === 'chat' && !chatLoaded) { initChatSystem(); }
 }
 
 /* =========================================================
-   BACHELOR & BACHELORETTE PSYCHOLOGICAL SCENARIOS
+   15 HIGHLY EVALUATIVE MARRIAGE COMPATIBILITY QUESTIONS
 ========================================================= */
-const bachelorScenarios = [
-  { cat: "Accountability Loop", q: "A partner shares that they felt hurt by a comment he made in public. What is his immediate response pattern?",
-    opts: [
-      { text: "He terms it hypersensitivity and points out why the joke was logically harmless.", score: { bad: 3, good: 0 } },
-      { text: "He immediately addresses the emotional injury, clarifies intent calmly, and avoids defense behaviors.", score: { bad: 0, good: 4 } },
-      { text: "He responds defensively, recalling an instance where his partner criticized him similarly.", score: { bad: 2, good: 1 } }
-    ]
-  },
-  { cat: "Domestic Equality Framework", q: "How does he manage household tasks when standards for cleanliness differ?",
-    opts: [
-      { text: "He views extra cleanup as the responsibility of the person with the 'higher standard.'", score: { bad: 3, good: 0 } },
-      { text: "He tracks the operational workload and steps in proactively to maintain a fair balance.", score: { bad: 0, good: 4 } },
-      { text: "He expects praise or concrete acknowledgement when assisting with household maintenance tasks.", score: { bad: 1, good: 2 } }
-    ]
-  },
-  { cat: "De-escalation Under Stress", q: "During an argument, his partner starts to cry due to sensory or emotional overload. How does he react?",
-    opts: [
-      { text: "He treats the emotional expression as an optimization block or tactical manipulation tactic.", score: { bad: 4, good: 0 } },
-      { text: "He stops debating immediately to prioritize emotional safety and validation over winning.", score: { bad: 0, good: 4 } },
-      { text: "He withdraws abruptly, demanding they return to the discussion only when 'perfectly calm.'", score: { bad: 2, good: 1 } }
-    ]
-  }
-];
-
-const bacheloretteScenarios = [
-  { cat: "Vulnerability Processing", q: "Her partner expresses deep anxiety or cries regarding a severe professional setback. What is her default framework?",
-    opts: [
-      { text: "She feels a drop in perceived respect, viewing the display as ungrounded or weak.", score: { bad: 3, good: 0 } },
-      { text: "She establishes immediate emotional safety, validating his space without judgment.", score: { bad: 0, good: 4 } },
-      { text: "She gets anxious and immediately pressures him to fix the issue or snap out of it.", score: { bad: 2, good: 1 } }
-    ]
-  },
-  { cat: "Conflict Resolution Metrics", q: "She notices that she completely misread an interaction, which caused her to start an argument. How does she run repair operations?",
-    opts: [
-      { text: "She issues an explicit, direct apology, taking absolute ownership of the projection loop.", score: { bad: 0, good: 4 } },
-      { text: "She minimizes the mistake: 'If you hadn't been acting strange, I wouldn't have assumed that.'", score: { bad: 3, good: 0 } },
-      { text: "She changes the subject or switches to emotional distress metrics so that he ends up comforting her.", score: { bad: 4, good: 0 } }
-    ]
-  }
+const marriageQuestions = [
+  { p: "Finances", q: "How should our primary household income be organized, handled, and spent?", o: ["All income pooled into one joint family account.", "Main expenses paid jointly, but keeping individual personal accounts.", "Separate accounts entirely, splitting major household invoices evenly."] },
+  { p: "Conflict Resolution", q: "When a heated disagreement happens, what is your most natural instinct?", o: ["Talk it through immediately until it's completely settled.", "Take an hour to cool off separately, then calmly discuss.", "Avoid the issue and wait for things to go back to normal naturally."] },
+  { p: "In-Laws", q: "How large of a role should extended family and in-laws play in our weekly household life?", o: ["Very active; regular drop-ins, family calls, and major advisory roles.", "Healthy boundaries; friendly contact but our immediate home stays private.", "Minimal involvement; family events limited strictly to major holidays."] },
+  { p: "Division of Labor", q: "How should daily house chores, cooking, and maintenance management be assigned?", o: ["Split 50/50 strictly by scheduled tasks and routines.", "Flexible tracking based on who is less busy or tired that day.", "One person manages the home while the other handles external tasks."] },
+  { p: "Children & Parenting", q: "If we choose to raise children, what is your approach to discipline and guidance?", o: ["Structured routines, clear boundaries, and firm expectations.", "Gentle, fluid parenting focusing heavily on emotional conversations.", "Balanced style, adapting rules on a case-by-case basis together."] },
+  { p: "Career vs Home Balance", q: "If a major job promotion requires moving or working late hours regularly, how do we choose?", o: ["Career success is priority; the household adjusts around it.", "The marriage comes first; turn down opportunities that impact home balance.", "We review the financial payout together case-by-case."] },
+  { p: "Emotional Needs", q: "When you are stressed or upset after a long day, what do you look for most?", o: ["Deep conversation, undivided attention, and active empathy.", "Quiet downtime alone in a private room to decompress.", "Practical problem-solving advice to fix the issue right away."] },
+  { p: "Social Circles", q: "How do you view spending personal free time with separate friends without your partner?", o: ["Totally healthy; separate social outings should continue regularly.", "Occasional outings are fine, but most free time belongs together.", "We should do everything as a couple; separate outings should be rare."] },
+  { p: "Spiritual/Moral Values", q: "How essential is it that our daily habits reflect identical moral or faith traditions?", o: ["Non-negotiable; our active practices must align precisely.", "General shared moral values are enough; exact practices can vary.", "We can have completely different values as long as we respect each other."] },
+  { p: "Lifestyle and Spending", q: "When extra money becomes available, what is your default way to enjoy it?", o: ["Save or invest it immediately for future security.", "Spend it on shared physical comforts, home improvements, or items.", "Spend it on memorable lifestyle experiences like travel and trips."] },
+  { p: "Crisis Management", q: "When an unexpected stressful situation occurs, how do you handle it mentally?", o: ["I get anxious and want to tackle the details instantly.", "I stay quiet, detach emotionally, and process it internally.", "I stay calm and look for structural ways to handle the pressure."] },
+  { p: "Leisure Speed", q: "What does an ideal, restoring weekend or vacation look like to you?", o: ["Busy schedules, visiting locations, and socializing.", "Quiet home relaxation, reading, sleeping, and low-key comfort.", "A mix of one organized activity paired with plenty of downtime."] },
+  { p: "Transparency and Privacy", q: "What level of privacy is healthy regarding personal devices like phones and accounts?", o: ["Complete transparency; zero password locks between each other.", "Private but accessible; we respect personal space unless reason arises.", "Absolute individual boundaries; separate personal devices and profiles."] },
+  { p: "Affection Styles", q: "How do you prefer to show and receive commitment security in everyday life?", o: ["Frequent physical touch, closeness, and regular verbal validation.", "Acts of service, picking up slack, and practical household help.", "Quality uninterrupted time, deep one-on-one focus, and shared experiences."] },
+  { p: "Ambition Levels", q: "How do you view long-term lifestyle improvement versus being content with what we have?", o: ["Always striving for growth, higher financial milestones, and tracking goals.", "Happy with a comfortable, secure standard of life without endless pressure.", "Fluid; changing priorities based on our life stage."] }
 ];
 
 /* =========================================================
-   DETAILED COMPATIBILITY PILLARS (COUPLES)
+   10 SUBTLE COVERT INTEGRITY SCENARIOS
 ========================================================= */
-const couplesQuizPillars = [
-  { cat: "Worldview & Core Values", q: "How do your foundational lifepaths and absolute moral framework indicators line up?", options: ["Absolute systemic alignment across all variables", "Minor operational variances but identical underlying values", "Significant philosophical friction vectors exist"] },
-  { cat: "Conflict & Repair Systems", q: "What is the primary action loop when an accidental boundary violation occurs?", options: ["Active, calm processing with fast accountability acceptance", "One party typically shuts down or runs avoidance patterns", "Escalating verbal volume or scorekeeping of historical disputes"] },
-  { cat: "Financial Infrastructure", q: "How do your long-term wealth deployment, risk tolerance, and spending priorities map out?", options: ["Identical outlooks on security boundaries and allocations", "Different spending parameters but managed via separate pools", "Frequent unvoiced friction regarding budget tracking control"] },
-  { cat: "Intimacy & Affection Space", q: "How well do your communication needs regarding closeness and emotional reassurance calibrate?", options: ["Natural harmony without explicit request load", "Different needs but handled through active compromise", "Consistent emotional distance tracking profiles"] },
-  { cat: "Autonomy & Boundaries", q: "How are personal privacy allocations (e.g., separate friendships, device boundaries) processed?", options: ["Complete mutual trust with relaxed individual spaces", "Managed spaces with occasional reassurance touchpoints", "High surveillance expectations or strict tracking requirements"] }
+const integrityScenarios = [
+  { q: "A food delivery arrives totally wrong after an hour wait. What is their instant default reaction?", o: [{ t: "They get visibly angry, complaining about total incompetence.", s: { v:4, e:1, p:1 } }, { t: "They call customer service calmly or let it go without making a scene.", s: { v:0, e:0, p:0 } }] },
+  { q: "They accidentally make a mistake at work that directly hurts a coworker's timeline. They will likely:", o: [{ t: "Explain why other factors or people caused them to make that mistake.", s: { v:1, e:4, p:2 } }, { t: "Own the mistake directly to the coworker and help clean it up.", s: { v:0, e:0, p:0 } }] },
+  { q: "A close friend shares an impressive personal win. Their underlying internal feeling is:", o: [{ t: "A slight competitive sting, minimizing it slightly or pivoting the conversation.", s: { v:0, e:3, p:3 } }, { t: "Pure celebration, offering authentic validation with zero comparison.", s: { v:0, e:0, p:0 } }] },
+  { q: "During a conversation, you point out a small, factually incorrect statement they made. They:", o: [{ t: "Argue their point intensely or get upset about being corrected over something small.", s: { v:3, e:3, p:1 } }, { t: "Laugh it off, accept the correction, or quickly move on with the talk.", s: { v:0, e:0, p:0 } }] },
+  { q: "When they are completely exhausted and stressed out, how do they treat family or retail workers?", o: [{ t: "They become snappy, impatient, or blunt, excusing it because they're tired.", s: { v:4, e:2, p:2 } }, { t: "They maintain polite, decent manners despite feeling depleted.", s: { v:0, e:0, p:0 } }] },
+  { q: "They commit to a helpful task for you, but an invite to a fun personal event pops up at the same time. They:", o: [{ t: "Try to find an excuse to rearrange your plans so they can attend the event.", s: { v:1, e:3, p:3 } }, { t: "Stick to their word and finish helping you first without guilt-tripping.", s: { v:0, e:0, p:0 } }] },
+  { q: "In past relationships or friendships that ended, how do they talk about their ex-partners?", o: [{ t: "They describe the other people as completely toxic, crazy, or entirely at fault.", s: { v:2, e:4, p:2 } }, { t: "They speak objectively, acknowledging mistakes made on both sides.", s: { v:0, e:0, p:0 } }] },
+  { q: "You share a vulnerable, anxious worry that seems minor to them. Their immediate response is:", o: [{ t: "Telling you you're overthinking it or trying to logically prove why you shouldn't worry.", s: { v:2, e:2, p:4 } }, { t: "Listening fully, comforting your feeling first before offering logic.", s: { v:0, e:0, p:0 } }] },
+  { q: "They lose a competitive game or miss out on a prize. What does their attitude look like?", o: [{ t: "They get quiet/moody, blame unfair rules, or complain about bad luck.", s: { v:3, e:3, p:1 } }, { t: "They shake it off, stay cheerful, and congratulate the winner sincerely.", s: { v:0, e:0, p:0 } }] },
+  { q: "When they apologize after an argument, their apologies sound like:", o: [{ t: "\"I'm sorry, but you wouldn't have reacted that way if you hadn't brought up the past.\"", s: { v:2, e:4, p:2 } }, { t: "\"I am sorry for how I spoke to you. It was wrong of me and I will fix it.\"", s: { v:0, e:0, p:0 } }] }
 ];
 
 /* =========================================================
-   CHARACTER INTEGRITY & VOLATILITY (PROXY SCREENER)
+   DYNAMIC DUAL-LINK SHARING & MATCH ALGORITHM
 ========================================================= */
-const screenerScenarios = [
-  { q: "An order arrives completely incorrect at a restaurant after a long wait. What is their instant unmasked behavior?", opts: [{ text: "Displays clear, sharp verbal anger, treating it as intentional incompetence.", s: { v: 4, e: 2, p: 1 } }, { text: "Addresses the error calmly with staff without escalating tension.", s: { v: 0, e: 0, p: 0 } }] },
-  { q: "They make a mistake at work that impacts a team member. When questioned privately, they choose to:", opts: [{ text: "Deflect accountability, highlighting the other person's past errors to balance it.", s: { v: 2, e: 4, p: 2 } }, { text: "Own the structural breakdown transparently and focus on systemic correction.", s: { v: 0, e: 0, p: 0 } }] },
-  { q: "A friend shares an impressive personal milestone. Their internal baseline response is:", opts: [{ text: "Feels an undercurrent of envy, minimizing it or steering attention back to themselves.", s: { v: 1, e: 3, p: 4 } }, { text: "Celebrates the milestone with genuine, non-competitive validation.", s: { v: 0, e: 0, p: 0 } }] }
-];
-
-/* =========================================================
-   LIVE BROADCAST SIMULATOR (P2P REALTIME ENGINE)
-========================================================= */
-let selectedHubGender = 'male';
-let monitorDataCache = null;
-
-function generateLiveTelemetryLink() {
-  selectedHubGender = document.getElementById('hub-gender-select').value;
-  const mockToken = "kd_" + Math.random().toString(36).substring(2, 9);
-  const path = `${window.location.origin}${window.location.pathname}?hsRole=target&hsGender=${selectedHubGender}&hsToken=${mockToken}`;
-  
-  document.getElementById('hub-link-input').value = path;
-  document.getElementById('hub-link-box').classList.remove('hidden');
-  
-  const status = document.getElementById('hub-stream-status');
-  status.textContent = "Listening for Target Pipeline...";
-  status.className = "text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-bold pulse-indicator";
-  
-  window.addEventListener('storage', processIncomingTelemetryStream);
-  localStorage.removeItem('kd_telemetry_stream');
-}
-
-function copyHubLink() {
-  const el = document.getElementById('hub-link-input');
-  el.select();
-  document.execCommand('copy');
-  alert("Live Tracking Link copied! Send this to your partner to view their responses live.");
-}
-
-function processIncomingTelemetryStream(e) {
-  if (e.key !== 'kd_telemetry_stream' || !e.newValue) return;
-  const streamPacket = JSON.parse(e.newValue).payload;
-  
-  document.getElementById('hub-stream-status').textContent = "Streaming Live Data Vector";
-  document.getElementById('hub-stream-status').className = "text-xs px-3 py-1 rounded-full bg-emerald-600 text-white font-bold pulse-indicator";
-  document.getElementById('hub-placeholder').classList.add('hidden');
-  document.getElementById('hub-stream-active').classList.remove('hidden');
-  
-  if (streamPacket.type === 'nav') {
-    document.getElementById('hub-live-q-text').textContent = streamPacket.q;
-    const bar = document.getElementById('hub-progress-bar');
-    const pct = Math.round((streamPacket.idx / streamPacket.total) * 100);
-    bar.style.width = pct + '%';
-    document.getElementById('hub-progress-text').textContent = pct + '%';
-    
-    const optsBox = document.getElementById('hub-live-options');
-    optsBox.innerHTML = '';
-    streamPacket.opts.forEach((o, i) => {
-      optsBox.innerHTML += `<div id="live-opt-card-${i}" class="p-3 text-xs rounded-xl border border-black/5 bg-white text-black/60 transition-all">${o}</div>`;
-    });
-  }
-  
-  if (streamPacket.type === 'select') {
-    const el = document.getElementById(`live-opt-card-${streamPacket.selected}`);
-    if (el) {
-      el.className = "p-3 text-xs rounded-xl border-2 border-[var(--coral)] bg-[var(--coral)]/5 text-[var(--coral-dark)] font-bold";
-    }
-  }
-  
-  if (streamPacket.type === 'end') {
-    monitorDataCache = streamPacket.scores;
-    document.getElementById('hub-stream-status').textContent = "Evaluation Processing Complete";
-    document.getElementById('hub-stream-status').className = "text-xs px-3 py-1 rounded-full bg-blue-600 text-white font-bold";
-    document.getElementById('hub-reveal-btn').classList.remove('hidden');
-  }
-}
-
-function revealLiveCalculatedReport() {
-  if (!monitorDataCache) return;
-  vAccumulator = Math.min(6, Math.round(monitorDataCache.bad * 1.5));
-  eAccumulator = monitorDataCache.bad * 2;
-  pAccumulator = Math.max(0, 8 - monitorDataCache.good);
-  presentScreenerCalculations();
-}
-
-/* =========================================================
-   TARGET EXECUTION FRAMEWORK
-========================================================= */
-let runnerIdx = 0;
-let runnerGender = 'male';
-let runnerScores = { bad: 0, good: 0 };
+let cpIndex = 0;
+let cpRole = 'A'; // 'A' = Initiator, 'B' = Responder
+let answersA = [];
+let answersB = [];
+let uniqueMatchId = '';
 
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('hsRole') === 'target') {
-    runnerGender = params.get('hsGender') || 'male';
-    goTo('target-runner');
-    initializeRunnerLoop();
+  if (params.get('matchId')) {
+    uniqueMatchId = params.get('matchId');
+    const patternData = localStorage.getItem('cp_raw_' + uniqueMatchId);
+    if (patternData) {
+      answersA = JSON.parse(patternData);
+      cpRole = 'B';
+      goTo('couples-quiz');
+      initCouplesQuizLoop();
+    } else {
+      alert("This link profile session expired or is invalid. Starting fresh initialization.");
+      goTo('home');
+    }
   }
+  
+  // Realtime multi-tab/device syncing listener via standard local storage conduit
+  window.addEventListener('storage', (e) => {
+    if (uniqueMatchId && e.key === 'cp_final_' + uniqueMatchId) {
+      const packaged = JSON.parse(e.newValue);
+      renderFinalMatchMetrics(packaged.a, packaged.b);
+    }
+  });
 });
 
-function initializeRunnerLoop() {
-  runnerIdx = 0;
-  runnerScores = { bad: 0, good: 0 };
-  renderRunnerState();
+function startCouplesQuiz() {
+  cpIndex = 0;
+  cpRole = 'A';
+  answersA = [];
+  answersB = [];
+  uniqueMatchId = 'mid_' + Math.random().toString(36).substring(2, 11);
+  goTo('couples-quiz');
+  initCouplesQuizLoop();
 }
 
-function renderRunnerState() {
-  const dataset = (runnerGender === 'male') ? bachelorScenarios : bacheloretteScenarios;
-  const current = dataset[runnerIdx];
-  
-  document.getElementById('runner-bar').style.width = ((runnerIdx / dataset.length) * 100) + '%';
-  document.getElementById('runner-counter').textContent = `Scenario ${runnerIdx + 1} of ${dataset.length}`;
-  document.getElementById('runner-cat').textContent = current.cat;
-  document.getElementById('runner-q-text').textContent = current.q;
-  
-  const container = document.getElementById('runner-options');
-  container.innerHTML = '';
-  
-  current.opts.forEach((o, i) => {
-    const btn = document.createElement('button');
-    btn.className = "card text-left p-4 rounded-xl text-xs font-semibold text-neutral-700 hover:border-[var(--forest)] transition cursor-pointer";
-    btn.textContent = o.text;
-    btn.onclick = () => submitRunnerInput(i, o.score);
-    container.appendChild(btn);
-  });
-  
-  transmitTelemetryPacket({
-    type: 'nav',
-    idx: runnerIdx,
-    total: dataset.length,
-    q: current.q,
-    opts: current.opts.map(opt => opt.text)
-  });
+function initCouplesQuizLoop() {
+  document.getElementById('cp-role-display').textContent = (cpRole === 'A') ? "Your Profile Questionnaire" : "Partner / Suitor Evaluation";
+  renderCouplesQuestion();
 }
 
-function submitRunnerInput(idx, score) {
-  transmitTelemetryPacket({ type: 'select', selected: idx });
-  runnerScores.bad += score.bad;
-  runnerScores.good += score.good;
+function renderCouplesQuestion() {
+  const current = marriageQuestions[cpIndex];
+  document.getElementById('cp-progress').style.width = ((cpIndex / marriageQuestions.length) * 100) + '%';
+  document.getElementById('cp-counter-display').textContent = `Question ${cpIndex + 1} of ${marriageQuestions.length}`;
+  document.getElementById('cp-question-text').textContent = current.q;
   
-  const dataset = (runnerGender === 'male') ? bachelorScenarios : bacheloretteScenarios;
-  if (runnerIdx + 1 < dataset.length) {
-    runnerIdx++;
-    setTimeout(renderRunnerState, 300);
-  } else {
-    transmitTelemetryPacket({ type: 'end', scores: runnerScores });
-    goTo('target-complete');
-  }
-}
-
-function transmitTelemetryPacket(payload) {
-  localStorage.setItem('kd_telemetry_stream', JSON.stringify({ payload: payload, clock: Date.now() }));
-}
-
-/* =========================================================
-   LOCAL COUPLES DUAL PIPELINE MACHINE
-========================================================= */
-let cpFlowIdx = 0;
-let cpActiveUserMode = 'A';
-let cpUserAnswersA = [];
-let cpUserAnswersB = [];
-
-function launchCouplesPipeline() {
-  cpFlowIdx = 0; cpActiveUserMode = 'A'; cpUserAnswersA = []; cpUserAnswersB = [];
-  document.getElementById('cp-intro').classList.add('hidden');
-  document.getElementById('cp-handover').classList.add('hidden');
-  document.getElementById('cp-flow-results').classList.add('hidden');
-  document.getElementById('cp-quiz').classList.remove('hidden');
-  renderCouplesFlowState();
-}
-
-function renderCouplesFlowState() {
-  const current = couplesQuizPillars[cpFlowIdx];
-  document.getElementById('cp-flow-bar').style.width = ((cpFlowIdx / couplesQuizPillars.length) * 100) + '%';
-  document.getElementById('cp-user-tag').textContent = `Partner ${cpActiveUserMode} Verification`;
-  document.getElementById('cp-flow-counter').textContent = `${cpFlowIdx + 1} of ${couplesQuizPillars.length}`;
-  document.getElementById('cp-flow-cat').textContent = current.cat;
-  document.getElementById('cp-flow-q').textContent = current.q;
-  
-  const box = document.getElementById('cp-flow-options');
+  const box = document.getElementById('cp-options-container');
   box.innerHTML = '';
   
-  current.options.forEach((o, idx) => {
+  current.o.forEach((optStr, idx) => {
     const btn = document.createElement('button');
-    btn.className = "card text-left p-4 rounded-xl text-sm font-medium hover:border-[var(--forest)] transition cursor-pointer";
-    btn.textContent = o;
-    btn.onclick = () => logCouplesFlowAnswer(idx);
+    btn.className = "card text-left p-4 rounded-xl text-xs sm:text-sm font-medium hover:border-[var(--forest)] hover:bg-[var(--sand)]/10 transition cursor-pointer";
+    btn.textContent = optStr;
+    btn.onclick = () => logCouplesChoice(idx);
     box.appendChild(btn);
   });
 }
 
-function logCouplesFlowAnswer(val) {
-  if (cpActiveUserMode === 'A') cpUserAnswersA.push(val); else cpUserAnswersB.push(val);
-  
-  if (cpFlowIdx + 1 < couplesQuizPillars.length) {
-    cpFlowIdx++;
-    renderCouplesFlowState();
+function logCouplesChoice(chosenIdx) {
+  if (cpRole === 'A') {
+    answersA.push(chosenIdx);
   } else {
-    if (cpActiveUserMode === 'A') {
-      document.getElementById('cp-quiz').classList.add('hidden');
-      document.getElementById('cp-handover').classList.remove('hidden');
+    answersB.push(chosenIdx);
+  }
+  
+  if (cpIndex + 1 < marriageQuestions.length) {
+    cpIndex++;
+    renderCouplesQuestion();
+  } else {
+    if (cpRole === 'A') {
+      localStorage.setItem('cp_raw_' + uniqueMatchId, JSON.stringify(answersA));
+      const matchLink = `${window.location.origin}${window.location.pathname}?matchId=${uniqueMatchId}`;
+      document.getElementById('share-link-input').value = matchLink;
+      goTo('couples-share');
     } else {
-      processFinalCouplesCalibration();
+      localStorage.setItem('cp_final_' + uniqueMatchId, JSON.stringify({ a: answersA, b: answersB }));
+      renderFinalMatchMetrics(answersA, answersB);
     }
   }
 }
 
-function launchPartnerBPipeline() {
-  cpFlowIdx = 0;
-  cpActiveUserMode = 'B';
-  document.getElementById('cp-handover').classList.add('hidden');
-  document.getElementById('cp-quiz').classList.remove('hidden');
-  renderCouplesFlowState();
+function copyShareLink() {
+  const inp = document.getElementById('share-link-input');
+  inp.select();
+  document.execCommand('copy');
+  alert("Link Copied! Send it to your partner or suitor now.");
 }
 
-function processFinalCouplesCalibration() {
-  document.getElementById('cp-quiz').classList.add('hidden');
-  document.getElementById('cp-flow-results').classList.remove('hidden');
+function renderFinalMatchMetrics(arrA, arrB) {
+  goTo('couples-results');
   
-  let structuralMatchHits = 0;
-  let breakdownHTML = '';
+  let matchHits = 0;
+  let pillarScores = {};
   
-  couplesQuizPillars.forEach((p, idx) => {
-    const ansA = cpUserAnswersA[idx];
-    const ansB = cpUserAnswersB[idx];
-    const delta = Math.abs(ansA - ansB);
+  marriageQuestions.forEach((qObj, index) => {
+    const valA = arrA[index];
+    const valB = arrB[index];
+    const distance = Math.abs(valA - valB);
     
-    let stateLabel = "Variance Matrix Tension Identified";
-    let colorClass = "bg-[var(--coral)]";
+    let scoreEarned = 0;
+    if (distance === 0) scoreEarned = 100;
+    else if (distance === 1) scoreEarned = 50;
     
-    if (delta === 0) { stateLabel = "Perfect Architecture Sync"; colorClass = "bg-[var(--forest)]"; structuralMatchHits += 20; }
-    else if (delta === 1) { stateLabel = "Acceptable Functional Convergence"; colorClass = "bg-[var(--gold)]"; structuralMatchHits += 12; }
+    if(!pillarScores[qObj.p]) {
+      pillarScores[qObj.p] = { total: 0, items: 0 };
+    }
+    pillarScores[qObj.p].total += scoreEarned;
+    pillarScores[qObj.p].items += 1;
     
-    breakdownHTML += `
-      <div class="card rounded-xl p-4 space-y-1">
-        <div class="flex justify-between items-center text-xs font-bold">
-          <span>${p.cat}</span>
-          <span class="text-white px-2 py-0.5 rounded-full ${colorClass}">${stateLabel}</span>
-        </div>
-        <p class="text-xs text-black/60 pt-1">${p.q}</p>
-      </div>`;
+    matchHits += scoreEarned;
   });
   
-  document.getElementById('cp-res-pct').textContent = structuralMatchHits + '%';
-  document.getElementById('cp-res-breakdown').innerHTML = breakdownHTML;
+  const finalPercentage = Math.round(matchHits / marriageQuestions.length);
+  document.getElementById('final-match-pct').textContent = finalPercentage + '%';
   
-  let summaryText = "Gaps spotted across your primary communication vectors. These alignment paths indicate an ideal baseline to prioritize deep conversational exploration.";
-  if (structuralMatchHits >= 80) summaryText = "Excellent systemic compatibility indicators detected across major developmental archetypes. Your baseline communication strategies match perfectly.";
-  document.getElementById('cp-res-summary').textContent = summaryText;
+  let feedback = "Significant foundational lifestyle differences noted. Focus your upcoming conversations heavily on resolving these specific breakdown categories before committing.";
+  if (finalPercentage >= 75) feedback = "Excellent matching scores! Your daily operational habits, family lifestyle structures, and long-term values show high harmony potential.";
+  else if (finalPercentage >= 50) feedback = "Moderate, workable compatibility match. You sync well on key issues but have structural alignment differences that require explicit compromise.";
+  
+  document.getElementById('final-match-summary').textContent = feedback;
+  
+  const container = document.getElementById('pillar-results-box');
+  container.innerHTML = '';
+  
+  for (const pillar in pillarScores) {
+    const avg = Math.round(pillarScores[pillar].total / pillarScores[pillar].items);
+    let color = "bg-[var(--coral)]";
+    if (avg >= 75) color = "bg-[var(--forest)]";
+    else if (avg >= 50) color = "bg-amber-500";
+    
+    container.innerHTML += `
+      <div class="p-3 bg-neutral-50 rounded-xl border border-black/5">
+        <div class="flex justify-between text-xs font-semibold mb-1">
+          <span>${pillar} Compatibility</span>
+          <span>${avg}%</span>
+        </div>
+        <div class="w-full h-1.5 bg-black/5 rounded-full overflow-hidden">
+          <div class="h-full ${color}" style="width:${avg}%"></div>
+        </div>
+      </div>`;
+  }
 }
 
 /* =========================================================
-   INTEGRITY CHARACTER SCREENER MANAGEMENT
+   CHARACTER INTEGRITY TESTING LOGIC
 ========================================================= */
-let scIdx = 0;
-let vAccumulator = 0, eAccumulator = 0, pAccumulator = 0;
+let scIndex = 0;
+let scV = 0, scE = 0, scP = 0;
 
 function startScreenerQuiz() {
-  scIdx = 0; vAccumulator = 0; eAccumulator = 0; pAccumulator = 0;
-  document.getElementById('page-screener-intro').classList.remove('active');
+  scIndex = 0; scV = 0; scE = 0; scP = 0;
   goTo('screener-quiz');
   renderScreenerState();
 }
 
 function renderScreenerState() {
-  const current = screenerScenarios[scIdx];
-  document.getElementById('sc-bar').style.width = ((scIdx / screenerScenarios.length) * 100) + '%';
-  document.getElementById('sc-q-text').textContent = current.q;
+  const current = integrityScenarios[scIndex];
+  document.getElementById('sc-progress').style.width = ((scIndex / integrityScenarios.length) * 100) + '%';
+  document.getElementById('sc-counter').textContent = `Situation ${scIndex + 1} of ${integrityScenarios.length}`;
+  document.getElementById('sc-question-text').textContent = current.q;
   
-  const container = document.getElementById('sc-options');
-  container.innerHTML = '';
+  const box = document.getElementById('sc-options-container');
+  box.innerHTML = '';
   
-  current.opts.forEach(o => {
+  current.o.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = "card text-left p-4 rounded-xl text-sm font-medium hover:border-[var(--coral)] transition cursor-pointer";
-    btn.textContent = o.text;
+    btn.className = "card text-left p-4 rounded-xl text-xs sm:text-sm font-medium hover:border-[var(--coral)] hover:bg-[var(--coral)]/5 transition cursor-pointer";
+    btn.textContent = opt.t;
     btn.onclick = () => {
-      vAccumulator += o.s.v; eAccumulator += o.s.e; pAccumulator += o.s.p;
-      if (scIdx + 1 < screenerScenarios.length) { scIdx++; renderScreenerState(); }
-      else { presentScreenerCalculations(); }
+      scV += opt.s.v; scE += opt.s.e; scP += opt.s.p;
+      if (scIndex + 1 < integrityScenarios.length) {
+        scIndex++;
+        renderScreenerState();
+      } else {
+        processScreenerReport();
+      }
     };
-    container.appendChild(btn);
+    box.appendChild(btn);
   });
 }
 
-function presentScreenerCalculations() {
-  let vPct = Math.min(100, Math.round((vAccumulator / 7) * 100));
-  let ePct = Math.min(100, Math.round((eAccumulator / 9) * 100));
-  let pPct = Math.min(100, Math.round((pAccumulator / 7) * 100));
-  
-  document.getElementById('v-score-txt').textContent = vPct + '%';
-  document.getElementById('v-score-bar').style.width = vPct + '%';
-  document.getElementById('e-score-txt').textContent = ePct + '%';
-  document.getElementById('e-score-bar').style.width = ePct + '%';
-  document.getElementById('p-score-txt').textContent = pPct + '%';
-  document.getElementById('p-score-bar').style.width = pPct + '%';
-  
-  let note = "Stable baseline integration records verified. The underlying personality vector displays healthy adaptive accountability traits and structured interpersonal emotional control frameworks.";
-  if (vPct > 45 || ePct > 45 || pPct > 45) {
-    note = "⚠️ CRITICAL CHARACTER ALERT: Structural metrics show significant deflection, high baseline scorekeeping markers, or underlying empathy resistance. Further unmasked evaluation is strongly advised.";
-  }
-  
-  document.getElementById('sc-summary-box').textContent = note;
+function processScreenerReport() {
   goTo('screener-results');
+  
+  // Normalized metrics based on the answer payload configurations
+  let vPct = Math.min(100, Math.round((scV / 24) * 100));
+  let ePct = Math.min(100, Math.round((scE / 27) * 100));
+  let pPct = Math.min(100, Math.round((scP / 21) * 100));
+  
+  document.getElementById('v-txt').textContent = vPct + '%';
+  document.getElementById('v-bar').style.width = vPct + '%';
+  document.getElementById('e-txt').textContent = ePct + '%';
+  document.getElementById('e-bar').style.width = ePct + '%';
+  document.getElementById('p-txt').textContent = pPct + '%';
+  document.getElementById('p-bar').style.width = pPct + '%';
+  
+  let reportNote = "Healthy interpersonal baseline configuration. Profile demonstrates dependable accountability indicators, balanced temper controls, and solid conversational validation habits.";
+  if(vPct > 40 || ePct > 40 || pPct > 40) {
+    reportNote = "⚠️ CHARACTER ALERT FLAGS: Elevated trends detected in blame-shifting, high defensive scorekeeping, or volatile frustration triggers. We advise observing their reactions to unexpected stress closely.";
+  }
+  document.getElementById('sc-summary-text').textContent = reportNote;
 }
 
 /* =========================================================
-   SUPPORT CONTEXT CHAT SIMULATOR
+   COMPANION CHAT SYSTEM
 ========================================================= */
-let chatActivated = false;
-function runChatInit() {
-  chatActivated = true;
+let chatLoaded = false;
+function initChatSystem() {
+  chatLoaded = true;
   const box = document.getElementById('chat-box');
-  box.innerHTML = `<div class="p-3 rounded-xl bg-[var(--sand)] text-neutral-800 mr-auto max-w-[85%]">Welcome to Kindred. I'm a private self-reflection sandbox. How can I help map out your feelings today?</div>`;
+  box.innerHTML = `<div class="p-3 rounded-xl bg-[var(--sand)] text-neutral-800 mr-auto max-w-[85%]">Hi there! This is your completely private workspace. What values, goals, or personality requirements are you focusing on most for marriage matching?</div>`;
 }
 
-document.getElementById('chat-entry-form').addEventListener('submit', (e) => {
+document.getElementById('chat-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const input = document.getElementById('chat-msg-input');
-  const val = input.value.trim();
-  if(!val) return;
+  const input = document.getElementById('chat-input');
+  const txt = input.value.trim();
+  if(!txt) return;
   
   const box = document.getElementById('chat-box');
-  box.innerHTML += `<div class="p-3 rounded-xl bg-[var(--forest)] text-white ml-auto max-w-[85%]">${val}</div>`;
+  box.innerHTML += `<div class="p-3 rounded-xl bg-[var(--forest)] text-white ml-auto max-w-[85%]">${txt}</div>`;
   input.value = '';
   
   setTimeout(() => {
-    box.innerHTML += `<div class="p-3 rounded-xl bg-[var(--sand)] text-neutral-800 mr-auto max-w-[85%]">Thank you for sharing that with me. Processing your emotional perspective can provide invaluable insights as you navigate your relationships.</div>`;
+    box.innerHTML += `<div class="p-3 rounded-xl bg-[var(--sand)] text-neutral-800 mr-auto max-w-[85%]">That is incredibly important to map out clearly. Reflecting on these traits intentionally is exactly how you protect your peace and make a well-aligned choice.</div>`;
     box.scrollTop = box.scrollHeight;
-  }, 600);
+  }, 500);
 });
 </script>
 </body>
