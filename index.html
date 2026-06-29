@@ -4,121 +4,94 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kindred — Understand Yourself, Understand Each Other</title>
-<meta name="description" content="A warm, judgment-free space to talk things through, discover your personality type, and check in on your relationship — in plain, everyday language." />
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --forest-dark:#1d3a31; --coral:#e2684a; --coral-dark:#c8533a; --sand:#efe5d3; --gold:#be9a4d; }
-  body{ background:var(--canvas); color:var(--ink); font-family:'Inter',sans-serif; }
-  .font-display{ font-family:'Fraunces',serif; }
-  .page{ display:none; } .page.active{ display:block; }
-  .card{ background:#fff; border:1px solid rgba(35,39,31,0.08); box-shadow: 0 1px 2px rgba(35,39,31,0.04); }
-  .btn-primary{ background:var(--coral); color:#fff; font-weight:600; transition: transform .15s ease; }
-  .btn-primary:hover{ background:var(--coral-dark); transform: translateY(-1px); }
-  .bar-fill{ transition: width .6s ease; }
-  .active-option{ background:var(--sand) !important; border-color:var(--forest) !important; }
+  :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --coral:#e2684a; }
+  body{ background:var(--canvas); color:var(--ink); font-family:sans-serif; }
+  .page{ display:none; }
+  .page.active{ display:block; }
+  .btn-primary{ background:var(--coral); color:#fff; padding:12px 24px; border-radius:9999px; font-weight:600; }
+  .card{ background:#fff; border:1px solid rgba(0,0,0,0.1); padding:16px; border-radius:12px; }
 </style>
 </head>
-<body class="antialiased">
+<body>
 
-<header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf7f1]/90 border-b border-black/5">
-  <nav class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-    <button onclick="goTo('home')" class="font-display text-xl font-semibold text-[var(--forest)]">🌿 Kindred</button>
-    <div class="flex items-center gap-7 text-sm font-medium">
-      <button onclick="goTo('personality')" class="hover:text-[var(--coral)]">Deep Insight</button>
-      <button onclick="goTo('couples')" class="hover:text-[var(--coral)]">Couples Check-in</button>
+<!-- NAVIGATION -->
+<nav class="p-5 flex gap-5 font-bold">
+  <button onclick="goTo('home')">Home</button>
+  <button onclick="goTo('chat')">Chatbot</button>
+  <button onclick="goTo('personality')">Personality Quiz</button>
+  <button onclick="goTo('tricky')">Tricky Quiz</button>
+</nav>
+
+<main class="p-5">
+  <!-- HOME -->
+  <section id="page-home" class="page active"><h1>Welcome to Kindred</h1></section>
+
+  <!-- CHATBOT -->
+  <section id="page-chat" class="page"><div id="chat-window" class="h-64 border p-4"></div></section>
+
+  <!-- PERSONALITY QUIZ -->
+  <section id="page-personality" class="page"><h1>Personality Quiz</h1></section>
+
+  <!-- TRICKY QUIZ -->
+  <section id="page-tricky" class="page">
+    <div id="tricky-intro">
+      <h1 class="text-2xl mb-4">The Tricky Quiz</h1>
+      <button onclick="startTricky()" class="btn-primary">Start Quiz</button>
     </div>
-  </nav>
-</header>
-
-<main id="page-home" class="page active max-w-4xl mx-auto p-6 pt-12">
-  <h1 class="font-display text-5xl mb-8">Reflect on the patterns.</h1>
-  <div class="grid md:grid-cols-2 gap-6">
-    <button onclick="goTo('personality')" class="card p-8 rounded-2xl text-left hover:shadow-lg transition">
-      <h2 class="font-display text-2xl mb-2">Deep Insight Assessment</h2>
-      <p class="text-black/60">15 scenarios probing for ego, empathy, and social utility.</p>
-    </button>
-    <button onclick="goTo('couples')" class="card p-8 rounded-2xl text-left hover:shadow-lg transition">
-      <h2 class="font-display text-2xl mb-2">Couples Compatibility</h2>
-      <p class="text-black/60">15 scenarios probing for conflict, trust, and alignment.</p>
-    </button>
-  </div>
+    <div id="tricky-quiz" class="hidden">
+      <h2 id="tricky-question" class="text-xl mb-4"></h2>
+      <div id="tricky-options" class="grid gap-2"></div>
+    </div>
+    <div id="tricky-result" class="hidden">
+      <h2 id="tricky-score"></h2>
+      <button onclick="startTricky()" class="btn-primary mt-4">Try Again</button>
+    </div>
+  </section>
 </main>
 
-<section id="page-personality" class="page max-w-2xl mx-auto p-6">
-  <button onclick="goTo('home')" class="text-sm opacity-60 mb-6">← Back home</button>
-  <h1 class="font-display text-3xl mb-6">Deep Insight Assessment</h1>
-  <div id="p-container"></div>
-</section>
-
-<section id="page-couples" class="page max-w-2xl mx-auto p-6">
-  <button onclick="goTo('home')" class="text-sm opacity-60 mb-6">← Back home</button>
-  <h1 class="font-display text-3xl mb-6">Couples Compatibility</h1>
-  <div id="c-container"></div>
-</section>
-
 <script>
-const pQs = [
-    {q:"You win a project award. Do you:", a:"Let people think you were the 'mastermind' because it opens more doors.", b:"Ensure the team knows I value their specific 'behind-the-scenes' work equally."},
-    {q:"The Critique Reflex: Someone points out a mistake you made. Your first internal urge is:", a:"To find a flaw in their argument to immediately 'neutralize' the criticism.", b:"To honestly check if they’re right, even if it's uncomfortable."},
-    {q:"The Social Battery: Being in a room where no one knows your status makes you feel:", a:"Slightly restless or 'invisible'.", b:"Relaxed—it’s refreshing not to have to 'perform'."},
-    {q:"The Favor: You help someone. What makes the act feel 'complete'?", a:"Knowing I’ve built a solid ally who will owe me.", b:"The feeling that I’ve actually relieved their burden."},
-    {q:"The Rule-Breaker: A small, inefficient rule stands in your way. You:", a:"Circumvent it—rules are just suggestions.", b:"Follow it—the system keeps things fair."},
-    {q:"The Conflict Pivot: If you are losing an argument, you tend to:", a:"Pivot to the other person's character to shift the focus.", b:"Stop and ask, 'Are we actually arguing about the same thing?'"},
-    {q:"The 'Boring' Person: You label someone as 'not worth my time' if:", a:"They don't have anything to offer me (utility/status).", b:"They are dishonest or unkind."},
-    {q:"The Emotional Leak: You see someone sobbing in public. You:", a:"Feel awkward/irritated by the intrusion.", b:"Feel an automatic, physical sense of concern."},
-    {q:"The 'Special' Feeling: Do you feel you are destined for something significantly better than the 'average' life?", a:"Yes, that's my baseline expectation.", b:"No, I believe a simple, meaningful life is a great goal."},
-    {q:"The Mirroring: When meeting someone new, you:", a:"Adjust your 'vibe' to match them so they like you instantly.", b:"Stay consistent, hoping they like who you actually are."},
-    {q:"The Remorse Test: You accidentally hurt someone. The part that bothers you most is:", a:"That they might think less of me now.", b:"That they are in actual pain."},
-    {q:"The Power Vacuum: You enter a new group. You:", a:"Map who the 'real' leader is to leverage them.", b:"Look for people you feel comfortable talking to."},
-    {q:"The Vulnerability Test: Sharing your deep insecurities feels like:", a:"Giving them a weapon they could use against me.", b:"A necessary risk to build real trust."},
-    {q:"The Boredom Trap: You are in a situation that no longer serves your goals. You:", a:"Cut ties cleanly and move on.", b:"Feel loyalty and try to see if the bond can evolve."},
-    {q:"The 'Game' Mentality: Life feels mostly like:", a:"A competition where there are winners and losers.", b:"A community where the goal is mutual well-being."}
+/* NAVIGATION */
+function goTo(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+}
+
+/* TRICKY QUIZ LOGIC */
+const trickyQuestions = [
+  {q: "If you have 3 apples and you take away 2, how many apples do you have?", options: ["1", "2", "3"], correct: 1},
+  {q: "What is always coming but never arrives?", options: ["Tomorrow", "The future", "Yesterday"], correct: 0}
 ];
 
-const cQs = [
-    {q:"The Late-Night Fight: You are exhausted and arguing. You:", a:"Withdraw/shut down to protect your 'inner peace'.", b:"Focus on staying present to hear their hurt."},
-    {q:"The Public Silliness: Your partner tells a story that makes you look 'silly'. You:", a:"Call them out to protect your image.", b:"Let it go; their intent wasn't malicious."},
-    {q:"The Decision: Your partner makes a decision for you both without asking. You:", a:"'Correct' them by making a unilateral decision yourself.", b:"Set a boundary: 'Let's talk about how we decide together.'"},
-    {q:"The 'Scorecard': When your partner fails you, do you:", a:"Store it away for a future argument.", b:"Address, process, and clear it from your memory."},
-    {q:"The Support: Your partner is spiraling. You:", a:"Give a 'logic fix' to stop the noise.", b:"Just sit there and hold space."},
-    {q:"The Growth Gap: You are advancing; they are coasting. You:", a:"Secretly feel they are a weight holding you back.", b:"Encourage them but focus on your own path."},
-    {q:"The Chore Strike: You feel they aren't doing their share. You:", a:"Stop doing your share to 'show them'.", b:"Ask for a calm, neutral meeting to divide tasks."},
-    {q:"The Attraction: You feel attracted to an outsider. You:", a:"Keep it a secret and enjoy the thrill.", b:"Create distance to protect your commitment."},
-    {q:"The Future Vision: Your partner wants a life you don't. You:", a:"Expect them to eventually 'see reason' and follow your plan.", b:"Have a hard talk about whether your paths still align."},
-    {q:"The Vulnerability: Your partner sees you at your worst. You:", a:"Feel ashamed and push them away.", b:"Feel relieved that someone finally knows the 'real' you."},
-    {q:"The Family Jab: Their family is passive-aggressive to you. You:", a:"Take it out on your partner later.", b:"Discuss how to be a 'united front' together."},
-    {q:"The 'Empty' Season: Your partner is in a low-intimacy phase. You:", a:"Check out and look for validation elsewhere.", b:"Stay the course and support them."},
-    {q:"The Financial Dispute: They want to take a 'risk' with savings. You:", a:"Dig your heels in to protect 'my' security.", b:"Try to find the middle ground."},
-    {q:"The Rejection: They turn down intimacy. You:", a:"Feel an immediate need to 'punish' them with distance.", b:"Assume they are tired and try again another time."},
-    {q:"The Conflict Core: At the end of the day, is the relationship about:", a:"Two people maximizing their own happiness?", b:"Two people building a foundation that helps them both grow?"}
-];
+let tIndex = 0, tScore = 0;
 
-function goTo(page){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById('page-'+page).classList.add('active');
+function startTricky(){
+  tIndex = 0; tScore = 0;
+  document.getElementById('tricky-intro').classList.add('hidden');
+  document.getElementById('tricky-result').classList.add('hidden');
+  document.getElementById('tricky-quiz').classList.remove('hidden');
+  renderTricky();
 }
 
-function render(arr, id){
-    const cont = document.getElementById(id);
-    arr.forEach((item, i) => {
-        cont.innerHTML += `<div class='card p-5 rounded-xl mb-4'>
-            <p class='mb-4 font-semibold text-lg'>${i+1}. ${item.q}</p>
-            <button class='w-full text-left p-4 border rounded-xl mb-3 hover:bg-[var(--sand)] transition' onclick='select(this)'>${item.a}</button>
-            <button class='w-full text-left p-4 border rounded-xl hover:bg-[var(--sand)] transition' onclick='select(this)'>${item.b}</button>
-        </div>`;
-    });
+function renderTricky(){
+  const q = trickyQuestions[tIndex];
+  document.getElementById('tricky-question').textContent = q.q;
+  document.getElementById('tricky-options').innerHTML = q.options.map((opt, i) => `
+    <button class="card" onclick="answerTricky(${i})">${opt}</button>
+  `).join('');
 }
 
-function select(btn){
-    btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active-option'));
-    btn.classList.add('active-option');
+function answerTricky(index){
+  if(index === trickyQuestions[tIndex].correct) tScore++;
+  tIndex++;
+  if(tIndex < trickyQuestions.length) renderTricky();
+  else {
+    document.getElementById('tricky-quiz').classList.add('hidden');
+    document.getElementById('tricky-result').classList.remove('hidden');
+    document.getElementById('tricky-score').textContent = `You scored ${tScore} out of ${trickyQuestions.length}.`;
+  }
 }
-
-render(pQs, 'p-container');
-render(cQs, 'c-container');
 </script>
 </body>
 </html>
