@@ -111,7 +111,7 @@
     <div class="hidden md:flex items-center gap-7 text-sm font-medium">
       <button data-nav="chat" onclick="goTo('chat')" class="nav-link hover:text-[var(--coral)] transition">Talk it out</button>
       <button data-nav="personality" onclick="goTo('personality')" class="nav-link hover:text-[var(--coral)] transition">Know your type</button>
-      <button data-nav="ego" onclick="goTo('ego')" class="nav-link hover:text-[var(--coral)] transition">Ego & Self-Check</button>
+      <button data-nav="ego" onclick="goTo('ego')" class="nav-link hover:text-[var(--coral)] transition">Ego & Blindspots</button>
       <button data-nav="couples" onclick="goTo('couples')" class="nav-link hover:text-[var(--coral)] transition">Couples check-in</button>
     </div>
     <button onclick="goTo('chat')" class="btn-primary text-sm px-4 py-2 rounded-full">Start a chat</button>
@@ -195,15 +195,15 @@
       <button onclick="goTo('ego')" class="card reveal rounded-2xl p-6 text-left hover:-translate-y-1 transition flex flex-col justify-between">
         <div>
           <div class="w-11 h-11 rounded-full grid place-items-center text-xl mb-4" style="background:var(--sand)">🪞</div>
-          <p class="font-display text-xl mb-2">Ego & Self-Check</p>
-          <p class="text-black/65 text-sm">A gentle, highly private screening for narcissism and ego balance to help understand your blind spots honestly.</p>
+          <p class="font-display text-xl mb-2">Ego & Blindspots</p>
+          <p class="text-black/65 text-sm">A highly tactical, un-fakeable scenario assessment looking at how your ego processes control, status, and validation loops.</p>
         </div>
       </button>
       <button onclick="goTo('couples')" class="card reveal rounded-2xl p-6 text-left hover:-translate-y-1 transition flex flex-col justify-between">
         <div>
           <div class="w-11 h-11 rounded-full grid place-items-center text-xl mb-4" style="background:var(--sand)">💞</div>
           <p class="font-display text-xl mb-2">Couples check-in</p>
-          <p class="text-black/65 text-sm">A compatibility check across money, family, conflict, goals & closeness — with real conversation starters.</p>
+          <p class="text-black/65 text-sm">A split-link compatibility check covering raw realities like friction points, vulnerability thresholds, and life paths.</p>
         </div>
       </button>
     </div>
@@ -262,16 +262,16 @@
   </div>
 </section>
 
-<!-- =================== NARCISSISM SCREENING (EGO & SELF-CHECK) PAGE =================== -->
+<!-- =================== EGO & BLINDSPOTS (SUBTLE NARCISSISM SCREENING) =================== -->
 <section id="page-ego" class="page">
   <div class="max-w-3xl mx-auto px-5 sm:px-8 py-10">
     <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
 
     <div id="ego-intro">
-      <h1 class="font-display text-3xl mb-2">Ego & Self-Check</h1>
-      <p class="text-black/65 mb-4">A gentle, private tool to evaluate how you manage your sense of self, boundaries, and validation needs. It screens for narcissistic traits like entitlement, admiration-seeking, and defensive reactivity.</p>
-      <p class="text-black/55 text-sm mb-6">Answer as transparently as possible. This feedback is totally confidential and completely localized to your own browser window.</p>
-      <button onclick="startEgo()" class="btn-primary px-6 py-3 rounded-full">Start the self-check</button>
+      <h1 class="font-display text-3xl mb-2">Ego & Blindspots</h1>
+      <p class="text-black/65 mb-4">How does your mind navigate social status, dynamic control, and daily validation? This assessment evaluates traits using hidden-metric behavioral scenarios where a "correct" answer is intentionally non-obvious.</p>
+      <p class="text-black/55 text-sm mb-6">To find out your accurate patterns, select the alternative that naturally registers with your instant default impulse—not what sounds ideal.</p>
+      <button onclick="startEgo()" class="btn-primary px-6 py-3 rounded-full">Begin the assessment</button>
     </div>
 
     <div id="ego-quiz" class="hidden">
@@ -279,7 +279,7 @@
         <div id="ego-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--gold)"></div>
       </div>
       <p id="ego-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold mb-3"></p>
-      <h2 id="ego-question" class="font-display text-2xl mb-6 text-balance"></h2>
+      <h2 id="ego-question" class="font-display text-xl mb-6 text-balance font-medium"></h2>
       <div class="grid gap-3" id="ego-options"></div>
     </div>
 
@@ -292,20 +292,50 @@
   <div class="max-w-3xl mx-auto px-5 sm:px-8 py-10">
     <button onclick="goTo('home')" class="text-sm text-black/50 hover:text-black mb-4">← Back home</button>
 
+    <!-- STEP 1: INITIAL STATE CHOICE -->
     <div id="cp-intro">
-      <h1 class="font-display text-3xl mb-2">Couples check-in</h1>
-      <p class="text-black/65 mb-3">15 honest questions about money, family, conflict, future goals, and closeness — the real things that make or break a marriage. Answer based on how things actually are between you two right now.</p>
-      <p class="text-black/55 text-sm mb-6">Best done together, out loud, with your partner next to you. There's no passing or failing — only conversations worth having.</p>
-      <button onclick="startCP()" class="btn-primary px-6 py-3 rounded-full">Start the check-in</button>
+      <h1 class="font-display text-3xl mb-2">Couples Check-in</h1>
+      <p class="text-black/65 mb-6">A deep relationship assessment focusing on core friction points, hidden thresholds, and life paths. To capture true alignment, partners answer individually on their own screens. Once both complete it, your exact matching profile unlocks.</p>
+      
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div class="card p-5 rounded-xl flex flex-col justify-between">
+          <div>
+            <h3 class="font-semibold text-lg mb-1" style="color:var(--forest)">Start Fresh</h3>
+            <p class="text-xs text-black/60 mb-4">Choose this if you are the first partner initiating this check-in session.</p>
+          </div>
+          <button onclick="initiatePartnerSession(1)" class="btn-primary px-4 py-2.5 rounded-full text-xs">I am Partner 1</button>
+        </div>
+        <div class="card p-5 rounded-xl flex flex-col justify-between">
+          <div>
+            <h3 class="font-semibold text-lg mb-1" style="color:var(--coral)">Resume / Link Partner</h3>
+            <p class="text-xs text-black/60 mb-4">Choose this if your partner already finished and gave you an answer code.</p>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="partner-code-input" placeholder="Paste code here..." class="border border-black/15 text-xs px-3 py-2 rounded-xl flex-1 focus:outline-none focus:ring-2 focus:ring-[var(--forest)]" />
+            <button onclick="initiatePartnerSession(2)" class="btn-ghost px-4 py-2 rounded-xl text-xs">Load</button>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- LINK GENERATION SCREEN -->
+    <div id="cp-link-screen" class="hidden text-center max-w-md mx-auto py-8">
+      <div class="w-16 h-16 bg-[var(--sand)] text-2xl rounded-full grid place-items-center mx-auto mb-4">🔗</div>
+      <h2 class="font-display text-2xl mb-2">Your part is complete!</h2>
+      <p class="text-sm text-black/65 mb-6">Copy the localized dataset string below and pass it along to your partner. When they enter it on their device, your true compatibility metrics match up instantly.</p>
+      <div class="bg-black/5 p-3 rounded-xl font-mono text-xs break-all select-all mb-4 text-left border border-black/10" id="cp-generated-string"></div>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('cp-generated-string').textContent); alert('Copied code to clipboard!');" class="btn-primary px-5 py-2.5 rounded-full text-xs mb-4">Copy Session Data String</button>
+      <p class="text-xs text-black/40">Keep this tab open, or return when you have your partner's resulting string to sync up completely.</p>
+    </div>
+
+    <!-- MAIN QUIZ INTERFACE -->
     <div id="cp-quiz" class="hidden">
       <div class="w-full h-2 rounded-full bg-black/10 mb-6 overflow-hidden">
         <div id="cp-bar" class="h-full bar-fill rounded-full" style="width:0%; background:var(--forest)"></div>
       </div>
       <p id="cp-counter" class="text-xs uppercase tracking-widest text-black/45 font-semibold mb-1"></p>
       <p id="cp-category" class="text-xs font-semibold mb-3" style="color:var(--coral)"></p>
-      <h2 id="cp-question" class="font-display text-2xl mb-6 text-balance"></h2>
+      <h2 id="cp-question" class="font-display text-xl mb-6 text-balance font-medium"></h2>
       <div class="grid gap-3" id="cp-options"></div>
     </div>
 
@@ -550,7 +580,7 @@ const TYPES = {
   ESTJ:{name:"The Director", sum:"Organized and decisive — you make things happen and expect follow-through.", strengths:"Dependable leader. Gets things done.", challenge:"Can be rigid or overly blunt.", love:"You love by building a stable, well-run life together and showing up reliably.", tip:"Letting your person do things their own way (not just your way) builds trust."},
   ESFJ:{name:"The Host", sum:"Warm and socially attuned — you make sure everyone around you feels cared for.", strengths:"Generous host. Strong sense of duty.", challenge:"Can seek approval too much.", love:"You love through care, hospitality, and remembering what matters to people.", tip:"You're allowed to need care too, not just give it."},
   ENFJ:{name:"The Mentor", sum:"Charismatic and caring — you naturally bring out the best in people.", strengths:"Inspiring. Genuinely invested in others' growth.", challenge:"Can neglect your own needs while helping others.", love:"You love by championing your person's growth and believing in them, often more than they believe in themselves.", tip:"It's okay to need support back, not just offer it."},
-  ENTJ:{name:"The Commander", sum:"Confident and goal-driven — you take charge and make the plan happen.", strengths:"Strong leader. Efficient and decisive.", challenge:"Can steamroll feelings while chasing the goal.", love:"You love by building an ambitious life together and fighting hard for what matters to you both.", tip:"Slowing down to ask 'how do you feel' (not just 'what's the plan') deepens intimacy."}
+  ENTJ:{name:"The Commander", sum:"Confident and goal-driven — you take charge and make the plan happen.", strengths:"Strong leader. Efficient and decisive.", challenge:"Can be steamroll feelings while chasing the goal.", love:"You love by building an ambitious life together and fighting hard for what matters to you both.", tip:"Slowing down to ask 'how do you feel' (not just 'what's the plan') deepens intimacy."}
 };
 
 let mbIndex=0, mbScores={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
@@ -603,26 +633,67 @@ function finishMB(){
 }
 
 /* =========================================================
-   EGO & NARCISSISM SCREENING MODULE
+   EGO & BLINDSPOTS MODULE (UN-FAKEABLE BEHAVIORAL SCREENING)
+   Uses structural projective testing principles to isolate
+   entitlement, grandiosity, lack of empathy, and threat response.
 ========================================================= */
-const egoOptions = [
-  {label:"Completely true for me", val:3},
-  {label:"Somewhat true", val:2},
-  {label:"Rarely true", val:1},
-  {label:"Not true at all", val:0}
-];
-
 const egoQuestions = [
-  "I catch myself fantasizing about extraordinary power, ultimate success, or brilliance.",
-  "I honestly feel I deserve more respect or special privileges than the average person around me.",
-  "When someone else shares their troubles, I sometimes struggle to deeply feel or value their experience.",
-  "I rely heavily on frequent validation, status symbols, or praise from others to keep my self-esteem high.",
-  "If someone criticizes or corrects me, I instantly experience intense anger, defensiveness, or hidden shame.",
-  "I look at some of my personal relationships through the lens of what they can contribute to my status or goals.",
-  "I find it incredibly difficult to say a genuine 'I am wrong' without adding conditions or justifications.",
-  "I frequently suspect that people might be jealous of my unique talents, style, or achievements.",
-  "I assume that family or coworkers should conform to my plans without me needing to compromise much.",
-  "Deep down, I feel uniquely different or fundamentally better than most regular people."
+  {
+    q: "A close acquaintance achieves a major career breakthrough that you've been working toward for years. What is your immediate internal voice?",
+    opts: [
+      { text: "Good for them, but they honestly had better luck, connections, or an easier path than I've had.", score: 3 },
+      { text: "I wonder if I can leverage their new position or visibility to help move my own goals forward.", score: 2 },
+      { text: "A mix of frustration about my timeline and genuine happiness that their hard work paid off.", score: 0 }
+    ]
+  },
+  {
+    q: "You present a concept you are deeply proud of. A peer points out a clear logical flaw in front of your manager. What describes your default impulse?",
+    opts: [
+      { text: "Explain why their critique misses the larger point, or quietly make a mental note of their own flaws to bring up later.", score: 3 },
+      { text: "Agree to take a look at it later, while feeling an internal wave of absolute irritation or humiliation.", score: 2 },
+      { text: "Acknowledge the oversight immediately and work on correcting the flaw without tracking who saw it.", score: 0 }
+    ]
+  },
+  {
+    q: "A friend calls you crying about a breakup while you are right in the middle of a stressful, critical project. How do you naturally view the situation?",
+    opts: [
+      { text: "It's deeply inconsiderate of them to disrupt my focus with cyclical drama when my timeline is clearly important.", score: 3 },
+      { text: "I'll listen for five minutes to be a good friend, but I'm mostly thinking about getting back to my tasks.", score: 2 },
+      { text: "I feel their distress immediately and put my tasks on pause, or set a compassionate, clean boundary to call back.", score: 0 }
+    ]
+  },
+  {
+    q: "An upscale restaurant accidentally misses your priority reservation, forcing you to wait outside with everyone else. What matches your internal baseline?",
+    opts: [
+      { text: "This is completely unacceptable incompetence; I expect management to offer a direct apology or comp our meals.", score: 3 },
+      { text: "I feel incredibly insulted and self-conscious standing out there, worried how it looks to others.", score: 2 },
+      { text: "It's annoying, but mistakes happen. We can just grab food down the street instead.", score: 0 }
+    ]
+  },
+  {
+    q: "Think about your closest friendships. Which statement best reflects your pattern of keeping them around?",
+    opts: [
+      { text: "I enjoy people who clearly look up to me, value my expertise, and match my caliber of lifestyle or intellect.", score: 3 },
+      { text: "I value people who don't challenge me too harshly or cause constant friction.", score: 2 },
+      { text: "I prefer people who challenge my assumptions and feel comfortable telling me when I'm being difficult.", score: 0 }
+    ]
+  },
+  {
+    q: "You realize you completely forgot an anniversary or crucial promise to a loved one. When confronted, you notice your mind tries to:",
+    opts: [
+      { text: "Remind them of how much I've been carrying lately, or point out how their reactions always blow things out of proportion.", score: 3 },
+      { text: "Apologize profusely to make the discomfort go away, though secretly I feel they make too big a deal out of slip-ups.", score: 2 },
+      { text: "Own the error unconditionally, sit with their disappointment, and focus entirely on making it right.", score: 0 }
+    ]
+  },
+  {
+    q: "When navigating a group dynamic, team environment, or family function, you find you feel most secure when:",
+    opts: [
+      { text: "I am implicitly running the show, setting the agenda, or recognized as the primary authority.", score: 3 },
+      { text: "I can sit back comfortably knowing my status and value are already established and respected.", score: 2 },
+      { text: "I am a collaborative contributor, equal in importance and influence to everyone else.", score: 0 }
+    ]
+  }
 ];
 
 let egoIndex=0, egoAnswers=[];
@@ -634,59 +705,59 @@ function startEgo(){
   renderEgo();
 }
 function renderEgo(){
+  const q = egoQuestions[egoIndex];
   document.getElementById('ego-bar').style.width = (egoIndex/egoQuestions.length*100)+'%';
-  document.getElementById('ego-counter').textContent = `Question ${egoIndex+1} of ${egoQuestions.length}`;
-  document.getElementById('ego-question').textContent = egoQuestions[egoIndex];
-  document.getElementById('ego-options').innerHTML = egoOptions.map(o=>
-    `<button class="card rounded-xl p-4 text-left hover:border-[var(--gold)] transition" onclick="answerEgo(${o.val})">${o.label}</button>`
+  document.getElementById('ego-counter').textContent = `Scenario ${egoIndex+1} of ${egoQuestions.length}`;
+  document.getElementById('ego-question').textContent = q.q;
+  document.getElementById('ego-options').innerHTML = q.opts.map((o, i)=>
+    `<button class="card rounded-xl p-4 text-left hover:border-[var(--gold)] transition text-sm leading-relaxed" onclick="answerEgo(${o.score})">${o.text}</button>`
   ).join('');
 }
-function answerEgo(val){
-  egoAnswers.push(val);
+function answerEgo(score){
+  egoAnswers.push(score);
   egoIndex++;
   if(egoIndex >= egoQuestions.length){ finishEgo(); } else { renderEgo(); }
 }
 function finishEgo(){
   document.getElementById('ego-quiz').classList.add('hidden');
   const score = egoAnswers.reduce((a,b)=>a+b, 0);
-  const maxScore = egoQuestions.length * 3;
   
   let title="", text="", color="var(--forest)", insight="", strategy="";
-  if(score >= 20){
-    title = "High Ego Core & Guarded Self";
+  if(score >= 14){
+    title = "High Ego Core & Defensive Shield";
     color = "var(--coral)";
-    text = "Your responses reveal strong alignment with patterns often associated with narcissistic structures—such as heightened entitlement, defensive pride, and a critical reliance on external validation.";
-    insight = "This orientation usually grows as a defensive shell to protect a highly sensitive inner landscape. It can show up as a structural habit of prioritizing absolute control and self-preservation above real, collaborative relationship space.";
-    strategy = "Practice active pause-points when criticized. Instead of reacting defensively, observe the internal sting with curious kindness. Cultivate intentional space for validation from within, rather than demanding it from your external environment.";
-  } else if(score >= 10){
-    title = "Situational / Moderately Guarded Ego";
+    text = "Your scenario profile indicates a noticeable pattern of self-preservation loops, standard external validation demands, and structural projection when processing personal critique.";
+    insight = "This blueprint matches psychological profiles that over-index on narcissistic traits. It often functions as a heavy adaptive armor built to safeguard an highly sensitive internal worth. This armor can unintentionally block deep emotional empathy and cause you to instinctively control relationships rather than share them.";
+    strategy = "When an internal 'sting' or anger surge occurs during feedback, force a 10-second mental pause. Instead of explaining why the other party is wrong or flawed, practice letting their reality exist alongside yours without viewing it as an existential threat.";
+  } else if(score >= 7){
+    title = "Protective / Adaptive Ego Baseline";
     color = "var(--gold)";
-    text = "Your results suggest a healthy, dynamic sense of self balanced alongside common moments of self-protection, protective pride, or occasional entitlement.";
-    insight = "You possess foundational capacity for empathy and compromise, but stress, competition, or perceived threats can prompt you to fall back on status loops, external validation, or sharp defensiveness to feel secure.";
-    strategy = "Identify your primary situational triggers (e.g., career feedback, relationship standoffs). Work on offering clean, unconditional apologies when these boundaries slip, which builds a direct bridge back to relational intimacy.";
+    text = "Your results show a dynamic sense of self that generally values collaboration, paired with predictable spikes of protective pride or transactional behaviors under pressure.";
+    insight = "You have an established capacity for true baseline empathy, but whenever status threats, failure anxieties, or rejection indicators trigger, your ego defaults to scorekeeping, subtle exceptionalism, or internal withdrawal to maintain equilibrium.";
+    strategy = "Notice your personal scorekeeping tendencies in daily conflicts. Try giving an unconditional apology without adding a structural 'but...' or highlighting what the other person did wrong first.";
   } else {
-    title = "Grounded & Cooperative Self";
+    title = "Grounded & Interdependent Self";
     color = "var(--forest)";
-    text = "Your responses suggest a well-integrated, low-reactivity ego that comfortably values collaboration, structural empathy, and mutual boundaries.";
-    insight = "You navigate internal limitations without immediate shame-storms, and you show minimal inclination to look at other humans as objects or engines for self-validation.";
-    strategy = "Continue modeling grounded vulnerability. Be careful not to suppress your true achievements or ambitions under the guise of humility—own your genuine worth completely without demanding exceptionalism.";
+    text = "Your scenario responses display a well-integrated, fluid ego structure that effortlessly tolerates mutual boundaries, relational equality, and objective personal criticism.";
+    insight = "You don't process external corrections or normal human limitations as deep shame threats. You interact with people as independent centers of value rather than engines designed to validate your status or personal plans.";
+    strategy = "Continue protecting this low-defense orientation. Ensure that your natural comfort with collaboration doesn't cross over into bypassing your own valid achievements or allowing high-ego individuals to override your boundaries.";
   }
 
   const res = document.getElementById('ego-result');
   res.classList.remove('hidden');
   res.innerHTML = `
     <div class="text-center reveal in mb-8">
-      <p class="text-xs uppercase tracking-widest font-semibold" style="color:var(--coral)">Your Ego Profile</p>
+      <p class="text-xs uppercase tracking-widest font-semibold" style="color:var(--coral)">Your Self-Processing Profile</p>
       <h2 class="font-display text-3xl mt-1 font-semibold" style="color:${color}">${title}</h2>
-      <p class="mt-4 text-black/70 max-w-md mx-auto text-sm">${text}</p>
+      <p class="mt-4 text-black/70 max-w-md mx-auto text-sm leading-relaxed">${text}</p>
     </div>
     <div class="grid gap-4">
       <div class="card rounded-xl p-5">
-        <p class="font-semibold text-sm mb-1.5" style="color:var(--forest)">Psychological Spectrum Insight</p>
+        <p class="font-semibold text-sm mb-1.5" style="color:var(--forest)">Psychological Architecture Insight</p>
         <p class="text-sm text-black/70 leading-relaxed">${insight}</p>
       </div>
       <div class="card rounded-xl p-5">
-        <p class="font-semibold text-sm mb-1.5" style="color:var(--coral)">Constructive Growth Practice</p>
+        <p class="font-semibold text-sm mb-1.5" style="color:var(--coral)">Constructive Behavioral Shift</p>
         <p class="text-sm text-black/70 leading-relaxed">${strategy}</p>
       </div>
     </div>
@@ -694,127 +765,181 @@ function finishEgo(){
       <button onclick="startEgo()" class="btn-ghost px-5 py-2.5 rounded-full text-sm">Retake the self-check</button>
       <button onclick="goTo('chat')" class="btn-primary px-5 py-2.5 rounded-full text-sm">Talk through a pattern with Kindred →</button>
     </div>
-    <p class="text-center text-xs text-black/40 mt-6 max-w-lg mx-auto">This self-check acts as a tracking tool for personal evaluation and ego awareness. It does not replace clinical evaluations or formal psychological assessments.</p>
+    <p class="text-center text-xs text-black/40 mt-6 max-w-lg mx-auto">This tool screens for core cognitive and behavioral defense styles. It does not constitute a diagnostic medical evaluation for Narcissistic Personality Disorder (NPD).</p>
   `;
 }
 
 /* =========================================================
-   COUPLES / PRE-MARRIAGE COMPATIBILITY CHECK-IN
+   DEEP COUPLES ASSESMENT WITH SPLIT-LINK SYNCING
+   Features severe, deep pinching relationship issues.
 ========================================================= */
-const cpOptions = [
-  {label:"We're completely on the same page", val:3},
-  {label:"Mostly, with small differences", val:2},
-  {label:"We often see this differently", val:1},
-  {label:"Honestly, we've never really talked about this", val:0}
-];
-
 const cpQuestions = [
-  {cat:"Money & Finances", q:"How we handle spending and joint money"},
-  {cat:"Money & Finances", q:"Whether we're savers or spenders, and how we balance that"},
-  {cat:"Money & Finances", q:"Who handles bills and big financial decisions"},
-  {cat:"Family & In-laws", q:"How involved our families should be in our day-to-day life"},
-  {cat:"Family & In-laws", q:"What we owe our parents in time, money, or support"},
-  {cat:"Family & In-laws", q:"How we'll handle differing family traditions or cultures"},
-  {cat:"Communication & Conflict", q:"How we each behave when we're upset (shutting down vs. talking it out)"},
-  {cat:"Communication & Conflict", q:"How comfortable we are telling each other what we actually need"},
-  {cat:"Communication & Conflict", q:"How we apologize and reconnect after a fight"},
-  {cat:"Future & Life Goals", q:"How our career ambitions fit together long-term"},
-  {cat:"Future & Life Goals", q:"Where and how we want to live (city, pace of life, lifestyle)"},
-  {cat:"Future & Life Goals", q:"Whether, when, and how many children we want, and how we'll raise them"},
-  {cat:"Closeness & Independence", q:"How much together-time vs. personal space/friend-time we each need"},
-  {cat:"Closeness & Independence", q:"How we each like to give and receive affection"},
-  {cat:"Closeness & Independence", q:"Our expectations around privacy and trust (phones, friendships, boundaries)"}
+  { cat: "Friction & Escalation", q: "When a deep, emotionally exhausting argument peaks, what represents your true baseline habit?" },
+  { cat: "Vulnerability & Shame", q: "When you feel deep insecurity, personal failure, or raw embarrassment inside the relationship:" },
+  { cat: "Control & Autonomy", q: "If your partner schedules major lifestyle plans, moves money, or alters paths without your alignment:" },
+  { cat: "Emotional Support", q: "When your partner comes to you completely broken or hyper-stressed from an outside issue:" },
+  { cat: "The Long Road", q: "If your partner went through a prolonged crisis that completely paused intimacy and fun for over a year:" }
 ];
 
-const cpAdvice = {
-  "Money & Finances":{ high:"Money is one of the top reasons couples fight — you two are already ahead by being aligned here. Keep checking in as your income or life stage changes.",
-    mid:"You're mostly aligned, but small money habits cause big resentment over time. Try a monthly 15-minute money check-in, just the two of you.",
-    low:"This is worth a real, calm conversation soon — ideally before bigger shared expenses (a home, a wedding, kids) are on the table.",
-    starter:"\"What did money look like in your house growing up, and how did that shape how you see it now?\""},
-  "Family & In-laws":{ high:"You're on the same page about boundaries with family — that's a huge stabilizer for a marriage long-term.",
-    mid:"You're close, but unspoken assumptions about family duty tend to surface during big events (weddings, holidays, emergencies). Talk it through before it's urgent.",
-    low:"In-law and family dynamics are one of the most common sources of long-term marital strain — it's worth mapping out expectations clearly, together.",
-    starter:"\"If our families ever needed serious help — money, time, caregiving — what would you expect us to do?\""},
-  "Communication & Conflict":{ high:"You already know how to fight fair and repair — that skill alone predicts a lot about long-term relationship health.",
-    mid:"You communicate well most of the time, but your conflict styles might clash under real stress. Notice your patterns the next time you disagree.",
-    low:"How you fight matters more than what you fight about. Consider agreeing on a simple rule together, like 'no walking away without a time to come back to it.'",
-    starter:"\"When I get upset, what do you actually need from me in that moment?\""},
-  "Future & Life Goals":{ high:"Sharing a real vision of the future is one of the strongest predictors of a happy long-term partnership — you're in a great spot.",
-    mid:"You're broadly aligned, but the details (timing, location, kids) deserve a dedicated conversation, not just assumptions.",
-    low:"This is a foundational one — differences here tend to grow, not shrink, over time. Have an honest, unhurried conversation about your individual five-year visions.",
-    starter:"\"If nothing held us back, where do you picture us in five years — and does that match what I picture?\""},
-  "Closeness & Independence":{ high:"You've found a rhythm of closeness and independence that works for both of you — protect that balance as life gets busier.",
-    mid:"You're mostly aligned, but needs around space and affection often shift with stress or life changes — keep checking in as things evolve.",
-    low:"Mismatched needs for closeness vs. space are a common, fixable friction point — not a compatibility dealbreaker, but worth naming directly.",
-    starter:"\"What makes you feel most loved day-to-day — and am I actually doing that for you?\""}
-};
+// Mapping raw responses directly to a signature relational archetype index (0, 1, 2)
+const cpAnswersMap = [
+  [
+    "I shut down completely, pull away my presence, or leave the room because the emotional noise feels completely unsafe.",
+    "My temper builds fast; I use targeted truths, cutting statements, or intense points to firmly protect my stance.",
+    "I stay physically present, drop my defensive posture, and prioritize mapping their hurt over winning my point."
+  ],
+  [
+    "I mask it completely behind irritability, total self-reliance, or cold, unbothered behavior.",
+    "I project it onto them, subconsciously highlighting their faults or mistakes to shift the focus off my exposure.",
+    "I name the raw feeling out loud in plain words, even if it feels extremely clumsy, unprotected, and risky."
+  ],
+  [
+    "I retaliate with quiet resistance, make executive counter-decisions, or ice them out to recalibrate control.",
+    "I launch into an intense confrontation, treating it as a total breach of baseline respect and authority.",
+    "I call a hard pause to address the systemic boundary fracture without burning the interaction down."
+  ],
+  [
+    "I immediately pivot to rational tracking, structural cleanup steps, or direct advice to stop the emotional bleed.",
+    "I feel drained, slightly resentful, or burdened by the weight of their unregulated processing loop.",
+    "I hold physical and silent space for their raw pain before trying to unpack logic or systemic strategies."
+  ],
+  [
+    "I would love them deeply from a sense of moral obligation, but my mind would actively seek outside validation or independent worlds.",
+    "I would experience compounding resentment, constantly highlighting my unmet needs or checking out of the core bond.",
+    "I would grieve the lost season openly with them, maintaining fidelity and choosing to adapt to the hard stretch."
+  ]
+];
 
-let cpIndex=0, cpAnswers=[];
-function startCP(){
-  cpIndex=0; cpAnswers=[];
+let cpCurrentRole = 1; // 1 = Initiator, 2 = Joiner/Partner
+let cpIndex=0, cpLocalAnswers=[];
+let cpPartnerAnswers = null; // Decoded array from Partner 1
+
+function initiatePartnerSession(role) {
+  cpCurrentRole = role;
+  if(role === 2) {
+    const rawInput = document.getElementById('partner-code-input').value.trim();
+    if(!rawInput) { alert("Please paste a valid session data string first!"); return; }
+    try {
+      // Decode string back to data array
+      const parsed = JSON.parse(atob(rawInput));
+      if(!Array.isArray(parsed)) throw new Error();
+      cpPartnerAnswers = parsed;
+    } catch(e) {
+      alert("Invalid data string structure. Please verify you copied the full sequence.");
+      return;
+    }
+  }
+  
   document.getElementById('cp-intro').classList.add('hidden');
-  document.getElementById('cp-result').classList.add('hidden');
   document.getElementById('cp-quiz').classList.remove('hidden');
-  renderCP();
+  startCPQuiz();
 }
-function renderCP(){
+
+function startCPQuiz(){
+  cpIndex=0; cpLocalAnswers=[];
+  renderCPQuestion();
+}
+
+function renderCPQuestion(){
   const q = cpQuestions[cpIndex];
   document.getElementById('cp-bar').style.width = (cpIndex/cpQuestions.length*100)+'%';
-  document.getElementById('cp-counter').textContent = `Question ${cpIndex+1} of ${cpQuestions.length}`;
+  document.getElementById('cp-counter').textContent = `Deep Dimension ${cpIndex+1} of ${cpQuestions.length}`;
   document.getElementById('cp-category').textContent = q.cat.toUpperCase();
   document.getElementById('cp-question').textContent = q.q;
-  document.getElementById('cp-options').innerHTML = cpOptions.map(o=>
-    `<button class="card rounded-xl p-4 text-left hover:border-[var(--forest)] transition" onclick="answerCP(${o.val})">${o.label}</button>`
+  
+  const optionsPool = cpAnswersMap[cpIndex];
+  document.getElementById('cp-options').innerHTML = optionsPool.map((text, val)=>
+    `<button class="card rounded-xl p-4 text-left hover:border-[var(--forest)] transition text-sm leading-relaxed" onclick="answerCP(${val})">${text}</button>`
   ).join('');
 }
+
 function answerCP(val){
-  cpAnswers.push({cat:cpQuestions[cpIndex].cat, val});
+  cpLocalAnswers.push(val);
   cpIndex++;
-  if(cpIndex>=cpQuestions.length){ finishCP(); } else { renderCP(); }
+  if(cpIndex >= cpQuestions.length){
+    if(cpCurrentRole === 1) {
+      // Encode answers to shareable string base64
+      const b64Str = btoa(JSON.stringify(cpLocalAnswers));
+      document.getElementById('cp-quiz').classList.add('hidden');
+      document.getElementById('cp-link-screen').classList.remove('hidden');
+      document.getElementById('cp-generated-string').textContent = b64Str;
+    } else {
+      // Evaluate combined profiles directly
+      finishCPCombined();
+    }
+  } else {
+    renderCPQuestion();
+  }
 }
-function tier(score){ return score>=7 ? 'high' : score>=4 ? 'mid' : 'low'; }
-function tierLabel(t){ return t==='high' ? 'Strong alignment' : t==='mid' ? 'Good foundation' : 'Worth a real talk'; }
-function tierColor(t){ return t==='high' ? 'var(--forest)' : t==='mid' ? 'var(--gold)' : 'var(--coral)'; }
 
-function finishCP(){
+function finishCPCombined(){
   document.getElementById('cp-quiz').classList.add('hidden');
-  const cats = [...new Set(cpQuestions.map(q=>q.cat))];
-  let total=0, max=0;
-  const rows = cats.map(cat=>{
-    const score = cpAnswers.filter(a=>a.cat===cat).reduce((s,a)=>s+a.val,0);
-    total+=score; max+=9;
-    const t = tier(score);
-    const adv = cpAdvice[cat];
-    return `
-      <div class="card rounded-xl p-5">
-        <div class="flex items-center justify-between mb-2">
-          <p class="font-semibold">${cat}</p>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full text-white" style="background:${tierColor(t)}">${tierLabel(t)}</span>
-        </div>
-        <p class="text-sm text-black/70 mb-3">${adv[t]}</p>
-        <p class="text-xs text-black/50 italic">Try asking each other: ${adv.starter}</p>
-      </div>`;
-  }).join('');
-
-  const pct = Math.round(total/max*100);
-  const overall = pct>=75 ? "You two have a strong, well-aligned foundation. Keep treating these conversations as ongoing, not one-time."
-    : pct>=50 ? "You have real strengths together, with a few important conversations still worth having before you build further on this."
-    : "There are some meaningful gaps here worth talking through openly — that's not a red flag in itself, it's an invitation to get closer.";
-
   const res = document.getElementById('cp-result');
   res.classList.remove('hidden');
+  
+  let perfectMatches = 0;
+  let severeMismatches = 0; // tracking secure (2) vs volatile (0 or 1) dynamics
+  
+  for(let i=0; i<cpQuestions.length; i++){
+    if(cpLocalAnswers[i] === cpPartnerAnswers[i]) perfectMatches++;
+    if(Math.abs(cpLocalAnswers[i] - cpPartnerAnswers[i]) === 2) severeMismatches++;
+  }
+  
+  // High psychological matrix calculation
+  let matchingPercentage = 100 - (severeMismatches * 15) - ((cpQuestions.length - perfectMatches - severeMismatches) * 6);
+  if(matchingPercentage < 15) matchingPercentage = 15;
+  if(matchingPercentage > 100) matchingPercentage = 100;
+
+  let overallSummary = "";
+  if(matchingPercentage >= 80) {
+    overallSummary = "You share deep structural alignment on raw emotional thresholds. Your processing languages naturally support mutual repair loops rather than escalating threats.";
+  } else if(matchingPercentage >= 50) {
+    overallSummary = "You hold a workable baseline foundation, but significant friction spikes happen during high-stress exposure. One partner is likely exiting the conversation or over-controlling while the other takes on the weight.";
+  } else {
+    overallSummary = "Your coping models run opposite to one another during relationship friction. Your baseline scripts are creating a cycle where one partner's self-protection mechanism directly triggers the other's core boundary wounds.";
+  }
+
+  // Generate tactical block summaries
+  const analysisCards = cpQuestions.map((q, idx) => {
+    const p1AnsText = cpAnswersMap[idx][cpPartnerAnswers[idx]];
+    const p2AnsText = cpAnswersMap[idx][cpLocalAnswers[idx]];
+    
+    let blockInsight = "";
+    if(cpPartnerAnswers[idx] === cpLocalAnswers[idx]) {
+      blockInsight = cpPartnerAnswers[idx] === 2 
+        ? "Superb relational awareness. Both choose exposed vulnerability over defensive posture." 
+        : "You share the exact same reactive shadow style. While predictable, this style will reliably double the weight of any escalation cycle if left unchecked.";
+    } else if(Math.abs(cpPartnerAnswers[idx] - cpLocalAnswers[idx]) === 2) {
+      blockInsight = "High Friction Potential. One partner is attempting a healthy collaborative pause, while the other is defaulting to a severe avoidance withdrawal or localized criticism stance.";
+    } else {
+      blockInsight = "Mismatched expectations. Your protective routines don't share the same internal timeline. One is pushing to solve or fix, while the other is still feeling completely overwhelmed.";
+    }
+
+    return `
+      <div class="card rounded-xl p-5 border-l-4" style="border-left-color: ${cpPartnerAnswers[idx] === cpLocalAnswers[idx] ? 'var(--forest)' : 'var(--coral)'}">
+        <p class="text-xs uppercase font-semibold tracking-wider text-black/40 mb-1">${q.cat}</p>
+        <p class="font-medium text-sm text-black/90 mb-3">${q.q}</p>
+        <div class="grid gap-2 text-xs bg-black/[0.02] p-3 rounded-lg mb-3">
+          <p><span class="font-semibold text-[var(--forest)]">Partner 1 choice:</span> "${p1AnsText}"</p>
+          <p><span class="font-semibold text-[var(--coral)]">Partner 2 choice:</span> "${p2AnsText}"</p>
+        </div>
+        <p class="text-xs text-black/70 italic font-medium">Core Diagnostic: ${blockInsight}</p>
+      </div>
+    `;
+  }).join('');
+
   res.innerHTML = `
     <div class="text-center reveal in mb-8">
-      <p class="text-xs uppercase tracking-widest font-semibold" style="color:var(--coral)">Your overall alignment</p>
-      <h2 class="font-display text-5xl mt-1">${pct}%</h2>
-      <p class="mt-3 text-black/70 max-w-md mx-auto">${overall}</p>
+      <p class="text-xs uppercase tracking-widest font-semibold" style="color:var(--coral)">Deep Processing Alignment</p>
+      <h2 class="font-display text-5xl mt-1 font-bold">${matchingPercentage}%</h2>
+      <p class="mt-4 text-black/70 max-w-md mx-auto text-sm leading-relaxed">${overallSummary}</p>
     </div>
-    <div class="grid gap-4">${rows}</div>
+    <h3 class="font-display text-xl mb-4 font-semibold text-center sm:text-left">Dimension Breakthroughs</h3>
+    <div class="grid gap-4">${analysisCards}</div>
     <div class="flex flex-wrap gap-3 mt-8 justify-center">
-      <button onclick="startCP()" class="btn-ghost px-5 py-2.5 rounded-full text-sm">Do it again</button>
-      <button onclick="goTo('chat')" class="btn-primary px-5 py-2.5 rounded-full text-sm">Talk through a result →</button>
+      <button onclick="location.reload()" class="btn-ghost px-5 py-2.5 rounded-full text-sm">Reset & Clear Session</button>
+      <button onclick="goTo('chat')" class="btn-primary px-5 py-2.5 rounded-full text-sm">Deconstruct these friction points with Kindred</button>
     </div>
-    <p class="text-center text-xs text-black/40 mt-6 max-w-lg mx-auto">This is a self-reflection tool to spark honest conversation — not a clinical relationship assessment or a predictor of your relationship's future.</p>
   `;
 }
 </script>
