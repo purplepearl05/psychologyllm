@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PsycheStudio - Standalone Psychology Platform</title>
+    <style>
+        :root {
+            --bg-base: #0b0f19;
+            --bg-surface: #151d30;
+            --bg-card: #1f293d;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --success: #10b981;
+            --error: #f43f5e;
+            --border: #2e3c56;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-primary); display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+
+        /* Top Control Deck */
+        .top-deck { background-color: var(--bg-surface); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .branding h1 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; }
+        .branding span { color: var(--accent); }
+        
+        .api-suite { display: flex; align-items: center; gap: 1rem; }
+        .api-field { background-color: var(--bg-card); border: 1px solid var(--border); color: white; padding: 0.6rem 1rem; border-radius: 8px; width: 320px; font-size: 0.85rem; outline: none; transition: all 0.2s; }
+        .api-field:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        
+        .indicator-pill { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--border); font-size: 0.8rem; font-weight: 600; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--error); box-shadow: 0 0 8px var(--error); transition: all 0.3s; }
+        .status-dot.active { background-color: var(--success); box-shadow: 0 0 8px var(--success); }
+
+        /* Layout Grid */
+        .workspace { display: flex; flex: 1; overflow: hidden; }
+        .navigation-rail { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        
+        .rail-item { display: flex; flex-direction: column; padding: 1rem; color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .rail-item:hover { background-color: var(--bg-card); color: var(--text-primary); }
+        .rail-item.active { background-color: var(--bg-card); color: var(--text-primary); border-color: var(--border); border-left: 4px solid var(--accent); }
+        .rail-item h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+        .rail-item p { font-size: 0.75rem; color: var(--text-secondary); }
+
+        .stage { flex: 1; padding: 3rem; overflow-y: auto; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.03), transparent); }
+        .view-panel { display: none; max-width: 1100px; margin: 0 auto; }
+        .view-panel.active { display: block; }
+
+        /* Typography & Elements */
+        h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+        .desc { color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 0.95rem; }
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        
+        .deck-card { background: var(--bg-surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .deck-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .deck-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .deck-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Dynamic Test Interface */
+        .test-wrapper { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; margin-top: 2rem; }
+        .q-item { background: var(--bg-base); border: 1px solid var(--border); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; }
+        .q-text { font-size: 1.05rem; font-weight: 600; margin-bottom: 1.2rem; }
+        .matrix-options { display: flex; flex-direction: column; gap: 0.75rem; }
+        .matrix-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 1rem; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 1rem; font-size: 0.9rem; transition: all 0.2s; }
+        .matrix-btn:hover { background: #28354f; }
+        .matrix-btn input { accent-color: var(--accent); width: 18px; height: 18px; }
+
+        /* Core UI Buttons */
+        .action-btn { background: var(--accent); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 0.95rem; transition: background 0.2s; }
+        .action-btn:hover { background: #4f46e5; }
+
+        /* Chat Layout */
+        .chat-container { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; height: calc(100vh - 240px); display: flex; flex-direction: column; overflow: hidden; }
+        .chat-scroller { flex: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem; }
+        .msg { max-width: 80%; padding: 1rem 1.25rem; border-radius: 14px; line-height: 1.6; font-size: 0.95rem; }
+        .msg.user { background: var(--accent); align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg.bot { background: var(--bg-card); align-self: flex-start; border-bottom-left-radius: 2px; white-space: pre-wrap; }
+        .chat-bar { display: flex; gap: 1rem; padding: 1.5rem; background: var(--bg-base); border-top: 1px solid var(--border); }
+        .chat-entry { flex: 1; background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 1rem; border-radius: 8px; outline: none; }
+
+        /* Match Panel Layout */
+        .matching-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        .partner-box { background: var(--bg-surface); border: 1px solid var(--border); padding: 2rem; border-radius: 12px; }
+        .partner-box h3 { color: var(--accent); margin-bottom: 1.5rem; font-size: 1.2rem; }
+        .field-group { margin-bottom: 1.25rem; }
+        .field-group label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .input-area { width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 0.8rem; border-radius: 8px; outline: none; font-size: 0.9rem; transition: border 0.2s; }
+        .input-area:focus { border-color: var(--accent); }
+
+        /* Presentation Output Window */
+        .manifest-window { background: linear-gradient(135deg, #16223f, #111a30); border-left: 4px solid var(--accent); padding: 2rem; border-radius: 8px; margin-top: 2rem; line-height: 1.7; font-size: 1rem; display: none; color: #e2e8f0; white-space: pre-wrap; }
+        
+        .loader { display: inline-block; width: 1.2rem; height: 1.2rem; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="top-deck">
+        <div class="branding">
+            <h1>Psyche<span>Studio</span></h1>
+        </div>
+        <div class="api-suite">
+            <input type="password" id="cryptoKey" class="api-field" placeholder="Provide Gemini API Access Token...">
+            <button class="action-btn" style="width: auto; padding: 0.6rem 1.5rem;" onclick="initializeToken()">Mount Engine</button>
+            <div class="indicator-pill">
+                <div id="glowIndicator" class="status-dot"></div>
+                <span id="indicatorText">Offline Core</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace">
+        <div class="navigation-rail">
+            <div class="rail-item active" onclick="navigate('lab-panel', this)">
+                <h4>Diagnostic Testing Suite</h4>
+                <p>Run complex clinical & behavioral screenings</p>
+            </div>
+            <div class="rail-item" onclick="navigate('eq-panel', this)">
+                <h4>EQ Intelligent Companion</h4>
+                <p>Real-time emotional systems decompression</p>
+            </div>
+            <div class="rail-item" onclick="navigate('match-panel', this)">
+                <h4>Compatibility Matrix</h4>
+                <p>Pre-marital behavioral alignment indexing</p>
+            </div>
+        </div>
+
+        <div class="stage">
+            <!-- PANEL 1: DIAGNOSTICS -->
+            <div id="lab-panel" class="view-panel active">
+                <h2>Clinical & Behavioral Matrix Labs</h2>
+                <p class="desc">Isolate and analyze neurodivergent profiles, shadow traits, and high-functioning positive psychology indicators.</p>
+                
+                <div class="grid-cards">
+                    <div class="deck-card" onclick="loadTest('ADHD')">
+                        <h3>ADHD Neurological Spectrum</h3>
+                        <p>Measures executive filtering degradation, attentional drift velocity, and reward-system latency.</p>
+                    </div>
+                    <div class="deck-card" onclick="loadTest('NARCISSISM')">
+                        <h3>Narcissistic Structural Inflation</h3>
+                        <p>Calculates dynamic ego validation dependencies, supply-seeking vectors, and transactional empathy limits.</p>
+                    </div>
+                    <div class="deck-card" onclick="loadTest('SOCIOPATHY')">
+                        <h3>Antisocial Behavioral Schema</h3>
+                        <p>Profiles low-arousal risk processing, non-normative rule structures, and calculated boundary bypass loops.</p>
+                    </div>
+                    <div class="deck-card" onclick="loadTest('AUTISM')">
+                        <h3>Autistic Processing Discrepancy</h3>
+                        <p>Maps explicit social translation friction, hyper-systemization metrics, and sensory saturation bounds.</p>
+                    </div>
+                    <div class="deck-card" onclick="loadTest('RESILIENCE')">
+                        <h3>Psychological Elasticity Index</h3>
+                        <p>Measures cognitive reframing capacity, failure-state assimilation, and core trauma conversion.</p>
+                    </div>
+                </div>
+
+                <div id="testLab" class="test-wrapper" style="display: none;">
+                    <h3 id="labTitle" style="margin-bottom: 1.5rem; color: var(--accent);"></h3>
+                    <div id="quizFormWrapper"></div>
+                    <button id="calcBtn" class="action-btn" onclick="submitLabBatch()">Process Diagnostics Engine</button>
+                    <div id="labOutput" class="manifest-window"></div>
+                </div>
+            </div>
+
+            <!-- PANEL 2: EQ BOT -->
+            <div id="eq-panel" class="view-panel">
+                <h2>EQ Intelligent Dialogue Space</h2>
+                <p class="desc">A therapeutic processing engine specialized in cognitive reframing and emotional decompression matrices.</p>
+                
+                <div class="chat-container">
+                    <div class="chat-scroller" id="chatFeed">
+                        <div class="msg bot">System initialized. Provide the mental architecture or current emotional processing block you wish to run diagnostics on today.</div>
+                    </div>
+                    <div class="chat-bar">
+                        <input type="text" id="chatMsgIn" class="chat-entry" placeholder="Input conscious thought processing stream..." onkeydown="if(event.key === 'Enter') executeChatCycle()">
+                        <button class="action-btn" style="width: auto; padding: 0 2rem;" onclick="executeChatCycle()">Transmit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 3: COUPLES MATCHING -->
+            <div id="match-panel" class="view-panel">
+                <h2>Pre-Marital Alignment Matrix</h2>
+                <p class="desc">Run predictive intersection tracking across resource processing, attachment safety, and crisis handling frameworks.</p>
+
+                <div class="matching-split">
+                    <div class="partner-box">
+                        <h3>Subject Alpha Matrix</h3>
+                        <div class="field-group">
+                            <label>Existential Architecture & Vision</label>
+                            <textarea id="p1_vision" class="input-area" rows="3" placeholder="Long-range structural goals, geographic freedom indexes, legacy plans..."></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label>Conflict Mitigation Strategy</label>
+                            <textarea id="p1_conflict" class="input-area" rows="2" placeholder="De-escalation windows, emotional isolation cycles, or anxious immediate processing?"></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label>Resource Allocation Philosophy</label>
+                            <textarea id="p1_finance" class="input-area" rows="2" placeholder="Capital buffering strategies versus experiential liquid outflows..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="partner-box">
+                        <h3>Subject Beta Matrix</h3>
+                        <div class="field-group">
+                            <label>Existential Architecture & Vision</label>
+                            <textarea id="p2_vision" class="input-area" rows="3" placeholder="Family-centric planning, community-embedded safety, low-volatility tracking..."></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label>Conflict Mitigation Strategy</label>
+                            <textarea id="p2_conflict" class="input-area" rows="2" placeholder="Analytical compartmentalization, defensive deflection, or direct mirroring loop?"></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label>Resource Allocation Philosophy</label>
+                            <textarea id="p2_finance" class="input-area" rows="2" placeholder="Conservative wealth defense frameworks, transparent centralized capital accounting..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="matrixBtn" class="action-btn" style="padding: 1.2rem;" onclick="runMatrixEvaluation()">Compute Convergence Diagnostics</button>
+                <div id="matrixOutput" class="manifest-window"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ACCESS_TOKEN = "";
+        let activeScope = "";
+
+        const database = {
+            ADHD: [
+                "Isolate your execution threshold: How often do you delay processing administrative overhead or complex organization structures until a panic trigger occurs?",
+                "Analyze attentional drift: When tracking an information stream, do secondary processing sub-routines fire up uncontrollably inside your brain?",
+                "Determine recovery latency: When unceremoniously broken out of a deep focus vector, how severe is the friction to re-engage?"
+            ],
+            NARCISSISM: [
+                "Track validation loops: Do you find yourself running mental metrics evaluating whether those around you are sufficiently recognizing your position or capabilities?",
+                "Examine interpersonal utility: When selecting personal configurations or associates, how heavily does their public-facing social currency rate?",
+                "Evaluate defensive patterns: When subjected to explicit performance corrections, does your system register an existential threat configuration?"
+            ],
+            SOCIOPATHY: [
+                "Isolate rule processing: How seamlessly can you filter out conventional moral bounds or regulatory parameters if they compromise an optimal target?",
+                "Analyze empathy integration: When a strategy you execute triggers operational damage or distress to another entity, how present is system remorse?",
+                "Track physiological baseline: In sudden environments of total crisis or direct confrontation, does your heart-rate and cognitive focus remain perfectly flat-lined?"
+            ],
+            AUTISM: [
+                "Track translation friction: Do you execute conscious rule-based calculations to parse facial subtext and unwritten social rules that others track implicitly?",
+                "Isolate environmental filtration: Do complex audio/visual matrices (crowded rooms, unstable lights) cause rapid neurological over-saturation?",
+                "Evaluate structural dependencies: How dependent is your baseline emotional containment on immutable procedural patterns and deep thematic domains?"
+            ],
+            RESILIENCE: [
+                "Calculate structural bounce-back: When a major life project encounters sudden total collapse, how quickly can your systems synthesize the failure profile and reset?",
+                "Examine stability thresholds: Can you execute high-fidelity strategic planning when simultaneously dealing with severe interpersonal or systemic volatility?",
+                "Evaluate trauma formatting: How effectively do you translate historical crisis metrics into functional wisdom and adaptive behavioral strategies?"
+            ]
+        };
+
+        function initializeToken() {
+            const token = document.getElementById('cryptoKey').value.trim();
+            if (!token) return alert("Provide an active validation sequence.");
+            ACCESS_TOKEN = token;
+            
+            document.getElementById('glowIndicator').classList.add('active');
+            const txt = document.getElementById('indicatorText');
+            txt.innerText = "Engine Connected";
+            txt.style.color = "var(--success)";
+        }
+
+        function navigate(targetId, el) {
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.rail-item').forEach(r => r.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function loadTest(scope) {
+            if (!ACCESS_TOKEN) return alert("Mount the Gemini API Token before running metrics.");
+            activeScope = scope;
+            const target = document.getElementById('quizFormWrapper');
+            target.innerHTML = "";
+            document.getElementById('labOutput').style.display = 'none';
+            document.getElementById('testLab').style.display = 'block';
+            document.getElementById('labTitle').innerText = `${scope} Clinical Analytics Vector`;
+
+            database[scope].forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "q-item";
+                item.innerHTML = `
+                    <div class="q-text">${idx + 1}. ${q}</div>
+                    <div class="matrix-options">
+                        <label class="matrix-btn"><input type="radio" name="scope_q_${idx}" value="Negligible / Non-Operational"> Negligible / Non-Operational state in my system</label>
+                        <label class="matrix-btn"><input type="radio" name="scope_q_${idx}" value="Intermittent Variance"> Intermittent Variance / Highly context-dependent</label>
+                        <label class="matrix-btn"><input type="radio" name="scope_q_${idx}" value="Dominant Systemic Driver"> Dominant Systemic Driver / High constant manifestation</label>
+                    </div>
+                `;
+                target.appendChild(item);
+            });
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function interfaceWithGemini(prompt) {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${ACCESS_TOKEN}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+            
+            const req = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!req.ok) {
+                const err = await req.json();
+                throw new Error(err.error?.message || "Engine routing exception.");
+            }
+            const res = await req.json();
+            return res.candidates[0].content.parts[0].text;
+        }
+
+        async function submitLabBatch() {
+            const btn = document.getElementById('calcBtn');
+            const windowOut = document.getElementById('labOutput');
+            const questions = database[activeScope];
+            let answers = [];
+
+            for(let i=0; i < questions.length; i++) {
+                const selected = document.querySelector(`input[name="scope_q_${i}"]:checked`);
+                if(!selected) return alert("Complete all metrics blocks before processing calculations.");
+                answers.push(`Metric Vector: [${questions[i]}] -> User Self-Report State: [${selected.value}]`);
+            }
+
+            btn.innerHTML = `<span class="loader"></span>Computing behavioral deviations...`;
+            windowOut.style.display = "none";
+
+            const payloadPrompt = `You are a cognitive diagnostics platform processing a profile evaluation for ${activeScope} structures. 
+            Self-Report Data stream:
+            ${answers.join("\n")}
+            Provide a deep-tier professional blueprint analyzing cognitive friction points, structural coping vulnerabilities, behavioral assets, and tactical growth directions. Ensure you explicitly use clinical psychology terminology (e.g., neuro-atypical mapping, compensatory strategies). Include a clear warning layout showing this is an AI architecture profiling tool, not a medical psychiatric declaration.`;
+
+            try {
+                const processingOutput = await interfaceWithGemini(payloadPrompt);
+                windowOut.innerHTML = processingOutput;
+                windowOut.style.display = "block";
+            } catch(e) {
+                alert("Processing Error: " + e.message);
+            } finally {
+                btn.innerHTML = "Process Diagnostics Engine";
+            }
+        }
+
+        async function executeChatCycle() {
+            const entry = document.getElementById('chatMsgIn');
+            const scroller = document.getElementById('chatFeed');
+            const dataText = entry.value.trim();
+            if(!dataText || !ACCESS_TOKEN) return;
+
+            const uDiv = document.createElement('div');
+            uDiv.className = "msg user";
+            uDiv.innerText = dataText;
+            scroller.appendChild(uDiv);
+            entry.value = "";
+            scroller.scrollTop = scroller.scrollHeight;
+
+            const bDiv = document.createElement('div');
+            bDiv.className = "msg bot";
+            bDiv.innerHTML = `<span class="loader"></span>Running advanced diagnostic reframing loop...`;
+            scroller.appendChild(bDiv);
+            scroller.scrollTop = scroller.scrollHeight;
+
+            const specializedContextPrompt = `Act as an expert EQ-centric cognitive behavioral companion. Analyze this cognitive output from the user: "${dataText}". Deconstruct the unconscious defense mechanisms visible, validate the structural emotional weight without toxic positivity, and provide clear strategic questions that help the individual reframe their systemic loop.`;
+
+            try {
+                const response = await interfaceWithGemini(specializedContextPrompt);
+                bDiv.innerText = response;
+            } catch(err) {
+                bDiv.innerText = "System interface broken: " + err.message;
+            } finally {
+                scroller.scrollTop = scroller.scrollHeight;
+            }
+        }
+
+        async function runMatrixEvaluation() {
+            if(!ACCESS_TOKEN) return alert("Initialize access credentials first.");
+            const outputWindow = document.getElementById('matrixOutput');
+            outputWindow.style.display = "none";
+
+            const batch = {
+                a_vis: document.getElementById('p1_vision').value,
+                a_con: document.getElementById('p1_conflict').value,
+                a_fin: document.getElementById('p1_finance').value,
+                b_vis: document.getElementById('p2_vision').value,
+                b_con: document.getElementById('p2_conflict').value,
+                b_fin: document.getElementById('p2_finance').value,
+            };
+
+            const matrixPrompt = `You are a clinical relationships behavioral scientist evaluating pre-marital alignment profiles.
+            Subject Alpha: Vision: "${batch.a_vis}", Conflict Loop: "${batch.a_con}", Financial Strategy: "${batch.a_fin}"
+            Subject Beta: Vision: "${batch.b_vis}", Conflict Loop: "${batch.b_con}", Financial Strategy: "${batch.b_fin}"
+            
+            Perform a systemic convergence compilation:
+            1. Value Alignment Index & Long-range Stability Model.
+            2. Inherent Latent Friction Risks (Isolate exactly how subtle mismatches in their conflict loops or economic framework can cause communication fractures).
+            3. Three targeted, actionable clinical exercises or alignment milestones they should achieve together before legal convergence.`;
+
+            outputWindow.innerHTML = `<span class="loader"></span>Processing alignment data vectors...`;
+            outputWindow.style.display = "block";
+
+            try {
+                const breakdown = await interfaceWithGemini(matrixPrompt);
+                outputWindow.innerHTML = breakdown;
+            } catch(e) {
+                outputWindow.innerHTML = "Processing compilation error: " + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
