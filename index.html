@@ -1,127 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kindred — Understand Yourself, Understand Each Other</title>
-<meta name="description" content="A warm, judgment-free space to talk things through, discover your personality type, and check in on your relationship — in plain, everyday language." />
-
-<!-- Tailwind (browser CDN, no build step needed) -->
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-  :root{
-    --ink:#23271f;
-    --canvas:#fbf7f1;
-    --forest:#2c5347;
-    --forest-dark:#1d3a31;
-    --coral:#e2684a;
-    --coral-dark:#c8533a;
-    --sand:#efe5d3;
-    --gold:#be9a4d;
-  }
-  *{ -webkit-tap-highlight-color: transparent; }
-  html{ scroll-behavior:smooth; }
-  body{ background:var(--canvas); color:var(--ink); font-family:'Inter',sans-serif; }
-  .font-display{ font-family:'Fraunces',serif; }
-  .btn-primary{ background:var(--coral); color:#fff; font-weight:600; transition: transform .15s ease, background .15s ease; }
-  .btn-primary:hover{ background:var(--coral-dark); }
-  .btn-ghost{ border:1.5px solid var(--ink); color:var(--ink); font-weight:600; }
-  .card{ background:#fff; border:1px solid rgba(35,39,31,0.08); }
-  .page{ display:none; }
-  .page.active{ display:block; }
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kindred — Alignment Study</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --coral:#e2684a; }
+        body{ background:var(--canvas); color:var(--ink); font-family:'Inter',sans-serif; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .btn-primary { background: var(--coral); color: #fff; font-weight: 600; padding: 12px 24px; border-radius: 9999px; transition: 0.2s; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    </style>
 </head>
-<body class="antialiased">
+<body>
+    <main id="app" class="max-w-2xl mx-auto px-6 py-12">
+        <!-- Home Page -->
+        <div id="page-home" class="page active">
+            <h1 class="font-display text-4xl mb-6">Alignment Study</h1>
+            <p class="text-lg mb-8">This is a 40-question forced-choice assessment to see how your communication styles and perspectives align. Take your time, and be honest.</p>
+            <button onclick="startStudy()" class="btn-primary">Start the Study</button>
+        </div>
 
-<!-- NAVIGATION -->
-<header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf7f1]/90 border-b border-black/5">
-  <nav class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-    <button onclick="goTo('home')" class="font-display text-xl font-semibold" style="color:var(--forest)">🌿 Kindred</button>
-    <div class="hidden md:flex gap-7 text-sm font-medium">
-      <button onclick="goTo('chat')" class="hover:text-[var(--coral)]">Talk it out</button>
-      <button onclick="goTo('personality')" class="hover:text-[var(--coral)]">Know your type</button>
-    </div>
-  </nav>
-</header>
+        <!-- Quiz Page -->
+        <div id="page-quiz" class="page">
+            <div class="w-full bg-gray-200 h-2 mb-6 rounded-full">
+                <div id="progress-bar" class="bg-coral h-full rounded-full" style="width: 0%"></div>
+            </div>
+            <p id="counter" class="text-sm font-semibold mb-2"></p>
+            <h2 id="question" class="text-2xl font-bold mb-6"></h2>
+            <div id="options" class="grid gap-3"></div>
+        </div>
 
-<!-- HOME PAGE -->
-<main id="page-home" class="page active max-w-6xl mx-auto px-5 py-20">
-  <h1 class="font-display text-5xl mb-6">Understand yourself better.</h1>
-  <div class="grid md:grid-cols-2 gap-8">
-    <button onclick="goTo('personality')" class="card rounded-2xl p-8 text-left">
-      <h2 class="font-display text-2xl mb-2">Personality Quiz</h2>
-      <p class="text-black/70">A 20-question self-reflection tool.</p>
-    </button>
-    <button onclick="goTo('chat')" class="card rounded-2xl p-8 text-left">
-      <h2 class="font-display text-2xl mb-2">Talk it out</h2>
-      <p class="text-black/70">A judgment-free space to vent.</p>
-    </button>
-  </div>
-</main>
+        <!-- Result Page -->
+        <div id="page-result" class="page">
+            <h2 class="text-3xl font-bold mb-4">Assessment Complete</h2>
+            <p id="final-score" class="text-xl mb-6"></p>
+            <button onclick="location.reload()" class="btn-primary">Restart Study</button>
+        </div>
+    </main>
 
-<!-- CHAT PAGE -->
-<section id="page-chat" class="page max-w-3xl mx-auto px-5 py-10">
-  <button onclick="goTo('home')" class="mb-4">← Back</button>
-  <div id="chat-window" class="card rounded-2xl p-5 h-[50vh] overflow-y-auto mb-4"></div>
-  <form id="chat-form" class="flex gap-2">
-    <input id="chat-input" class="flex-1 border rounded-xl px-4 py-3" placeholder="Type here...">
-    <button type="submit" class="btn-primary px-6 rounded-xl">Send</button>
-  </form>
-</section>
+    <script>
+        const questions = [
+            {q: "If a friend asks for help with a problem they created, what is your first thought?", o: ["I’ll help; everyone struggles sometimes.", "I’ll help, but I’ll make sure they know it’s an inconvenience.", "They are just looking for attention.", "I don't help people who can't handle their own business."]},
+            {q: "You win a large sum of money. What is your top priority?", o: ["Helping those I care about.", "Keeping it quiet to avoid people asking for favors.", "Investing to ensure I am more powerful than my peers.", "Buying status symbols that prove my success."]},
+            {q: "Seeing someone cry in public makes you feel:", o: ["Concerned; I want to help.", "Awkward; I want to leave.", "That they are doing it for attention.", "Irritated that they are making a scene."]},
+            {q: "A superior criticizes your work. Your reaction?", o: ["I analyze the critique to improve.", "I find a flaw in the person critiquing me.", "I make them look incompetent in response.", "I feign agreement but ignore them entirely."]},
+            {q: "A friend succeeds where you failed. You feel:", o: ["Genuinely happy for them.", "Jealous, but I hide it.", "Cheated; they took what was mine.", "Suspicious; I look for how they cheated."]},
+            {q: "Is it okay to lie?", o: ["Only to spare someone’s feelings.", "To keep the peace.", "If it gives me an advantage.", "Everyone lies; the honest are just naive."]},
+            {q: "In an argument, your goal is:", o: ["To understand the other perspective.", "To reach a compromise.", "To prove them wrong.", "To win the argument."]},
+            {q: "What defines a 'weak' person?", o: ["No one is weak; we all have struggles.", "Being unable to defend oneself.", "Being too trusting.", "Being unable to suppress emotions."]},
+            {q: "Rules are:", o: ["Necessary guidelines.", "Suggestions I can ignore.", "Obstacles to my progress.", "For people who aren't smart enough to avoid them."]},
+            {q: "Do you care if people believe your stories?", o: ["Yes, honesty is vital.", "I exaggerate slightly for effect.", "If it gets a reaction, truth is secondary.", "My version is the only truth that matters."]},
+            {q: "In a crisis, your role is:", o: ["Calming and supporting others.", "Making the hard calls others fear.", "Appearing unaffected by the chaos.", "Ensuring everything goes according to my plan."]},
+            {q: "Handling complainers:", o: ["Offering a listening ear.", "Giving advice so they stop complaining.", "Distancing myself to protect my energy.", "Explaining why their failure is their fault."]},
+            {q: "Sensitivity is:", o: ["A strength.", "Difficult to work with.", "A manipulation tool.", "A character weakness."]},
+            {q: "A perfect night out is:", o: ["Relaxing with loved ones.", "Being treated with high service.", "Being the center of attention.", "Being seen as successful."]},
+            {q: "Most important quality:", o: ["Integrity.", "Confidence.", "Intelligence.", "Influence."]},
+            {q: "When you disagree:", o: ["I seek common ground.", "I persist until they see the logic.", "I wait for them to realize their error.", "I ignore them to deny them the satisfaction."]},
+            {q: "Respect is:", o: ["Mutual consideration.", "Recognition of my capability.", "Deference to my judgment.", "Acknowledgment of my achievements."]},
+            {q: "Explaining yourself:", o: ["A normal interaction.", "Annoying that others can't keep up.", "An interrogation.", "A waste of my time."]},
+            {q: "Above the rules?", o: ["Never.", "If the rule is illogical.", "Yes, rules are for the mediocre.", "I don't see them as rules."]},
+            {q: "Past relationships taught you:", o: ["How to grow.", "People are unreliable.", "People are envious.", "People are unintelligent."]},
+            {q: "You say you’re unhappy. I should:", o: ["Ask how to fix it together.", "Ask what you did to cause it.", "Say you’re being sensitive.", "Say you should be happy with what you have."]},
+            {q: "My friend upsets you. You:", o: ["Talk to me about your feelings.", "Give me the silent treatment.", "Demand I cut ties.", "Wait to insult the friend to hurt me."]},
+            {q: "Privacy is:", o: ["Having our own lives, but being open.", "Checking phones to ensure trust.", "Total transparency; no secrets.", "I keep mine; you share yours."]},
+            {q: "Moving forward after a fight:", o: ["Talk it out calmly.", "Keep at it until I admit I'm wrong.", "Act as if nothing happened.", "Use silence until I apologize."]},
+            {q: "A weekend away with friends:", o: ["Have fun!", "Check in every few hours.", "If you loved me, you'd stay.", "I might not be here when you return."]},
+            {q: "Making up for a mistake:", o: ["Apology and changed behavior.", "A grand gesture.", "Making me feel the pain you felt.", "Holding it over my head for months."]},
+            {q: "Supporting me when stressed:", o: ["Listen to me.", "Do exactly as I say to fix it.", "Stay away until I’m happy.", "Apologize for causing it."]},
+            {q: "My biggest flaw:", o: ["I love you as you are.", "You don't listen to my advice.", "You’re too dramatic.", "Your need for independence."]},
+            {q: "Celebrating my success:", o: ["Genuinely excited.", "Change the subject.", "Minimize it.", "Point out what I missed."]},
+            {q: "Can people change?", o: ["Yes, people grow.", "Only if they do as I say.", "No, they just mask the truth.", "Only if it benefits me."]},
+            {q: "Best compliment:", o: ["You make me feel loved.", "You understand my potential.", "You’re great at supporting me.", "I couldn't survive without you."]},
+            {q: "Partner should be grateful for:", o: ["Our mutual growth.", "The stability I provide.", "My pushing them to be better.", "Our high-status lifestyle."]},
+            {q: "Rough day?", o: ["Tell you and seek comfort.", "Keep it quiet so I don't drag you down.", "Ask your advice to fix it.", "Give you space until I'm normal."]},
+            {q: "Long-lasting secret:", o: ["Constant communication.", "Respecting my independence.", "Maintaining high standards.", "Reading minds."]},
+            {q: "Secrets:", o: ["Total transparency.", "Privacy is mysterious.", "You should just tell me.", "Privacy is only for unimportant things."]},
+            {q: "Compromise:", o: ["The foundation of love.", "Necessary, but my idea is better.", "Annoying, but I do it to avoid conflict.", "Only fair if you do it too."]},
+            {q: "Attractive trait:", o: ["Kindness.", "How much they admire me.", "Ambition.", "Ability to follow my lead."]},
+            {q: "Surprises:", o: ["Love them.", "I prefer control.", "Only if high-quality.", "I don't like not knowing."]},
+            {q: "Bad mood:", o: ["A hug.", "Space.", "Leave me alone.", "You fix it."]},
+            {q: "Dealbreaker:", o: ["Betrayal.", "Ignoring boundaries.", "Not appreciating me.", "Being told I'm wrong."]}
+        ];
 
-<!-- QUIZ PAGE -->
-<section id="page-personality" class="page max-w-3xl mx-auto px-5 py-10">
-  <button onclick="goTo('home')" class="mb-4">← Back</button>
-  <div id="quiz-container">
-    <h2 id="q-text" class="font-display text-2xl mb-6"></h2>
-    <div id="q-options" class="grid gap-3"></div>
-  </div>
-  <div id="q-result" class="hidden"></div>
-</section>
-
-<script>
-/* CORE LOGIC */
-function goTo(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-}
-
-/* CHAT LOGIC */
-const chatWindow = document.getElementById('chat-window');
-document.getElementById('chat-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const input = document.getElementById('chat-input');
-  chatWindow.innerHTML += `<div class="mb-3 text-right"><b>You:</b> ${input.value}</div>`;
-  chatWindow.innerHTML += `<div class="mb-3"><b>Kindred:</b> I'm listening. Tell me more about that.</div>`;
-  input.value = '';
-});
-
-/* QUIZ LOGIC */
-const quizData = [
-  {q: "Do you prefer group activities?", a: "Yes", b: "No"},
-  {q: "Are you more logic-driven?", a: "Yes", b: "No"}
-];
-let qIdx = 0;
-function renderQuiz() {
-  if(qIdx >= quizData.length) {
-    document.getElementById('quiz-container').classList.add('hidden');
-    document.getElementById('q-result').classList.remove('hidden');
-    document.getElementById('q-result').innerHTML = "<h3>Quiz Complete!</h3>";
-    return;
-  }
-  document.getElementById('q-text').textContent = quizData[qIdx].q;
-  document.getElementById('q-options').innerHTML = `
-    <button class="card p-4" onclick="next()">Yes</button>
-    <button class="card p-4" onclick="next()">No</button>`;
-}
-function next() { qIdx++; renderQuiz(); }
-renderQuiz();
-</script>
+        let index = 0, score = 0;
+        function startStudy() {
+            document.getElementById('page-home').classList.remove('active');
+            document.getElementById('page-quiz').classList.add('active');
+            showQuestion();
+        }
+        function showQuestion() {
+            const q = questions[index];
+            document.getElementById('counter').innerText = `Question ${index + 1} of ${questions.length}`;
+            document.getElementById('progress-bar').style.width = `${((index) / questions.length) * 100}%`;
+            document.getElementById('question').innerText = q.q;
+            const container = document.getElementById('options');
+            container.innerHTML = '';
+            q.o.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 border border-black/10 rounded-xl hover:bg-black/5";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (i > 0) score++;
+                    index++;
+                    index < questions.length ? showQuestion() : showResult();
+                };
+                container.appendChild(btn);
+            });
+        }
+        function showResult() {
+            document.getElementById('page-quiz').classList.remove('active');
+            document.getElementById('page-result').classList.add('active');
+            let res = score <= 10 ? "Highly Secure & Compatible" : (score <= 25 ? "Moderate Alignment; Work Required" : "High Risk / Significant Divergence");
+            document.getElementById('final-score').innerText = `Result Analysis: ${res}`;
+        }
+    </script>
 </body>
 </html>
