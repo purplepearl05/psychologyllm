@@ -1,109 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Behavioral Insight Portal</title>
-    <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; background: #f4f4f9; }
-        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: #ddd; }
-        .tab-btn.active { background: #333; color: white; }
-        .quiz-section { display: none; background: white; padding: 20px; border-radius: 8px; }
-        .quiz-section.active { display: block; }
-        .question { margin-bottom: 20px; }
-        button#analyze { margin-top: 20px; padding: 15px; background: #28a745; color: white; border: none; cursor: pointer; width: 100%; }
-        #report { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background: #fff; white-space: pre-wrap; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kindred — Deep Reflection</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#23271f; --canvas:#fbf7f1; --forest:#2c5347; --coral:#e2684a; --sand:#efe5d3; }
+  body{ background:var(--canvas); color:var(--ink); font-family:'Inter',sans-serif; }
+  .font-display{ font-family:'Fraunces',serif; }
+  .page{ display:none; } .page.active{ display:block; }
+  .card{ background:#fff; border:1px solid rgba(35,39,31,0.08); }
+  .active-option{ background:var(--sand); border-color:var(--forest); }
+</style>
 </head>
 <body>
 
-    <h2>Assessment Dashboard</h2>
-    <div>
-        <button class="tab-btn active" onclick="openQuiz('personality')">Personality Insight</button>
-        <button class="tab-btn" onclick="openQuiz('couples')">Relationship Dynamics</button>
+<header class="max-w-4xl mx-auto p-6 flex justify-between items-center">
+    <button onclick="goTo('home')" class="font-display text-2xl font-semibold">🌿 Kindred</button>
+    <div class="space-x-4 text-sm font-semibold">
+        <button onclick="goTo('personality')">Deep Insight</button>
+        <button onclick="goTo('couples')">Couples Check-in</button>
     </div>
+</header>
 
-    <!-- Personality Quiz -->
-    <div id="personality" class="quiz-section active">
-        <h3>Personality Depth Assessment</h3>
-        <div id="p-questions"></div>
+<main id="page-home" class="page active p-6 max-w-4xl mx-auto">
+    <h1 class="font-display text-5xl mb-8">Reflect on the patterns.</h1>
+    <div class="grid md:grid-cols-2 gap-6">
+        <button onclick="goTo('personality')" class="card p-8 rounded-2xl text-left">
+            <h2 class="font-display text-2xl mb-2">Deep Insight</h2>
+            <p class="text-black/60">15 scenarios probing for ego, empathy, and social utility.</p>
+        </button>
+        <button onclick="goTo('couples')" class="card p-8 rounded-2xl text-left">
+            <h2 class="font-display text-2xl mb-2">Couples Check-in</h2>
+            <p class="text-black/60">15 scenarios probing for conflict, trust, and alignment.</p>
+        </button>
     </div>
+</main>
 
-    <!-- Couples Quiz -->
-    <div id="couples" class="quiz-section">
-        <h3>Relationship Dynamics Assessment</h3>
-        <div id="c-questions"></div>
-    </div>
+<section id="page-personality" class="page p-6 max-w-2xl mx-auto">
+    <h1 class="font-display text-3xl mb-6">Deep Insight Assessment</h1>
+    <div id="p-container"></div>
+</section>
 
-    <button id="analyze" onclick="analyzePatterns()">Generate Behavioral Report</button>
-    <div id="report"></div>
+<section id="page-couples" class="page p-6 max-w-2xl mx-auto">
+    <h1 class="font-display text-3xl mb-6">Couples Compatibility</h1>
+    <div id="c-container"></div>
+</section>
 
 <script>
-const personalityQs = [
-    "The Success Narrative: You win an award. Do you (A) Let people think you were the mastermind? (B) Ensure the team knows I value their work equally?",
-    "The Critique Reflex: Someone points out a mistake. Do you (A) Find a flaw in their argument to neutralize it? (B) Honestly check if they’re right?",
-    "The Social Battery: Being where no one knows your status makes you feel (A) Slightly restless/invisible? (B) Relaxed, it's refreshing?",
-    "The Favor: Helping someone makes you feel (A) They now owe me loyalty? (B) I've relieved their burden?",
-    "The Rule-Breaker: A rule stops you. You (A) Circumvent it, it's just a suggestion? (B) Follow it, it keeps things fair?",
-    "The Conflict Pivot: Losing an argument, you (A) Pivot to their character? (B) Drop your point and listen?",
-    "The Boring Person: You label someone uninteresting if (A) They have no utility/status? (B) They are dishonest/unkind?",
-    "The Emotional Leak: Seeing someone cry, you (A) Feel awkward/irritated? (B) Feel immediate concern?",
-    "The Special Feeling: Are you destined for more than average? (A) Yes, it's my baseline? (B) No, simple life is fine?",
-    "The Mirroring: When meeting someone, you (A) Mirror their vibe to build rapport? (B) Stay yourself?",
-    "The Remorse Test: Hurting someone, what bothers you? (A) They think less of me? (B) They are in pain?",
-    "The Power Vacuum: Entering a group, you (A) Map the leader to leverage them? (B) Look for people I like?",
-    "The Vulnerability Test: Sharing secrets is (A) Giving them a weapon? (B) Necessary for trust?",
-    "The Boredom Trap: A situation doesn't serve you. You (A) Cut ties instantly? (B) Feel loyalty and try to evolve?",
-    "The Game Mentality: Life is (A) A competition? (B) A community?"
+const pQs = [
+    {q:"You win a team award. Do you:", a:"Let people think you were the 'mastermind' to open doors.", b:"Ensure the team knows I value their 'behind-the-scenes' work."},
+    {q:"Someone critiques your work in public. Your reflex is:", a:"Neutralize them by finding a flaw in their argument.", b:"Honestly check if they’re right, even if it's uncomfortable."},
+    {q:"Social situations where your status is unknown make you feel:", a:"Restless/Invisible.", b:"Relaxed/Refreshed."},
+    {q:"The act of helping feels 'complete' when:", a:"I've built a solid ally who owes me.", b:"I've actually relieved their burden."},
+    {q:"An inefficient rule stands in your way. You:", a:"Circumvent it.", b:"Follow it to maintain fairness."},
+    {q:"If you are losing an argument, you:", a:"Pivot to their character to shift focus.", b:"Stop and ask, 'Are we arguing about the same thing?'"},
+    {q:"You label someone 'not worth my time' if:", a:"They offer no utility or status.", b:"They are dishonest or unkind."},
+    {q:"You see someone sobbing in public. You:", a:"Feel irritated/awkward.", b:"Feel physical concern."},
+    {q:"Do you feel you are destined for 'more' than the average life?", a:"Yes, it's my expectation.", b:"No, a simple life is enough."},
+    {q:"When meeting someone new, you:", a:"Adjust your 'vibe' to get them to like you.", b:"Stay consistent to be authentic."},
+    {q:"You hurt someone. What bothers you most?", a:"They might think less of me.", b:"They are in pain."},
+    {q:"You enter a new group. You:", a:"Map the leader to leverage them.", b:"Look for people I enjoy."},
+    {q:"Sharing insecurities feels like:", a:"Giving them a weapon.", b:"A risk for trust."},
+    {q:"A situation no longer serves your goals. You:", a:"Cut ties and exit instantly.", b:"Try to see if the bond can evolve."},
+    {q:"Life feels mostly like:", a:"A competition.", b:"A community."}
 ];
 
-const coupleQs = [
-    "The Fight: You are exhausted. You (A) Shut down/withdraw? (B) Stay present and hear their hurt?",
-    "The Public Silliness: Partner makes you look silly. You (A) Call them out to protect image? (B) Let it go?",
-    "The Decision: Partner acts alone. You (A) Retaliate with a unilateral decision? (B) Set a boundary to talk it out?",
-    "The Scorecard: When they fail, you (A) Store it to use as ammo? (B) Process and clear it?",
-    "The Support: Partner is spiraling. You (A) Give a logic fix to stop the noise? (B) Hold space for them?",
-    "The Growth Gap: They are coasting. You (A) Feel they are dead weight? (B) Encourage them?",
-    "The Chores: You feel overworked. You (A) Stop doing your part to show them? (B) Ask for a calm meeting?",
-    "The Attraction: You like someone else. You (A) Keep it secret? (B) Create distance to protect the commitment?",
-    "The Future: You disagree on a life path. You (A) Expect them to follow my plan? (B) Have a hard talk?",
-    "The Vulnerability: They see you at your worst. You (A) Push them away? (B) Feel relieved?",
-    "The Family Jab: Family is rude. You (A) Call your partner weak for not defending? (B) Discuss being a united front?",
-    "The Empty Season: They are in a low phase. You (A) Look for validation elsewhere? (B) Stay the course?",
-    "The Money: They want a risk. You (A) Protect 'my' security? (B) Find middle ground?",
-    "The Rejection: They turn down intimacy. You (A) Punish them with distance? (B) Try again later?",
-    "The Conflict Core: The relationship is (A) Maximizing own happiness? (B) Mutual growth?"
+const cQs = [
+    {q:"During an exhausting argument, you:", a:"Withdraw to protect your inner peace.", b:"Stay present to hear their hurt."},
+    {q:"Partner tells a story that makes you look 'silly'. You:", a:"Call them out to protect image.", b:"Let it go."},
+    {q:"Partner makes a decision without asking. You:", a:"Make a unilateral decision to 'correct' them.", b:"Set a boundary and talk it through."},
+    {q:"When your partner fails you, do you:", a:"Store it away for future arguments.", b:"Address, process, and clear it."},
+    {q:"Partner is spiraling. You:", a:"Give a 'logic fix' to stop the noise.", b:"Hold space with no 'fix' needed."},
+    {q:"You are advancing; they are coasting. You:", a:"Feel they are a weight.", b:"Encourage them but focus on your path."},
+    {q:"Chore dispute. You:", a:"Stop doing your share to 'show them'.", b:"Ask for a calm, neutral meeting."},
+    {q:"Attraction to an outsider. You:", a:"Keep it a secret and enjoy the thrill.", b:"Create distance to protect commitment."},
+    {q:"Partner wants a life you don't. You:", a:"Expect them to eventually follow your plan.", b:"Have a hard talk about alignment."},
+    {q:"Partner sees you at your worst. You:", a:"Feel ashamed and push them away.", b:"Feel relieved they know the 'real' you."},
+    {q:"Family is passive-aggressive to you. You:", a:"Call your partner 'weak' for not defending you.", b:"Discuss how to be a 'united front'."},
+    {q:"Low-intimacy phase. You:", a:"Check out and look for validation elsewhere.", b:"Stay the course and support them."},
+    {q:"Partner wants a financial risk. You:", a:"Dig heels in to protect 'my' security.", b:"Find middle ground between safety and desire."},
+    {q:"They turn down intimacy. You:", a:"Feel the need to 'punish' them.", b:"Assume they are tired and try again later."},
+    {q:"Relationship is about:", a:"Two people maximizing their own happiness?", b:"Two people building a foundation together?"}
 ];
 
-function setupQuiz(id, questions) {
-    const container = document.getElementById(id);
-    questions.forEach((q, i) => {
-        container.innerHTML += `<div class='question'>${q} 
-            <br><input type='radio' name='${id}-${i}' value='A'> A 
-            <input type='radio' name='${id}-${i}' value='B'> B</div>`;
+function goTo(page){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+}
+
+function render(arr, id){
+    const cont = document.getElementById(id);
+    arr.forEach((item, i) => {
+        cont.innerHTML += `<div class='card p-5 rounded-xl mb-4'>
+            <p class='mb-3 font-semibold'>${i+1}. ${item.q}</p>
+            <button class='block w-full text-left p-3 border rounded mb-2 hover:bg-sand' onclick='this.classList.add("active-option")'>${item.a}</button>
+            <button class='block w-full text-left p-3 border rounded hover:bg-sand' onclick='this.classList.add("active-option")'>${item.b}</button>
+        </div>`;
     });
 }
 
-function openQuiz(type) {
-    document.querySelectorAll('.quiz-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(type).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
-
-function analyzePatterns() {
-    let score = 0;
-    document.querySelectorAll('input:checked').forEach(i => { if(i.value === 'A') score++; });
-    
-    let report = "--- BEHAVIORAL ANALYSIS REPORT ---\n";
-    if(score > 20) report += "Pattern Observed: High reliance on ego-protection and transactional logic. Consider professional perspective.";
-    else if(score > 10) report += "Pattern Observed: Mixed traits of independence and defensive reflexes.";
-    else report += "Pattern Observed: Strong indicators of high empathy and communal-based decision making.";
-    
-    document.getElementById('report').innerText = report;
-}
-
-setupQuiz('p-questions', personalityQs);
-setupQuiz('c-questions', coupleQs);
+render(pQs, 'p-container');
+render(cQs, 'c-container');
 </script>
 </body>
 </html>
