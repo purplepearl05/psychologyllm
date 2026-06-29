@@ -1,419 +1,275 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PsycheStudio - Standalone Psychology Platform</title>
-    <style>
-        :root {
-            --bg-base: #0b0f19;
-            --bg-surface: #151d30;
-            --bg-card: #1f293d;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.15);
-            --success: #10b981;
-            --error: #f43f5e;
-            --border: #2e3c56;
-        }
+import React, { useState, useRef, useEffect } from 'react';
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg-base); color: var(--text-primary); display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+// --- BOHO DESIGN SYSTEM COLORS & STYLES ---
+const BOHO = {
+  bg: "bg-[#FDFBF7] text-[#4A3E3D]", // Warm linen background, deep earthy brown text
+  card: "bg-[#F5EDE0] border border-[#E6D5B8] rounded-3xl p-6 md:p-8 shadow-sm transition-all duration-300", // Soft clay canvas
+  primaryBtn: "bg-[#D4A373] hover:bg-[#C39262] text-white font-medium py-3 px-8 rounded-full transition-all duration-300 shadow-sm transform hover:-translate-y-0.5 tracking-wide text-sm", // Terracotta
+  secondaryBtn: "bg-[#CCD5AE] hover:bg-[#B9C496] text-[#4A3E3D] font-medium py-3 px-8 rounded-full transition-all duration-300 tracking-wide text-sm", // Sage Green
+  input: "w-full p-4 rounded-2xl border border-[#E6D5B8] bg-[#FDFBF7] focus:outline-none focus:ring-2 focus:ring-[#D4A373] text-[#4A3E3D] placeholder-[#A09384] shadow-inner transition-all",
+  navLink: "text-[#6B5B52] hover:text-[#D4A373] font-medium transition-colors cursor-pointer text-sm tracking-wider uppercase font-serif"
+};
 
-        /* Top Control Deck */
-        .top-deck { background-color: var(--bg-surface); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .branding h1 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; }
-        .branding span { color: var(--accent); }
-        
-        .api-suite { display: flex; align-items: center; gap: 1rem; }
-        .api-field { background-color: var(--bg-card); border: 1px solid var(--border); color: white; padding: 0.6rem 1rem; border-radius: 8px; width: 320px; font-size: 0.85rem; outline: none; transition: all 0.2s; }
-        .api-field:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
-        
-        .indicator-pill { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--border); font-size: 0.8rem; font-weight: 600; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--error); box-shadow: 0 0 8px var(--error); transition: all 0.3s; }
-        .status-dot.active { background-color: var(--success); box-shadow: 0 0 8px var(--success); }
+export default function App() {
+  // --- STATE FOR PSYCHOLOGY QUIZ ---
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [quizComplete, setQuizComplete] = useState(false);
+  const [insightsTracker, setInsightsTracker] = useState([]);
 
-        /* Layout Grid */
-        .workspace { display: flex; flex: 1; overflow: hidden; }
-        .navigation-rail { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        
-        .rail-item { display: flex; flex-direction: column; padding: 1rem; color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
-        .rail-item:hover { background-color: var(--bg-card); color: var(--text-primary); }
-        .rail-item.active { background-color: var(--bg-card); color: var(--text-primary); border-color: var(--border); border-left: 4px solid var(--accent); }
-        .rail-item h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
-        .rail-item p { font-size: 0.75rem; color: var(--text-secondary); }
+  // --- STATE FOR COMPANION CHATBOT ---
+  const [chatMessages, setChatMessages] = useState([
+    { sender: 'bot', text: 'Hello, mindful soul. I am your companion. This is a safe space—how is your inner world feeling today?' }
+  ]);
+  const [userInput, setUserInput] = useState('');
+  const chatEndRef = useRef(null);
 
-        .stage { flex: 1; padding: 3rem; overflow-y: auto; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.03), transparent); }
-        .view-panel { display: none; max-width: 1100px; margin: 0 auto; }
-        .view-panel.active { display: block; }
+  // --- REFS FOR LUXURY SMOOTH SCROLLING ---
+  const homeSection = useRef(null);
+  const quizSection = useRef(null);
+  const chatSection = useRef(null);
 
-        /* Typography & Elements */
-        h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
-        .desc { color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 0.95rem; }
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-        
-        .deck-card { background: var(--bg-surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
-        .deck-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .deck-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .deck-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+  const handleScroll = (elementRef) => {
+    elementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
-        /* Dynamic Test Interface */
-        .test-wrapper { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; margin-top: 2rem; }
-        .q-item { background: var(--bg-base); border: 1px solid var(--border); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; }
-        .q-text { font-size: 1.05rem; font-weight: 600; margin-bottom: 1.2rem; }
-        .matrix-options { display: flex; flex-direction: column; gap: 0.75rem; }
-        .matrix-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 1rem; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 1rem; font-size: 0.9rem; transition: all 0.2s; }
-        .matrix-btn:hover { background: #28354f; }
-        .matrix-btn input { accent-color: var(--accent); width: 18px; height: 18px; }
+  // Auto-scrolling inside chat box when messages flow
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
 
-        /* Core UI Buttons */
-        .action-btn { background: var(--accent); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 0.95rem; transition: background 0.2s; }
-        .action-btn:hover { background: #4f46e5; }
+  // --- HIGH-LEVEL COGNITIVE PSYCHOLOGY QUIZ DATA ---
+  const quizQuestions = [
+    {
+      theme: "Stress Frameworks",
+      question: "When unexpected pressure builds up, what is your nervous system's instinctual home base?",
+      options: [
+        { text: "I disconnect, mute notifications, or retreat to sleep.", archetype: "The Safe Harbor (Flight/Freeze)", feedback: "Your nervous system prioritizes energy preservation! By retreating, your brain tries to create a barrier against emotional overwhelm." },
+        { text: "I instantly map out control strategies and organize details.", archetype: "The Structural Architect (Fight/Control)", feedback: "Your mind channels anxiety into structure. Action feels like safety to you, kicking off immediate cognitive organizing." },
+        { text: "I reach out to share the burden or vent to a trusted friend.", archetype: "The Relational Connector (Tend-and-Befriend)", feedback: "Brilliant evolutionary adaptation. Your biology responds to stress by seeking social safety loops, which instantly lowers active cortisol." }
+      ]
+    },
+    {
+      theme: "Neurochemical Optimization",
+      question: "Which gentle adjustment actually signals deep safety to your brain during an active anxious spiral?",
+      options: [
+        { text: "Extending your exhale to be twice as long as your inhale.", trueAnswer: true, feedback: "Spot on! Lengthening your exhale instantly triggers the Vagus Nerve, engaging the parasympathetic nervous system to slow down your heart rate manually." },
+        { text: "Analyzing exactly why you are anxious until you find the source.", trueAnswer: false, feedback: "Over-analyzing during panic often creates an emotional feedback loop, locking your brain into 'rumination mode' rather than calming it." },
+        { text: "Checking an objective task off a checklist right away.", trueAnswer: true, feedback: "Excellent. Achieving a concrete, tiny goal releases a predictable drip of dopamine, overriding feelings of chaotic helplessness." }
+      ]
+    }
+  ];
 
-        /* Chat Layout */
-        .chat-container { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; height: calc(100vh - 240px); display: flex; flex-direction: column; overflow: hidden; }
-        .chat-scroller { flex: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem; }
-        .msg { max-width: 80%; padding: 1rem 1.25rem; border-radius: 14px; line-height: 1.6; font-size: 0.95rem; }
-        .msg.user { background: var(--accent); align-self: flex-end; border-bottom-right-radius: 2px; }
-        .msg.bot { background: var(--bg-card); align-self: flex-start; border-bottom-left-radius: 2px; white-space: pre-wrap; }
-        .chat-bar { display: flex; gap: 1rem; padding: 1.5rem; background: var(--bg-base); border-top: 1px solid var(--border); }
-        .chat-entry { flex: 1; background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 1rem; border-radius: 8px; outline: none; }
+  // --- HANDLERS ---
+  const handleSelectAnswer = (idx, choice) => {
+    setSelectedAnswer(idx);
+    setInsightsTracker(prev => [...prev, choice.feedback]);
+  };
 
-        /* Match Panel Layout */
-        .matching-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-        .partner-box { background: var(--bg-surface); border: 1px solid var(--border); padding: 2rem; border-radius: 12px; }
-        .partner-box h3 { color: var(--accent); margin-bottom: 1.5rem; font-size: 1.2rem; }
-        .field-group { margin-bottom: 1.25rem; }
-        .field-group label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem; }
-        .input-area { width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 0.8rem; border-radius: 8px; outline: none; font-size: 0.9rem; transition: border 0.2s; }
-        .input-area:focus { border-color: var(--accent); }
+  const handleNextSteps = () => {
+    setSelectedAnswer(null);
+    if (currentQuestion + 1 < quizQuestions.length) {
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      setQuizComplete(true);
+    }
+  };
 
-        /* Presentation Output Window */
-        .manifest-window { background: linear-gradient(135deg, #16223f, #111a30); border-left: 4px solid var(--accent); padding: 2rem; border-radius: 8px; margin-top: 2rem; line-height: 1.7; font-size: 1rem; display: none; color: #e2e8f0; white-space: pre-wrap; }
-        
-        .loader { display: inline-block; width: 1.2rem; height: 1.2rem; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
-</head>
-<body>
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!userInput.trim()) return;
 
-    <div class="top-deck">
-        <div class="branding">
-            <h1>Psyche<span>Studio</span></h1>
+    const userMessage = { sender: 'user', text: userInput };
+    setChatMessages(prev => [...prev, userMessage]);
+    setUserInput('');
+
+    // Active Listening Empathy Engine Responses
+    setTimeout(() => {
+      let botResponse = "I am processing that deeply. In cognitive psychology, mapping our thoughts out loud is the very first step toward emotional freedom. Tell me a bit more?";
+      const cleanedText = userInput.toLowerCase();
+
+      if (cleanedText.includes('sad') || cleanedText.includes('overwhelmed') || cleanedText.includes('anxious') || cleanedText.includes('tired')) {
+        botResponse = "Thank you for validating your true feelings here. That weight is real. Let's practice radical acceptance: imagine dropping your shoulders right now and letting go of the need to fix this feeling for just five minutes.";
+      } else if (cleanedText.includes('happy') || cleanedText.includes('good') || cleanedText.includes('won') || cleanedText.includes('excited')) {
+        botResponse = "How wonderful! When we actively savor positive emotions, we strengthen neural pathways called 'neuroplasticity'. Let that proud feeling sit with you today!";
+      }
+
+      setChatMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+    }, 700);
+  };
+
+  const resetMindQuiz = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setQuizComplete(false);
+    setInsightsTracker([]);
+  };
+
+  return (
+    <div className={`min-h-screen ${BOHO.bg} selection:bg-[#CCD5AE] selection:text-[#4A3E3D] font-sans antialiased`}>
+      
+      {/* PREMIUM STICKY HEADER */}
+      <nav className="sticky top-0 bg-[#FDFBF7]/85 backdrop-blur-md border-b border-[#E6D5B8]/60 z-50 px-6 md:px-12 py-5 flex justify-between items-center transition-all">
+        <div className="text-xl md:text-2xl font-serif tracking-widest text-[#8C6239] font-bold cursor-pointer" onClick={() => handleScroll(homeSection)}>
+          🌿 SELFCULTURE
         </div>
-        <div class="api-suite">
-            <input type="password" id="cryptoKey" class="api-field" placeholder="Provide Gemini API Access Token...">
-            <button class="action-btn" style="width: auto; padding: 0.6rem 1.5rem;" onclick="initializeToken()">Mount Engine</button>
-            <div class="indicator-pill">
-                <div id="glowIndicator" class="status-dot"></div>
-                <span id="indicatorText">Offline Core</span>
+        <div className="hidden sm:flex gap-8 items-center">
+          <span onClick={() => handleScroll(homeSection)} className={BOHO.navLink}>Home</span>
+          <span onClick={() => handleScroll(quizSection)} className={BOHO.navLink}>Mind Mapping</span>
+          <span onClick={() => handleScroll(chatSection)} className={BOHO.navLink}>Earthy Chat</span>
+        </div>
+      </nav>
+
+      {/* HERO SECTION */}
+      <section ref={homeSection} className="max-w-4xl mx-auto px-6 pt-24 pb-20 text-center min-h-[85vh] flex flex-col justify-center items-center">
+        <span className="text-xs uppercase tracking-widest text-[#9A7B56] font-semibold mb-4 bg-[#F5EDE0] px-4 py-1.5 rounded-full">
+          Psychology UX Concept
+        </span>
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif text-[#5C4033] mb-8 leading-[1.15] tracking-tight font-medium">
+          A soft sanctuary for <br />
+          <span className="italic text-[#D4A373]">cognitive clarity</span>.
+        </h1>
+        <p className="text-base sm:text-lg text-[#6B5B52] max-w-2xl mb-12 leading-relaxed font-light">
+          Experience an application interface built on premium human-centric behavioral principles, calming aesthetics, and active micro-interactions designed to reduce cognitive load.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <button onClick={() => handleScroll(quizSection)} className={BOHO.primaryBtn}>
+            Begin Exploration Quiz
+          </button>
+          <button onClick={() => handleScroll(chatSection)} className={BOHO.secondaryBtn}>
+            Consult Companion
+          </button>
+        </div>
+      </section>
+
+      {/* COMPACT INTERACTIVE COGNITIVE QUIZ SECTION */}
+      <section ref={quizSection} className="max-w-3xl mx-auto px-6 py-24 min-h-screen flex flex-col justify-center">
+        <div className="text-center mb-12">
+          <span className="text-xs font-mono uppercase tracking-wider text-[#9A7B56]">Part 01</span>
+          <h2 className="text-3xl md:text-4xl font-serif text-[#5C4033] mt-1 mb-3">The Mind Mapping Engine</h2>
+          <p className="text-[#6B5B52] font-light text-sm max-w-md mx-auto">
+            Interactive scenarios constructed using cognitive reframing parameters to decode responses without bias.
+          </p>
+        </div>
+
+        <div className={BOHO.card}>
+          {!quizComplete ? (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center text-xs text-[#9A7B56] font-mono tracking-wider">
+                <span>STAGE {currentQuestion + 1} OF {quizQuestions.length}</span>
+                <span className="bg-[#CCD5AE]/60 text-[#4A3E3D] px-3 py-1 rounded-full font-sans uppercase font-medium">
+                  {quizQuestions[currentQuestion].theme}
+                </span>
+              </div>
+              
+              <h3 className="text-xl md:text-2xl font-serif text-[#4A3E3D] leading-snug">
+                {quizQuestions[currentQuestion].question}
+              </h3>
+              
+              <div className="space-y-3 pt-2">
+                {quizQuestions[currentQuestion].options.map((choice, index) => (
+                  <button
+                    key={index}
+                    onClick={() => selectedAnswer === null && handleSelectAnswer(index, choice)}
+                    disabled={selectedAnswer !== null}
+                    className={`w-full text-left p-5 rounded-2xl transition-all duration-300 border flex justify-between items-center text-sm md:text-base ${
+                      selectedAnswer === index 
+                        ? 'bg-[#E6D5B8] border-[#D4A373] text-[#4A3E3D] font-medium translate-x-1 shadow-xs' 
+                        : 'bg-[#FDFBF7] hover:bg-[#FDFBF7]/60 border-[#E6D5B8]/80 text-[#5C4033] hover:translate-x-0.5'
+                    }`}
+                  >
+                    <span>{choice.text}</span>
+                    {selectedAnswer === index && <span className="text-xs text-[#8C6239] ml-2">✦ Selected</span>}
+                  </button>
+                ))}
+              </div>
+
+              {selectedAnswer !== null && (
+                <div className="mt-8 p-6 bg-[#FDFBF7] rounded-2xl border border-[#D4A373]/60 shadow-inner animate-fadeIn space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-serif uppercase tracking-widest text-[#8C6239] font-semibold">
+                    <span>💡 Psychological Feedback Loop</span>
+                  </div>
+                  <p className="text-sm text-[#5C4033] leading-relaxed">
+                    {quizQuestions[currentQuestion].options[selectedAnswer].feedback}
+                  </p>
+                  <div className="pt-2">
+                    <button onClick={handleNextSteps} className={BOHO.primaryBtn}>
+                      {currentQuestion + 1 === quizQuestions.length ? "Compile Insights" : "Proceed onward"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
+          ) : (
+            <div className="text-center py-8 space-y-6">
+              <div className="w-16 h-16 bg-[#CCD5AE]/50 rounded-full flex items-center justify-center mx-auto text-2xl">🌱</div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-serif text-[#5C4033]">Emotional Mapping Compiled</h3>
+                <p className="text-sm text-[#6B5B52] max-w-md mx-auto leading-relaxed">
+                  By bringing your automatic subconscious reactions into conscious awareness, you systematically deactivate defensive amygdala hyper-arousal.
+                </p>
+              </div>
+              <div className="bg-[#FDFBF7] p-5 rounded-2xl text-left border border-[#E6D5B8] space-y-3 max-h-[180px] overflow-y-auto text-xs text-[#6B5B52] leading-relaxed">
+                <p className="font-semibold text-[#8C6239] uppercase tracking-wider font-mono">Your Self-Discovery Logs:</p>
+                {insightsTracker.map((insight, idx) => (
+                  <p key={idx} className="border-b border-[#E6D5B8]/40 pb-2">• {insight}</p>
+                ))}
+              </div>
+              <button onClick={resetMindQuiz} className={BOHO.secondaryBtn}>
+                Reset Framework
+              </button>
+            </div>
+          )}
         </div>
+      </section>
+
+      {/* EMPATHETIC COMPANION CHATBOT SECTION */}
+      <section ref={chatSection} className="max-w-3xl mx-auto px-6 py-24 min-h-screen flex flex-col justify-center">
+        <div className="text-center mb-12">
+          <span className="text-xs font-mono uppercase tracking-wider text-[#9A7B56]">Part 02</span>
+          <h2 className="text-3xl md:text-4xl font-serif text-[#5C4033] mt-1 mb-3">Earthy Therapy Companion</h2>
+          <p className="text-[#6B5B52] font-light text-sm max-w-md mx-auto">
+            An active conversational interface simulating unconditional positive regard to process daily cognitive strain.
+          </p>
+        </div>
+
+        <div className={`${BOHO.card} h-[550px] flex flex-col justify-between shadow-md`}>
+          {/* Messages Wrapper with Customized Scrollbar */}
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 scrollbar-thin scrollbar-thumb-[#E6D5B8] scrollbar-track-transparent">
+            {chatMessages.map((msg, index) => (
+              <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
+                <div className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
+                  msg.sender === 'user' 
+                    ? 'bg-[#D4A373] text-white rounded-tr-none shadow-sm font-medium' 
+                    : 'bg-[#FDFBF7] text-[#4A3E3D] rounded-tl-none border border-[#E6D5B8] shadow-xs'
+                }`}>
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            <div ref={chatEndRef} />
+          </div>
+
+          {/* Clean Interactive Footer Bar */}
+          <form onSubmit={handleSendMessage} className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-[#E6D5B8]/40">
+            <input
+              type="text"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="State a feeling... (e.g., 'I feel overwhelmed')"
+              className={BOHO.input}
+            />
+            <button type="submit" className={`${BOHO.primaryBtn} sm:w-auto w-full py-4`}>
+              Transmit
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* BEAUTIFUL DESIGN FOOTER */}
+      <footer className="border-t border-[#E6D5B8]/60 text-center py-16 text-xs text-[#9A7B56] tracking-widest uppercase font-serif bg-[#F5EDE0]/30">
+        Engineered with Premium Behavioral UI Frameworks • © 2026 SELFCULTURE LABS
+      </footer>
     </div>
-
-    <div class="workspace">
-        <div class="navigation-rail">
-            <div class="rail-item active" onclick="navigate('lab-panel', this)">
-                <h4>Diagnostic Testing Suite</h4>
-                <p>Run complex clinical & behavioral screenings</p>
-            </div>
-            <div class="rail-item" onclick="navigate('eq-panel', this)">
-                <h4>EQ Intelligent Companion</h4>
-                <p>Real-time emotional systems decompression</p>
-            </div>
-            <div class="rail-item" onclick="navigate('match-panel', this)">
-                <h4>Compatibility Matrix</h4>
-                <p>Pre-marital behavioral alignment indexing</p>
-            </div>
-        </div>
-
-        <div class="stage">
-            <!-- PANEL 1: DIAGNOSTICS -->
-            <div id="lab-panel" class="view-panel active">
-                <h2>Clinical & Behavioral Matrix Labs</h2>
-                <p class="desc">Isolate and analyze neurodivergent profiles, shadow traits, and high-functioning positive psychology indicators.</p>
-                
-                <div class="grid-cards">
-                    <div class="deck-card" onclick="loadTest('ADHD')">
-                        <h3>ADHD Neurological Spectrum</h3>
-                        <p>Measures executive filtering degradation, attentional drift velocity, and reward-system latency.</p>
-                    </div>
-                    <div class="deck-card" onclick="loadTest('NARCISSISM')">
-                        <h3>Narcissistic Structural Inflation</h3>
-                        <p>Calculates dynamic ego validation dependencies, supply-seeking vectors, and transactional empathy limits.</p>
-                    </div>
-                    <div class="deck-card" onclick="loadTest('SOCIOPATHY')">
-                        <h3>Antisocial Behavioral Schema</h3>
-                        <p>Profiles low-arousal risk processing, non-normative rule structures, and calculated boundary bypass loops.</p>
-                    </div>
-                    <div class="deck-card" onclick="loadTest('AUTISM')">
-                        <h3>Autistic Processing Discrepancy</h3>
-                        <p>Maps explicit social translation friction, hyper-systemization metrics, and sensory saturation bounds.</p>
-                    </div>
-                    <div class="deck-card" onclick="loadTest('RESILIENCE')">
-                        <h3>Psychological Elasticity Index</h3>
-                        <p>Measures cognitive reframing capacity, failure-state assimilation, and core trauma conversion.</p>
-                    </div>
-                </div>
-
-                <div id="testLab" class="test-wrapper" style="display: none;">
-                    <h3 id="labTitle" style="margin-bottom: 1.5rem; color: var(--accent);"></h3>
-                    <div id="quizFormWrapper"></div>
-                    <button id="calcBtn" class="action-btn" onclick="submitLabBatch()">Process Diagnostics Engine</button>
-                    <div id="labOutput" class="manifest-window"></div>
-                </div>
-            </div>
-
-            <!-- PANEL 2: EQ BOT -->
-            <div id="eq-panel" class="view-panel">
-                <h2>EQ Intelligent Dialogue Space</h2>
-                <p class="desc">A therapeutic processing engine specialized in cognitive reframing and emotional decompression matrices.</p>
-                
-                <div class="chat-container">
-                    <div class="chat-scroller" id="chatFeed">
-                        <div class="msg bot">System initialized. Provide the mental architecture or current emotional processing block you wish to run diagnostics on today.</div>
-                    </div>
-                    <div class="chat-bar">
-                        <input type="text" id="chatMsgIn" class="chat-entry" placeholder="Input conscious thought processing stream..." onkeydown="if(event.key === 'Enter') executeChatCycle()">
-                        <button class="action-btn" style="width: auto; padding: 0 2rem;" onclick="executeChatCycle()">Transmit</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANEL 3: COUPLES MATCHING -->
-            <div id="match-panel" class="view-panel">
-                <h2>Pre-Marital Alignment Matrix</h2>
-                <p class="desc">Run predictive intersection tracking across resource processing, attachment safety, and crisis handling frameworks.</p>
-
-                <div class="matching-split">
-                    <div class="partner-box">
-                        <h3>Subject Alpha Matrix</h3>
-                        <div class="field-group">
-                            <label>Existential Architecture & Vision</label>
-                            <textarea id="p1_vision" class="input-area" rows="3" placeholder="Long-range structural goals, geographic freedom indexes, legacy plans..."></textarea>
-                        </div>
-                        <div class="field-group">
-                            <label>Conflict Mitigation Strategy</label>
-                            <textarea id="p1_conflict" class="input-area" rows="2" placeholder="De-escalation windows, emotional isolation cycles, or anxious immediate processing?"></textarea>
-                        </div>
-                        <div class="field-group">
-                            <label>Resource Allocation Philosophy</label>
-                            <textarea id="p1_finance" class="input-area" rows="2" placeholder="Capital buffering strategies versus experiential liquid outflows..."></textarea>
-                        </div>
-                    </div>
-
-                    <div class="partner-box">
-                        <h3>Subject Beta Matrix</h3>
-                        <div class="field-group">
-                            <label>Existential Architecture & Vision</label>
-                            <textarea id="p2_vision" class="input-area" rows="3" placeholder="Family-centric planning, community-embedded safety, low-volatility tracking..."></textarea>
-                        </div>
-                        <div class="field-group">
-                            <label>Conflict Mitigation Strategy</label>
-                            <textarea id="p2_conflict" class="input-area" rows="2" placeholder="Analytical compartmentalization, defensive deflection, or direct mirroring loop?"></textarea>
-                        </div>
-                        <div class="field-group">
-                            <label>Resource Allocation Philosophy</label>
-                            <textarea id="p2_finance" class="input-area" rows="2" placeholder="Conservative wealth defense frameworks, transparent centralized capital accounting..."></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <button id="matrixBtn" class="action-btn" style="padding: 1.2rem;" onclick="runMatrixEvaluation()">Compute Convergence Diagnostics</button>
-                <div id="matrixOutput" class="manifest-window"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let ACCESS_TOKEN = "";
-        let activeScope = "";
-
-        const database = {
-            ADHD: [
-                "Isolate your execution threshold: How often do you delay processing administrative overhead or complex organization structures until a panic trigger occurs?",
-                "Analyze attentional drift: When tracking an information stream, do secondary processing sub-routines fire up uncontrollably inside your brain?",
-                "Determine recovery latency: When unceremoniously broken out of a deep focus vector, how severe is the friction to re-engage?"
-            ],
-            NARCISSISM: [
-                "Track validation loops: Do you find yourself running mental metrics evaluating whether those around you are sufficiently recognizing your position or capabilities?",
-                "Examine interpersonal utility: When selecting personal configurations or associates, how heavily does their public-facing social currency rate?",
-                "Evaluate defensive patterns: When subjected to explicit performance corrections, does your system register an existential threat configuration?"
-            ],
-            SOCIOPATHY: [
-                "Isolate rule processing: How seamlessly can you filter out conventional moral bounds or regulatory parameters if they compromise an optimal target?",
-                "Analyze empathy integration: When a strategy you execute triggers operational damage or distress to another entity, how present is system remorse?",
-                "Track physiological baseline: In sudden environments of total crisis or direct confrontation, does your heart-rate and cognitive focus remain perfectly flat-lined?"
-            ],
-            AUTISM: [
-                "Track translation friction: Do you execute conscious rule-based calculations to parse facial subtext and unwritten social rules that others track implicitly?",
-                "Isolate environmental filtration: Do complex audio/visual matrices (crowded rooms, unstable lights) cause rapid neurological over-saturation?",
-                "Evaluate structural dependencies: How dependent is your baseline emotional containment on immutable procedural patterns and deep thematic domains?"
-            ],
-            RESILIENCE: [
-                "Calculate structural bounce-back: When a major life project encounters sudden total collapse, how quickly can your systems synthesize the failure profile and reset?",
-                "Examine stability thresholds: Can you execute high-fidelity strategic planning when simultaneously dealing with severe interpersonal or systemic volatility?",
-                "Evaluate trauma formatting: How effectively do you translate historical crisis metrics into functional wisdom and adaptive behavioral strategies?"
-            ]
-        };
-
-        function initializeToken() {
-            const token = document.getElementById('cryptoKey').value.trim();
-            if (!token) return alert("Provide an active validation sequence.");
-            ACCESS_TOKEN = token;
-            
-            document.getElementById('glowIndicator').classList.add('active');
-            const txt = document.getElementById('indicatorText');
-            txt.innerText = "Engine Connected";
-            txt.style.color = "var(--success)";
-        }
-
-        function navigate(targetId, el) {
-            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.rail-item').forEach(r => r.classList.remove('active'));
-            document.getElementById(targetId).classList.add('active');
-            el.classList.add('active');
-        }
-
-        function loadTest(scope) {
-            if (!ACCESS_TOKEN) return alert("Mount the Gemini API Token before running metrics.");
-            activeScope = scope;
-            const target = document.getElementById('quizFormWrapper');
-            target.innerHTML = "";
-            document.getElementById('labOutput').style.display = 'none';
-            document.getElementById('testLab').style.display = 'block';
-            document.getElementById('labTitle').innerText = `${scope} Clinical Analytics Vector`;
-
-            database[scope].forEach((q, idx) => {
-                const item = document.createElement('div');
-                item.className = "q-item";
-                item.innerHTML = `
-                    <div class="q-text">${idx + 1}. ${q}</div>
-                    <div class="matrix-options">
-                        <label class="matrix-btn"><input type="radio" name="scope_q_${idx}" value="Negligible / Non-Operational"> Negligible / Non-Operational state in my system</label>
-                        <label class="matrix-btn"><input type="radio" name="scope_q_${idx}" value="Intermittent Variance"> Intermittent Variance / Highly context-dependent</label>
-                        <label class="matrix-btn"><input type="radio" name="scope_q_${idx}" value="Dominant Systemic Driver"> Dominant Systemic Driver / High constant manifestation</label>
-                    </div>
-                `;
-                target.appendChild(item);
-            });
-            target.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        async function interfaceWithGemini(prompt) {
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${ACCESS_TOKEN}`;
-            const payload = { contents: [{ parts: [{ text: prompt }] }] };
-            
-            const req = await fetch(endpoint, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            if (!req.ok) {
-                const err = await req.json();
-                throw new Error(err.error?.message || "Engine routing exception.");
-            }
-            const res = await req.json();
-            return res.candidates[0].content.parts[0].text;
-        }
-
-        async function submitLabBatch() {
-            const btn = document.getElementById('calcBtn');
-            const windowOut = document.getElementById('labOutput');
-            const questions = database[activeScope];
-            let answers = [];
-
-            for(let i=0; i < questions.length; i++) {
-                const selected = document.querySelector(`input[name="scope_q_${i}"]:checked`);
-                if(!selected) return alert("Complete all metrics blocks before processing calculations.");
-                answers.push(`Metric Vector: [${questions[i]}] -> User Self-Report State: [${selected.value}]`);
-            }
-
-            btn.innerHTML = `<span class="loader"></span>Computing behavioral deviations...`;
-            windowOut.style.display = "none";
-
-            const payloadPrompt = `You are a cognitive diagnostics platform processing a profile evaluation for ${activeScope} structures. 
-            Self-Report Data stream:
-            ${answers.join("\n")}
-            Provide a deep-tier professional blueprint analyzing cognitive friction points, structural coping vulnerabilities, behavioral assets, and tactical growth directions. Ensure you explicitly use clinical psychology terminology (e.g., neuro-atypical mapping, compensatory strategies). Include a clear warning layout showing this is an AI architecture profiling tool, not a medical psychiatric declaration.`;
-
-            try {
-                const processingOutput = await interfaceWithGemini(payloadPrompt);
-                windowOut.innerHTML = processingOutput;
-                windowOut.style.display = "block";
-            } catch(e) {
-                alert("Processing Error: " + e.message);
-            } finally {
-                btn.innerHTML = "Process Diagnostics Engine";
-            }
-        }
-
-        async function executeChatCycle() {
-            const entry = document.getElementById('chatMsgIn');
-            const scroller = document.getElementById('chatFeed');
-            const dataText = entry.value.trim();
-            if(!dataText || !ACCESS_TOKEN) return;
-
-            const uDiv = document.createElement('div');
-            uDiv.className = "msg user";
-            uDiv.innerText = dataText;
-            scroller.appendChild(uDiv);
-            entry.value = "";
-            scroller.scrollTop = scroller.scrollHeight;
-
-            const bDiv = document.createElement('div');
-            bDiv.className = "msg bot";
-            bDiv.innerHTML = `<span class="loader"></span>Running advanced diagnostic reframing loop...`;
-            scroller.appendChild(bDiv);
-            scroller.scrollTop = scroller.scrollHeight;
-
-            const specializedContextPrompt = `Act as an expert EQ-centric cognitive behavioral companion. Analyze this cognitive output from the user: "${dataText}". Deconstruct the unconscious defense mechanisms visible, validate the structural emotional weight without toxic positivity, and provide clear strategic questions that help the individual reframe their systemic loop.`;
-
-            try {
-                const response = await interfaceWithGemini(specializedContextPrompt);
-                bDiv.innerText = response;
-            } catch(err) {
-                bDiv.innerText = "System interface broken: " + err.message;
-            } finally {
-                scroller.scrollTop = scroller.scrollHeight;
-            }
-        }
-
-        async function runMatrixEvaluation() {
-            if(!ACCESS_TOKEN) return alert("Initialize access credentials first.");
-            const outputWindow = document.getElementById('matrixOutput');
-            outputWindow.style.display = "none";
-
-            const batch = {
-                a_vis: document.getElementById('p1_vision').value,
-                a_con: document.getElementById('p1_conflict').value,
-                a_fin: document.getElementById('p1_finance').value,
-                b_vis: document.getElementById('p2_vision').value,
-                b_con: document.getElementById('p2_conflict').value,
-                b_fin: document.getElementById('p2_finance').value,
-            };
-
-            const matrixPrompt = `You are a clinical relationships behavioral scientist evaluating pre-marital alignment profiles.
-            Subject Alpha: Vision: "${batch.a_vis}", Conflict Loop: "${batch.a_con}", Financial Strategy: "${batch.a_fin}"
-            Subject Beta: Vision: "${batch.b_vis}", Conflict Loop: "${batch.b_con}", Financial Strategy: "${batch.b_fin}"
-            
-            Perform a systemic convergence compilation:
-            1. Value Alignment Index & Long-range Stability Model.
-            2. Inherent Latent Friction Risks (Isolate exactly how subtle mismatches in their conflict loops or economic framework can cause communication fractures).
-            3. Three targeted, actionable clinical exercises or alignment milestones they should achieve together before legal convergence.`;
-
-            outputWindow.innerHTML = `<span class="loader"></span>Processing alignment data vectors...`;
-            outputWindow.style.display = "block";
-
-            try {
-                const breakdown = await interfaceWithGemini(matrixPrompt);
-                outputWindow.innerHTML = breakdown;
-            } catch(e) {
-                outputWindow.innerHTML = "Processing compilation error: " + e.message;
-            }
-        }
-    </script>
-</body>
-</html>
+  );
+}
